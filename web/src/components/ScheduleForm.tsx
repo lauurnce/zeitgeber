@@ -186,7 +186,7 @@ export function ScheduleForm({ initial, busy, serverErrors, onSubmit }: Props) {
             const day = form.days[i]!;
             return (
               <div key={name} className="flex flex-col gap-1">
-                <div className="grid grid-cols-2 items-center gap-2 sm:grid-cols-[7.5rem_minmax(0,1fr)_minmax(0,1fr)]">
+                <div className="grid grid-cols-2 items-center gap-2 sm:grid-cols-[6.25rem_minmax(0,1fr)_minmax(0,1fr)]">
                   <label className="col-span-2 flex items-center gap-2 sm:col-span-1">
                     <input
                       type="checkbox"
