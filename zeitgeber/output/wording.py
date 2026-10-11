@@ -15,7 +15,7 @@ from typing import Literal, Protocol
 
 from zeitgeber.output.copy import Lang
 
-# Medical terms that must never appear in a nudge (CLAUDE.md wellness framing), with common
+# Medical terms that must never appear in a nudge (wellness framing, PROJECT_BRIEF), with common
 # English forms and Tagalog equivalents. Matched case-insensitively at word starts.
 BANNED_TERMS: tuple[str, ...] = (
     r"melatonin\w*",
