@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use Zeitgeber, please cite it as below."
+title: "Zeitgeber: a body-clock planner for night-shift workers"
+type: software
+version: 0.1.0
+date-released: "2026-10-11"
+license: MIT
+authors:
+  - family-names: Panes
+    given-names: Lawrence
+    website: "https://lauurnce.is-a.dev"
+repository-code: "https://github.com/lauurnce/zeitgeber"
+url: "https://zeitgeber-web.vercel.app"
+abstract: >-
+  Zeitgeber turns a weekly shift schedule into a 14-day light profile, simulates
+  the human circadian clock with published models (Forger 1999, Jewett 1999,
+  Hannay 2019) through the open-source circadian package, scores misalignment
+  between the clock and the schedule, and searches for a plan of light, sleep,
+  nap and caffeine timing within published shift-work rules. A wellness tool,
+  not medical advice.
+keywords:
+  - circadian rhythm
+  - chronobiology
+  - shift work
+  - sleep
+  - BPO
+  - Philippines
