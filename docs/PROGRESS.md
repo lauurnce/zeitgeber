@@ -14,4 +14,4 @@ Build plan for v0.1 as a checklist. Day numbers are planned build days, one per 
 - [x] Z10, Day 7: `output` module: plan document (schema 1.0), timeline, .ics, nudges in English and Taglish, grounding check with template fallback, docs/COPY_REVIEW.md (Taglish awaiting review).
 - [ ] Z11, Day 8: `api/`: FastAPI app, Vercel function, latency measurement. Built and deployed (https://zeitgeber-five.vercel.app, docs/API.md); open until `/v1/plan` meets the 6 s budget (D42).
 - [x] Z12, Day 9: `web/`: planner UI (/plan), vitest component tests, Playwright end to end, screenshots in docs/figures.
-- [ ] Z13, Day 10: landing page, pilot protocol, README, SCIENCE.md review, v0.1 tag. Landing page and web deploy done (https://zeitgeber-web.vercel.app); pilot protocol, README, SCIENCE.md review and the v0.1 tag remain.
+- [x] Z13, Day 10: landing page and web deploy (https://zeitgeber-web.vercel.app), pilot protocol (docs/PILOT_PROTOCOL.md), README, CITATION.cff, CHANGELOG, v0.1.0 tag and release. A full SCIENCE.md review is left for Z8.
