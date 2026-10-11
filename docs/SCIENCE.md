@@ -676,7 +676,7 @@ The pilot with 10 to 15 agents measures sleepiness during shifts and sleep timin
 - Origin: Akerstedt and Gillberg 1990 [8.1]. Eight subjects kept awake overnight rated sleepiness every two hours while EEG and EOG were recorded; physiological signs of sleepiness appeared reliably only once ratings fell between "sleepy" and "extremely sleepy, fighting sleep" (abstract).
 - Validation: Kaida et al. 2006 [8.2] found KSS closely related to EEG alpha and theta power, alpha attenuation and psychomotor vigilance (mean correlation with lapses r = 0.56) in 16 adults over three days.
 - Scale: nine steps from 1 to 9. The widely used anchors are 1 extremely alert, 3 alert, 5 neither alert nor sleepy, 7 sleepy but no effort to keep awake, 9 very sleepy, great effort to keep awake, fighting sleep. The exact wording in the 1990 paper is UNVERIFIED (paywalled); the pilot form will use the wording from a validated published version and cite it.
-- Cadence in the pilot (design, matching the 2 h cadence of [8.1] and the 2 h test battery of Smith et al. 2009 [5.2]): at the start of the shift and every 2 h until the end, plus once within 30 min of waking from day sleep.
+- Cadence in the pilot (design, docs/PILOT_PROTOCOL.md 4.1): at the start, the middle and the end of every shift. This replaces an earlier draft with a rating every 2 h, which was judged too heavy for agents on calls.
 
 ### 8.3 Consensus Sleep Diary
 
@@ -685,12 +685,12 @@ The pilot with 10 to 15 agents measures sleepiness during shifts and sleep timin
 - Zeitgeber additions (design): shift worked yes or no and hours; sunglasses worn on the commute yes or no; minutes outdoors in daylight; caffeine times; nap start and end; a lux meter reading at the workstation and on the commute when available; whether the day's plan was followed.
 - Language: English and Taglish versions; the Taglish version is a translation to be reviewed, not a validated instrument (UNVERIFIED).
 
-### 8.4 Protocol outline (design)
+### 8.4 Protocol outline (design; the full protocol is docs/PILOT_PROTOCOL.md)
 
 | Element | Value |
 |---|---|
 | Participants | 10 to 15 night-shift agents, volunteers, adults, not pregnant, no diagnosed sleep disorder (self-report); others are welcome to use the app but not enrolled |
-| Duration | 2 weeks baseline (diary and KSS only), then 2 weeks following a Zeitgeber plan |
+| Duration | 1 week baseline (diary and KSS only), then 2 weeks following a Zeitgeber plan (docs/PILOT_PROTOCOL.md) |
 | Primary outcome | mean KSS in the last 4 h of the shift, baseline versus plan weeks |
 | Secondary | diary total sleep time and sleep quality after shifts; adherence to each rule |
 | Data handling | paper or offline form, held by the participant and Lawrence Panes only; no data enters the web app; consent form states purpose, voluntary participation, withdrawal at any time, and that employers see no individual data (Data Privacy Act of 2012, RA 10173) |
