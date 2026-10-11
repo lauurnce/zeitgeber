@@ -646,7 +646,7 @@ GitHub Actions (`.github/workflows/ci.yml`), on every push to main:
 
 Deployment is by the Vercel Git integration (preview per commit, production from main), not from Actions. CI holds no secrets in v0.1 because language-model wording is off. CI never commits or pushes.
 
-Local-only files (CLAUDE.md, .claude/, prompt files, notes-local/, pilot-data/) stay out through `.git/info/exclude`.
+Local-only files (personal notes and pilot data in `pilot-data/`) stay out through `.git/info/exclude`.
 
 Python versions on the development Mac: uv currently provides 3.13; a 3.12 interpreter is one `uv python install 3.12` away and is listed as an open question until approved.
 
