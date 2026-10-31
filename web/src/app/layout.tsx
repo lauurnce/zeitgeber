@@ -3,6 +3,7 @@ import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { site } from "@/lib/site";
+import { themeScript } from "@/lib/theme";
 import "./globals.css";
 
 // Self-hosted at build time by next/font: no request to a font service at run time.
@@ -46,8 +47,12 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
     <html
       lang="en"
       data-theme="dark"
+      suppressHydrationWarning
       className={`${fraunces.variable} ${inter.variable} ${jetbrains.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
