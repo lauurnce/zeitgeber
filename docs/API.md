@@ -45,7 +45,7 @@ curl -s -X POST https://zeitgeber-five.vercel.app/v1/plan \
 - Compute routes: 20 requests per minute per client per function instance (`429` with
   `Retry-After`). Health is not limited. The client key is a salted hash of the forwarded
   address, kept in memory for one minute.
-- Browser calls: only from `https://zeitgeber-five.vercel.app` and `http://localhost:3000`
+- Browser calls: only from the web app `https://zeitgeber-web.vercel.app`, `https://zeitgeber-five.vercel.app` and `http://localhost:3000`
   (`ZEITGEBER_CORS_ORIGINS` overrides).
 - Function time limit: 60 s.
 - Latency: `POST /v1/plan` takes about 22 s warm on the deployed function, over the 6 s budget
