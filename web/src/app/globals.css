@@ -1,57 +1,72 @@
 @import "tailwindcss";
 
-/* Colour tokens. Text pairs meet WCAG AA (4.5:1) on --background; chart marks meet 3:1 or
-   carry a visible label. Chart hues follow one fixed role each: work, commute, sleep, plan
-   step, biological night. */
+/* Night-sky palette: deep indigo for the night, dawn amber for the accent. Dark is the
+   default; [data-theme="light"] switches to the dawn theme. Text pairs meet WCAG AA (4.5:1)
+   on --background and --surface; chart marks meet 3:1. Chart hues keep one role each: work,
+   commute, sleep, plan step, biological night. */
 :root {
-  color-scheme: light;
-  --background: #fcfcfb;
-  --surface: #ffffff;
-  --foreground: #0b0b0b;
-  --muted: #52514e;
-  --border: #8a8984;
-  --hover: #efeeea;
-  --accent: #1f5fae;
-  --accent-hover: #184c8c;
-  --on-accent: #ffffff;
-  --focus: #1f5fae;
-  --error: #b42318;
-  --series-work: #c4501f;
-  --series-commute: #77766f;
-  --series-sleep: #6250d6;
-  --series-plan: #0d7a54;
-  --series-night: #2a78d6;
+  color-scheme: dark;
+  --background: #0b1026;
+  --surface: #131a3a;
+  --foreground: #eef0fa;
+  --muted: #b6bbd6;
+  --border: #6a73a3;
+  --hover: #1c2550;
+  --accent: #f2b25c;
+  --accent-hover: #f6c47e;
+  --on-accent: #1a1205;
+  --focus: #f6c47e;
+  --error: #ff9b8a;
+  --sky-top: #070a1c;
+  --sky-glow: #3b2a5c;
+  --series-work: #ef8a4f;
+  --series-commute: #9aa0bd;
+  --series-sleep: #9b8cff;
+  --series-plan: #4fd1a5;
+  --series-night: #5aa2ff;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --background: #121211;
-    --surface: #1a1a19;
-    --foreground: #f0efec;
-    --muted: #c3c2b7;
-    --border: #8f8e88;
-    --hover: #262624;
-    --accent: #6ea8f0;
-    --accent-hover: #8cbaf3;
-    --on-accent: #0b0b0b;
-    --focus: #8cbaf3;
-    --error: #ff8a80;
-    --series-work: #e8743f;
-    --series-commute: #a3a29b;
-    --series-sleep: #9085e9;
-    --series-plan: #2fb886;
-    --series-night: #4f95e8;
-  }
+:root[data-theme="light"] {
+  color-scheme: light;
+  --background: #f7f5ef;
+  --surface: #ffffff;
+  --foreground: #121633;
+  --muted: #4a4f6b;
+  --border: #82869f;
+  --hover: #ece8dc;
+  --accent: #2d2f8f;
+  --accent-hover: #23256f;
+  --on-accent: #ffffff;
+  --focus: #2d2f8f;
+  --error: #b42318;
+  --sky-top: #dfe3f4;
+  --sky-glow: #f6dcb4;
+  --series-work: #c4501f;
+  --series-commute: #6f7287;
+  --series-sleep: #5b49d0;
+  --series-plan: #0d7a54;
+  --series-night: #1f63c4;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), Georgia, serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: system-ui, sans-serif;
+  font-family: var(--font-sans);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }
