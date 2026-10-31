@@ -396,7 +396,9 @@ Built in Z11. Reference: docs/API.md.
 
 Built in Z12 (Next.js 16 App Router, React 19, Tailwind 4).
 
-- Routes: `/` landing page with a link to the planner; `/plan` the planner.
+- Routes: `/` landing page (Z13); `/plan` the planner; `/sitemap.xml`, `/robots.txt`, `/opengraph-image` (made with `next/og`) and `/icon.svg`.
+- Landing page (`src/components/landing/`): hero, the Aschoff bunker story, the problem, how it works, an animated live preview of the radial clock (data from `scripts/landing_preview.py` in `src/content/preview.json`; starts only without a reduced-motion preference and has a pause button), the science with citations, limitations, footer. Fonts are self-hosted with `next/font` (Fraunces for display, Inter for the interface, JetBrains Mono for times). Night-sky palette, dark by default; the light theme choice is the only value kept in browser storage.
+- Deployment: Vercel project `zeitgeber-web` with root `web/`, production `https://zeitgeber-web.vercel.app`, deployed with the CLI; the API stays in project `zeitgeber`.
 - `src/lib/schedule.ts`: form state, defaults (Monday to Friday, 10 PM to 7 AM, one-hour commutes, plan starting next Monday), plain-word validation and the request body. `src/lib/plan.ts`: plan document types and the clock and day-segment helpers. `src/lib/api.ts`: the only code that calls `fetch`, with credentials omitted.
 - Components: `ScheduleForm` (shift builder per weekday, commutes, current sleep, rest days, start date; errors summarised at the top and linked to each field), `ClockChart` (24-hour dial: biological night and the body-clock low inside, work, commute and sleep outside, plan steps outermost; `<title>`, `<desc>` and a visible caption carry the same facts as text), `Timeline` (14 bars with a list of times per day), `PlanSummary` (score now and with the plan, changes, reasons, disclaimers), `Nudges`, `LanguageToggle` (English or Taglish for all plan text), `Planner` (state, waiting message, calendar download).
 - The calendar button posts the plan the page already has to `POST /v1/calendar`, so no second search runs.
