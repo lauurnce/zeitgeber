@@ -16,10 +16,17 @@ function sources(dir: string): string[] {
 describe("privacy", () => {
   const files = sources(join(__dirname, ".."));
 
+  it("keeps only the theme choice in browser storage", () => {
+    const theme = readFileSync(join(__dirname, "theme.ts"), "utf-8");
+    expect(theme.match(/localStorage\.setItem\(([^)]*)\)/g)).toEqual([
+      "localStorage.setItem(THEME_KEY, theme)",
+    ]);
+  });
+
   it("never stores or tracks the schedule in the browser", () => {
     const banned =
       /\blocalStorage\b|\bsessionStorage\b|\bindexedDB\b|document\.cookie|sendBeacon|gtag\(|google-analytics|@vercel\/analytics|serviceWorker/;
-    for (const file of files) {
+    for (const file of files.filter((f) => !f.endsWith("theme.ts"))) {
       expect(banned.test(readFileSync(file, "utf-8")), file).toBe(false);
     }
   });
