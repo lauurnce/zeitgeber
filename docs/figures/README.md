@@ -30,3 +30,11 @@ What it shows:
 - Hannay19 keeps advancing for longer after CBTmin than the other two models.
 
 F3 and F4 are reported, not blocking (docs/SCIENCE.md 4.3); step Z8 runs the full feature set.
+
+## planner-390.png, planner-1440.png
+
+The planner page (`/plan`) after a plan has loaded, at 390 px and 1440 px wide, with the default 10 PM to 7 AM week, day sleep 9 AM to 3 PM and the plan starting Monday 16 November 2026. Regenerate with `pnpm -C web exec playwright test e2e/screens.spec.ts` (starts the API and a production build).
+
+## landing-390.jpg, landing-1440.jpg
+
+The landing page (`/`) in the default dark theme with reduced motion, so the live preview shows its first frame. Regenerate with `pnpm -C web exec playwright test e2e/landing.spec.ts`, or against the deployed site with `E2E_BASE_URL=https://zeitgeber-web.vercel.app`. JPEG at quality 70 to stay under the repository's 500 KB file limit.
