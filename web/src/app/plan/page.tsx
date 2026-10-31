@@ -6,8 +6,9 @@ import { Planner } from "@/components/Planner";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: `Plan · ${site.name}`,
+  title: "Make your plan",
   description: "Make a 14-day body-clock plan for your shift schedule.",
+  alternates: { canonical: "/plan" },
 };
 
 export default function PlanPage() {
