@@ -54,6 +54,11 @@ for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: width < 600 ? 844 : 900 });
     await page.goto("/");
     await noSideScroll(page);
-    await page.screenshot({ path: `../docs/figures/landing-${width}.png`, fullPage: true });
+    await page.screenshot({
+      path: `../docs/figures/landing-${width}.jpg`,
+      fullPage: true,
+      type: "jpeg",
+      quality: 70,
+    });
   });
 }
