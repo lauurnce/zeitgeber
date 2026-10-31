@@ -1,0 +1,77 @@
+{
+  "worker": "Permanent nights, 10 PM to 7 AM, Monday to Friday (fixture permanent_nights)",
+  "score_now_h": 3.69,
+  "score_plan_h": 1.04,
+  "low_now": [
+    14.844, 14.969, 14.952, 14.892, 14.847, 14.817, 14.581, 14.844, 14.969, 14.952, 14.892, 14.847,
+    14.817, 14.581
+  ],
+  "low_plan": [
+    13.815, 14.256, 14.161, 14.124, 14.102, 14.088, 12.796, 12.045, 13.041, 13.322, 13.536, 13.689,
+    13.799, 12.504
+  ],
+  "day_now": [
+    {
+      "kind": "shift",
+      "start": 0.0,
+      "end": 7.0
+    },
+    {
+      "kind": "commute_home",
+      "start": 7.0,
+      "end": 8.5
+    },
+    {
+      "kind": "sleep",
+      "start": 9.0,
+      "end": 15.0
+    },
+    {
+      "kind": "commute_to_work",
+      "start": 20.5,
+      "end": 22.0
+    },
+    {
+      "kind": "shift",
+      "start": 22.0,
+      "end": 24.0
+    }
+  ],
+  "day_plan": [
+    {
+      "kind": "shift",
+      "start": 0.0,
+      "end": 7.0
+    },
+    {
+      "kind": "commute_home",
+      "start": 7.0,
+      "end": 8.5
+    },
+    {
+      "kind": "sleep",
+      "start": 9.0,
+      "end": 16.0
+    },
+    {
+      "kind": "light_brake",
+      "start": 16.5,
+      "end": 16.75
+    },
+    {
+      "kind": "commute_to_work",
+      "start": 20.5,
+      "end": 22.0
+    },
+    {
+      "kind": "shift",
+      "start": 22.0,
+      "end": 24.0
+    },
+    {
+      "kind": "sunglasses",
+      "start": 7.0,
+      "end": 8.5
+    }
+  ]
+}
