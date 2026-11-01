@@ -86,6 +86,7 @@ export function spanHours(start: string, end: string): number {
 }
 
 function hours(h: number): string {
+  if (h === 1) return "1 hour";
   return Number.isInteger(h) ? `${h} hours` : `${h.toFixed(1)} hours`;
 }
 
