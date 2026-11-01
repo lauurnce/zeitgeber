@@ -6,6 +6,7 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: check-yaml
+        args: [--allow-multiple-documents] # pnpm 12 lockfiles hold several documents
       - id: check-json
       - id: check-toml
       - id: check-merge-conflict
