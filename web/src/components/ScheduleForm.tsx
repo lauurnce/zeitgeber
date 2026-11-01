@@ -13,6 +13,7 @@ import {
   type RestDayMode,
   type ScheduleForm as Form,
 } from "@/lib/schedule";
+import { site } from "@/lib/site";
 
 interface Props {
   initial: Form;
@@ -285,9 +286,7 @@ export function ScheduleForm({ initial, busy, serverErrors, onSubmit }: Props) {
         >
           {busy ? "Making your plan..." : "Make my plan"}
         </button>
-        <p className="text-sm text-[var(--muted)]">
-          Your schedule is used to make this plan and isn&apos;t stored.
-        </p>
+        <p className="text-sm text-[var(--muted)]">{site.privacy}</p>
       </div>
     </form>
   );
