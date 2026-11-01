@@ -1,20 +1,53 @@
 @import "tailwindcss";
 
+/* Colour tokens. Text pairs meet WCAG AA (4.5:1) on --background; chart marks meet 3:1 or
+   carry a visible label. Chart hues follow one fixed role each: work, commute, sleep, plan
+   step, biological night. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --background: #fcfcfb;
+  --surface: #ffffff;
+  --foreground: #0b0b0b;
+  --muted: #52514e;
+  --border: #8a8984;
+  --hover: #efeeea;
+  --accent: #1f5fae;
+  --accent-hover: #184c8c;
+  --on-accent: #ffffff;
+  --focus: #1f5fae;
+  --error: #b42318;
+  --series-work: #c4501f;
+  --series-commute: #77766f;
+  --series-sleep: #6250d6;
+  --series-plan: #0d7a54;
+  --series-night: #2a78d6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --background: #121211;
+    --surface: #1a1a19;
+    --foreground: #f0efec;
+    --muted: #c3c2b7;
+    --border: #8f8e88;
+    --hover: #262624;
+    --accent: #6ea8f0;
+    --accent-hover: #8cbaf3;
+    --on-accent: #0b0b0b;
+    --focus: #8cbaf3;
+    --error: #ff8a80;
+    --series-work: #e8743f;
+    --series-commute: #a3a29b;
+    --series-sleep: #9085e9;
+    --series-plan: #2fb886;
+    --series-night: #4f95e8;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
