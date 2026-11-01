@@ -232,3 +232,15 @@ Alternatives: Vercel Firewall rate-limit rule; a Redis counter (rejected: storag
 Decision: record the measured latency (about 22 s warm on Vercel with the cross-check, 17 s without; 6.4 s and 5.2 s on the development Mac) and keep the latency test as a strict expected failure until a fix is chosen. Running restart descents in lockstep (same plans, same seeds) is already in; it halved the time.
 Reason: the time is set by the number of sequential coordinate-descent steps, each a full 14-day integration through the package's derivative, and the function's CPU is about three times slower per call than the development Mac. The remaining options change the science path or the search, so they need a decision: (a) search at a 0.2 h step and re-score the chosen plan and ablations at 0.1 h (about half the time, needs a check that rankings hold); (b) a compiled copy of the model derivatives tested against the package (about ten times faster, but a second implementation of the equations, which Z4 avoided); (c) fewer passes or options (changes plans); (d) make the Hannay19 cross-check opt-in (saves about 5 s on the function); (e) accept about 20 s with a progress view in the web app.
 Alternatives: loosen the budget or the test to pass (rejected).
+
+## Web planner
+
+### D43. Calendar download renders the plan the page already has
+Decision: add `POST /v1/calendar`, which takes a plan document from `POST /v1/plan` and returns it as iCalendar, and raise the request body limit from 32 KB to 128 KB so a plan (about 47 KB) fits.
+Reason: the plan search takes about 20 s on the function (D42); `POST /v1/plan.ics` would run it again for the same answer. Rendering is pure and stateless; a client that edits the plan text before sending it only changes its own calendar.
+Alternatives: return both calendars inside the plan response (adds about 70 KB to every plan); build the calendar in the browser (a second implementation of the export).
+
+### D44. Web planner as built
+Decision: one client-side planner on `/plan` with plain-word validation before sending, server errors mapped back to the fields they concern, a waiting message that counts seconds while the plan runs, and an English and Taglish toggle that applies to all plan text (recommendations, reasons, reminders, calendar). The interface itself stays in English. The radial chart shows one day at a time, the second Tuesday by default (day 9, after a week of the plan), and any day can be picked from the timeline. Colours keep one role each (work, commute, sleep, plan step, biological night) and meet 3:1 against the background in both themes; text meets 4.5:1.
+Reason: the plan text already comes in both languages; translating the interface is a separate review job (docs/COPY_REVIEW.md covers plan text only). The second week shows the clock after the plan has acted on it.
+Alternatives: a server-rendered form; one chart per day; translating the interface now.
