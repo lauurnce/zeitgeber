@@ -394,10 +394,15 @@ Built in Z11. Reference: docs/API.md.
 
 ### 2.9 web/
 
-- Routes: `/` landing page, `/plan` planner (form, next 12 h view, 14-day timeline, nudges, .ics download), `/science` summary with links to docs/SCIENCE.md.
-- Form presets for common BPO shifts and copy-to-all weekdays; English and Taglish toggle.
-- Calls `/api/v1/plan` on the same deployment; keeps the plan in memory only; no analytics on form inputs.
-- Mobile-first; the next 12 h view is the default on phones.
+Built in Z12 (Next.js 16 App Router, React 19, Tailwind 4).
+
+- Routes: `/` landing page with a link to the planner; `/plan` the planner.
+- `src/lib/schedule.ts`: form state, defaults (Monday to Friday, 10 PM to 7 AM, one-hour commutes, plan starting next Monday), plain-word validation and the request body. `src/lib/plan.ts`: plan document types and the clock and day-segment helpers. `src/lib/api.ts`: the only code that calls `fetch`, with credentials omitted.
+- Components: `ScheduleForm` (shift builder per weekday, commutes, current sleep, rest days, start date; errors summarised at the top and linked to each field), `ClockChart` (24-hour dial: biological night and the body-clock low inside, work, commute and sleep outside, plan steps outermost; `<title>`, `<desc>` and a visible caption carry the same facts as text), `Timeline` (14 bars with a list of times per day), `PlanSummary` (score now and with the plan, changes, reasons, disclaimers), `Nudges`, `LanguageToggle` (English or Taglish for all plan text), `Planner` (state, waiting message, calendar download).
+- The calendar button posts the plan the page already has to `POST /v1/calendar`, so no second search runs.
+- Privacy: the schedule and the plan live in React state only. No storage APIs, cookies, analytics or third-party scripts; a test scans the source for them.
+- Changes from the Z4 design: calls the API at `NEXT_PUBLIC_ZEITGEBER_API_URL` (default the deployed API) rather than `/api/v1` on the same deployment, because the web app is not deployed yet; no BPO shift presets and no separate next-12-hours view yet; no `/science` page yet.
+- Tests: vitest with jsdom for the components and libraries; one Playwright test runs the real API and a production build end to end, and a second Playwright file takes the review screenshots and checks a 360 px layout for sideways scrolling.
 
 ## 3. Runtime decision
 
