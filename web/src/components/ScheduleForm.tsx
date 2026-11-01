@@ -23,7 +23,7 @@ interface Props {
 }
 
 const input =
-  "rounded-md border border-[var(--border)] bg-[var(--surface)] px-2 py-1.5 text-base " +
+  "w-full min-w-0 rounded-md border border-[var(--border)] bg-[var(--surface)] px-2 py-1.5 text-base " +
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus)] " +
   "aria-[invalid=true]:border-[var(--error)]";
 
@@ -86,7 +86,7 @@ export function ScheduleForm({ initial, busy, serverErrors, onSubmit }: Props) {
     const c = form[key];
     return (
       <Section title={title}>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3">
           <label className="flex flex-col gap-1">
             <span>Minutes, one way</span>
             <input
@@ -115,7 +115,7 @@ export function ScheduleForm({ initial, busy, serverErrors, onSubmit }: Props) {
               onChange={(e) => setCommute(key, { outdoorPercent: e.target.valueAsNumber })}
             />
           </label>
-          <label className="flex flex-col gap-1">
+          <label className="col-span-2 flex flex-col gap-1">
             <span>How you travel</span>
             <select
               className={input}
@@ -186,11 +186,11 @@ export function ScheduleForm({ initial, busy, serverErrors, onSubmit }: Props) {
             const day = form.days[i]!;
             return (
               <div key={name} className="flex flex-col gap-1">
-                <div className="grid grid-cols-[7.5rem_1fr_1fr] items-center gap-2">
-                  <label className="flex items-center gap-2">
+                <div className="grid grid-cols-2 items-center gap-2 sm:grid-cols-[7.5rem_minmax(0,1fr)_minmax(0,1fr)]">
+                  <label className="col-span-2 flex items-center gap-2 sm:col-span-1">
                     <input
                       type="checkbox"
-                      className="size-5 accent-[var(--accent)]"
+                      className="size-5 shrink-0 accent-[var(--accent)]"
                       checked={day.works}
                       onChange={(e) => setDay(i, { works: e.target.checked })}
                     />
