@@ -21,6 +21,7 @@ server sets `ZEITGEBER_LLM_WORDING`.
 | `GET /v1/health` | none | status, core version, models, plan schema version |
 | `POST /v1/plan` | `{schedule, options?}` | plan document, schema 1.0 (`docs/schema/plan-1.0.json`) |
 | `POST /v1/plan.ics?lang=en\|tl` | `{schedule, options?}` | the plan as an iCalendar file |
+| `POST /v1/calendar` | `{plan, lang?}` | a plan from `/v1/plan` rendered as iCalendar, no new search |
 | `POST /v1/simulate` | `{schedule, model?}` | CBTmin and DLMO per local day, for debugging |
 
 `schedule` is the schedule model in `zeitgeber/schedule.py`; `tests/fixtures/schedules/` has
@@ -40,7 +41,7 @@ curl -s -X POST https://zeitgeber-five.vercel.app/v1/plan \
 
 ## Limits
 
-- Request body: at most 32 KB (`413`).
+- Request body: at most 128 KB (`413`); a plan document sent to `/v1/calendar` is about 47 KB.
 - Compute routes: 20 requests per minute per client per function instance (`429` with
   `Retry-After`). Health is not limited. The client key is a salted hash of the forwarded
   address, kept in memory for one minute.
@@ -65,7 +66,7 @@ with a `detail`.
 
 ### request-too-large
 
-`413`. The body is over 32 KB.
+`413`. The body is over 128 KB.
 
 ### too-many-requests
 
