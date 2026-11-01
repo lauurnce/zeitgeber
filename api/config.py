@@ -2,7 +2,8 @@
 
 - ``ZEITGEBER_CORS_ORIGINS``: comma-separated origins allowed to call the API from a browser.
 - ``ZEITGEBER_RATE_LIMIT``: requests per minute per client on the compute routes (default 20).
-- ``ZEITGEBER_MAX_BODY_BYTES``: largest accepted request body (default 32768).
+- ``ZEITGEBER_MAX_BODY_BYTES``: largest accepted request body (default 131072, room for a
+  plan document of about 47 KB sent to ``/v1/calendar``).
 """
 
 from __future__ import annotations
@@ -20,7 +21,7 @@ class ApiSettings(BaseModel):
 
     cors_origins: tuple[str, ...] = DEFAULT_ORIGINS
     rate_limit_per_min: int = Field(20, ge=1, le=10_000)
-    max_body_bytes: int = Field(32_768, ge=1_024, le=4_000_000)
+    max_body_bytes: int = Field(131_072, ge=1_024, le=4_000_000)
 
     @classmethod
     def from_env(cls, env: Mapping[str, str] | None = None) -> ApiSettings:

@@ -7,6 +7,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from zeitgeber.output.plan import PlanDocument
 from zeitgeber.schedule import Schedule
 from zeitgeber.sim import ModelName
 
@@ -33,6 +34,11 @@ class PlanOptions(_Model):
 class PlanRequest(_Model):
     schedule: Schedule
     options: PlanOptions = Field(default_factory=PlanOptions)
+
+
+class CalendarRequest(_Model):
+    plan: PlanDocument = Field(description="A plan document returned by POST /v1/plan.")
+    lang: Literal["en", "tl"] = "en"
 
 
 class SimulateRequest(_Model):

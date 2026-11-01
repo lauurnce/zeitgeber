@@ -20,6 +20,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from api.config import ApiSettings
 from api.limits import BodySizeLimit, Message, RateLimiter, Receive, Scope, Send
 from api.models import (
+    CalendarRequest,
     DayMarkers,
     FieldError,
     Health,
@@ -197,6 +198,22 @@ def create_app(settings: ApiSettings | None = None) -> FastAPI:
         language: Lang = lang
         return Response(
             render_ics(make_plan(body), language),
+            media_type="text/calendar; charset=utf-8",
+            headers={"Content-Disposition": 'attachment; filename="zeitgeber-plan.ics"'},
+        )
+
+    @app.post(
+        "/v1/calendar",
+        tags=["plan"],
+        dependencies=limited,
+        responses={**errors, 200: {"content": {"text/calendar": {}}}},
+        response_class=Response,
+    )
+    def calendar(body: CalendarRequest) -> Response:
+        """Render a plan returned by POST /v1/plan as an iCalendar file, without a new search."""
+        language: Lang = body.lang
+        return Response(
+            render_ics(body.plan, language),
             media_type="text/calendar; charset=utf-8",
             headers={"Content-Disposition": 'attachment; filename="zeitgeber-plan.ics"'},
         )
