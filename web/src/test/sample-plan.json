@@ -1,0 +1,2091 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "a1527b6bb437",
+  "generated_at": "2026-11-01T00:00:00Z",
+  "timezone": "Asia/Manila",
+  "start_date": "2026-11-16",
+  "days_count": 14,
+  "seed": 0,
+  "disclaimers": [
+    {
+      "en": "Zeitgeber is a wellness planning tool, not medical advice.",
+      "tl": "Ang Zeitgeber ay wellness planning tool, hindi medical advice."
+    },
+    {
+      "en": "If you have a sleep condition, are pregnant or have a health condition, talk to a doctor before changing your sleep.",
+      "tl": "Kung may problema ka sa tulog, buntis ka, o may health condition, kausapin muna ang doktor bago baguhin ang tulog mo."
+    },
+    {
+      "en": "The times come from a body-clock model. Your body may differ, so adjust a time if it does not suit you.",
+      "tl": "Galing sa body-clock model ang mga oras. Pwedeng iba ang katawan mo, kaya i-adjust ang oras kung hindi bagay sa iyo."
+    }
+  ],
+  "recommendations": [
+    {
+      "intervention": "sunglasses",
+      "rule_ids": ["R2", "R7"],
+      "text": {
+        "en": "Wear dark sunglasses (category 3) on the commute home whenever the sun is up.",
+        "tl": "Mag-shades (category 3) sa biyahe pauwi tuwing may araw."
+      }
+    },
+    {
+      "intervention": "sleep",
+      "rule_ids": ["R3"],
+      "text": {
+        "en": "After each night shift, sleep from 9 AM to 4 PM in a dark room.",
+        "tl": "Pagkatapos ng bawat night shift, matulog mula 9 AM hanggang 4 PM sa madilim na kwarto."
+      }
+    },
+    {
+      "intervention": "rest_day",
+      "rule_ids": ["R4"],
+      "text": {
+        "en": "On rest days, sleep from 4 AM to 12 PM.",
+        "tl": "Sa rest days, matulog mula 4 AM hanggang 12 PM."
+      }
+    },
+    {
+      "intervention": "light_brake",
+      "rule_ids": ["R5"],
+      "text": {
+        "en": "After day sleep, go outside for 15 minutes at 4:30 PM.",
+        "tl": "Pagkatapos ng tulog sa araw, lumabas nang 15 minuto sa 4:30 PM."
+      }
+    },
+    {
+      "intervention": "caffeine",
+      "rule_ids": ["C1", "C3"],
+      "text": {
+        "en": "Have caffeine only from 10 PM to 2:30 AM, then switch to water.",
+        "tl": "Kape lang mula 10 PM hanggang 2:30 AM, tapos tubig na."
+      }
+    }
+  ],
+  "explanations": [
+    {
+      "intervention": "sunglasses",
+      "rule_ids": ["R2", "R7"],
+      "score_with_h": 1.036,
+      "score_without_h": 1.178,
+      "delta_score_h": 0.142,
+      "delta_cbt_day7_h": 0.475,
+      "delta_cbt_day14_h": 0.594,
+      "text": {
+        "en": "Sunglasses on the way home: without it, the misalignment score goes from 1.0 h to 1.2 h.",
+        "tl": "Shades pauwi: kung wala ito, ang misalignment score ay magiging 1.2 h mula 1.0 h."
+      }
+    },
+    {
+      "intervention": "sleep_len_h",
+      "rule_ids": ["R3"],
+      "score_with_h": 1.036,
+      "score_without_h": 1.211,
+      "delta_score_h": 0.175,
+      "delta_cbt_day7_h": -0.361,
+      "delta_cbt_day14_h": -0.423,
+      "text": {
+        "en": "Day sleep length: without it, the misalignment score goes from 1.0 h to 1.2 h.",
+        "tl": "Haba ng tulog sa araw: kung wala ito, ang misalignment score ay magiging 1.2 h mula 1.0 h."
+      }
+    },
+    {
+      "intervention": "rest_day",
+      "rule_ids": ["R4"],
+      "score_with_h": 1.036,
+      "score_without_h": 2.336,
+      "delta_score_h": 1.3,
+      "delta_cbt_day7_h": 1.112,
+      "delta_cbt_day14_h": 1.258,
+      "text": {
+        "en": "Rest-day sleep: without it, the misalignment score goes from 1.0 h to 2.3 h.",
+        "tl": "Tulog sa rest day: kung wala ito, ang misalignment score ay magiging 2.3 h mula 1.0 h."
+      }
+    },
+    {
+      "intervention": "light_brake",
+      "rule_ids": ["R5"],
+      "score_with_h": 1.036,
+      "score_without_h": 1.112,
+      "delta_score_h": 0.076,
+      "delta_cbt_day7_h": 0.485,
+      "delta_cbt_day14_h": 0.536,
+      "text": {
+        "en": "Outdoors after waking: without it, the misalignment score goes from 1.0 h to 1.1 h.",
+        "tl": "Labas pagkagising: kung wala ito, ang misalignment score ay magiging 1.1 h mula 1.0 h."
+      }
+    }
+  ],
+  "score": {
+    "model": "forger99",
+    "baseline": {
+      "total_h": 3.69,
+      "phase_angle_h": 3.69,
+      "work_in_low_h": 0.0,
+      "sleep_in_night_frac": 0.769,
+      "social_jetlag_h": 9.0,
+      "modal_category": "complete",
+      "flagged_days": 0,
+      "lam": 0.5
+    },
+    "plan": {
+      "total_h": 1.036,
+      "phase_angle_h": 1.036,
+      "work_in_low_h": 0.0,
+      "sleep_in_night_frac": 0.874,
+      "social_jetlag_h": 4.5,
+      "modal_category": "complete",
+      "flagged_days": 0,
+      "lam": 0.5
+    },
+    "cross_check_model": "hannay19",
+    "cross_check_baseline": {
+      "total_h": 4.889,
+      "phase_angle_h": 4.889,
+      "work_in_low_h": 0.0,
+      "sleep_in_night_frac": 0.739,
+      "social_jetlag_h": 9.0,
+      "modal_category": "past",
+      "flagged_days": 0,
+      "lam": 0.5
+    },
+    "cross_check_plan": {
+      "total_h": 1.48,
+      "phase_angle_h": 1.48,
+      "work_in_low_h": 0.0,
+      "sleep_in_night_frac": 0.863,
+      "social_jetlag_h": 4.5,
+      "modal_category": "complete",
+      "flagged_days": 0,
+      "lam": 0.5
+    }
+  },
+  "days": [
+    {
+      "date": "2026-11-16",
+      "label": {
+        "en": "Mon 16 Nov",
+        "tl": "Lun 16 Nov"
+      },
+      "events": [
+        {
+          "id": "20261116-0400-rest_sleep",
+          "kind": "rest_sleep",
+          "start_utc": "2026-11-15T20:00:00Z",
+          "end_utc": "2026-11-16T04:00:00Z",
+          "start_local": "2026-11-16T04:00:00+08:00",
+          "end_local": "2026-11-16T12:00:00+08:00",
+          "title": {
+            "en": "Rest-day sleep",
+            "tl": "Tulog sa rest day"
+          },
+          "rule_ids": ["R4"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261116-2030-commute_to_work",
+          "kind": "commute_to_work",
+          "start_utc": "2026-11-16T12:30:00Z",
+          "end_utc": "2026-11-16T14:00:00Z",
+          "start_local": "2026-11-16T20:30:00+08:00",
+          "end_local": "2026-11-16T22:00:00+08:00",
+          "title": {
+            "en": "Commute to work",
+            "tl": "Biyahe papasok"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261116-2200-shift",
+          "kind": "shift",
+          "start_utc": "2026-11-16T14:00:00Z",
+          "end_utc": "2026-11-16T23:00:00Z",
+          "start_local": "2026-11-16T22:00:00+08:00",
+          "end_local": "2026-11-17T07:00:00+08:00",
+          "title": {
+            "en": "Shift",
+            "tl": "Shift"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261116-2200-caffeine",
+          "kind": "caffeine",
+          "start_utc": "2026-11-16T14:00:00Z",
+          "end_utc": "2026-11-16T18:30:00Z",
+          "start_local": "2026-11-16T22:00:00+08:00",
+          "end_local": "2026-11-17T02:30:00+08:00",
+          "title": {
+            "en": "Caffeine OK",
+            "tl": "Pwede ang kape"
+          },
+          "rule_ids": ["C1", "C3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "end"
+          }
+        }
+      ],
+      "cbt_min_local": "2026-11-16T13:49:00+08:00",
+      "category": "past"
+    },
+    {
+      "date": "2026-11-17",
+      "label": {
+        "en": "Tue 17 Nov",
+        "tl": "Mar 17 Nov"
+      },
+      "events": [
+        {
+          "id": "20261117-0700-commute_home",
+          "kind": "commute_home",
+          "start_utc": "2026-11-16T23:00:00Z",
+          "end_utc": "2026-11-17T00:30:00Z",
+          "start_local": "2026-11-17T07:00:00+08:00",
+          "end_local": "2026-11-17T08:30:00+08:00",
+          "title": {
+            "en": "Commute home",
+            "tl": "Biyahe pauwi"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261117-0700-sunglasses",
+          "kind": "sunglasses",
+          "start_utc": "2026-11-16T23:00:00Z",
+          "end_utc": "2026-11-17T00:30:00Z",
+          "start_local": "2026-11-17T07:00:00+08:00",
+          "end_local": "2026-11-17T08:30:00+08:00",
+          "title": {
+            "en": "Sunglasses on",
+            "tl": "Shades on"
+          },
+          "rule_ids": ["R2", "R7"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261117-0900-sleep",
+          "kind": "sleep",
+          "start_utc": "2026-11-17T01:00:00Z",
+          "end_utc": "2026-11-17T08:00:00Z",
+          "start_local": "2026-11-17T09:00:00+08:00",
+          "end_local": "2026-11-17T16:00:00+08:00",
+          "title": {
+            "en": "Sleep",
+            "tl": "Tulog"
+          },
+          "rule_ids": ["R3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261117-1630-light_brake",
+          "kind": "light_brake",
+          "start_utc": "2026-11-17T08:30:00Z",
+          "end_utc": "2026-11-17T08:45:00Z",
+          "start_local": "2026-11-17T16:30:00+08:00",
+          "end_local": "2026-11-17T16:45:00+08:00",
+          "title": {
+            "en": "Outdoors after waking",
+            "tl": "Labas pagkagising"
+          },
+          "rule_ids": ["R5"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261117-2030-commute_to_work",
+          "kind": "commute_to_work",
+          "start_utc": "2026-11-17T12:30:00Z",
+          "end_utc": "2026-11-17T14:00:00Z",
+          "start_local": "2026-11-17T20:30:00+08:00",
+          "end_local": "2026-11-17T22:00:00+08:00",
+          "title": {
+            "en": "Commute to work",
+            "tl": "Biyahe papasok"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261117-2200-shift",
+          "kind": "shift",
+          "start_utc": "2026-11-17T14:00:00Z",
+          "end_utc": "2026-11-17T23:00:00Z",
+          "start_local": "2026-11-17T22:00:00+08:00",
+          "end_local": "2026-11-18T07:00:00+08:00",
+          "title": {
+            "en": "Shift",
+            "tl": "Shift"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261117-2200-caffeine",
+          "kind": "caffeine",
+          "start_utc": "2026-11-17T14:00:00Z",
+          "end_utc": "2026-11-17T18:30:00Z",
+          "start_local": "2026-11-17T22:00:00+08:00",
+          "end_local": "2026-11-18T02:30:00+08:00",
+          "title": {
+            "en": "Caffeine OK",
+            "tl": "Pwede ang kape"
+          },
+          "rule_ids": ["C1", "C3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "end"
+          }
+        }
+      ],
+      "cbt_min_local": "2026-11-17T14:15:00+08:00",
+      "category": "complete"
+    },
+    {
+      "date": "2026-11-18",
+      "label": {
+        "en": "Wed 18 Nov",
+        "tl": "Miy 18 Nov"
+      },
+      "events": [
+        {
+          "id": "20261118-0700-commute_home",
+          "kind": "commute_home",
+          "start_utc": "2026-11-17T23:00:00Z",
+          "end_utc": "2026-11-18T00:30:00Z",
+          "start_local": "2026-11-18T07:00:00+08:00",
+          "end_local": "2026-11-18T08:30:00+08:00",
+          "title": {
+            "en": "Commute home",
+            "tl": "Biyahe pauwi"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261118-0700-sunglasses",
+          "kind": "sunglasses",
+          "start_utc": "2026-11-17T23:00:00Z",
+          "end_utc": "2026-11-18T00:30:00Z",
+          "start_local": "2026-11-18T07:00:00+08:00",
+          "end_local": "2026-11-18T08:30:00+08:00",
+          "title": {
+            "en": "Sunglasses on",
+            "tl": "Shades on"
+          },
+          "rule_ids": ["R2", "R7"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261118-0900-sleep",
+          "kind": "sleep",
+          "start_utc": "2026-11-18T01:00:00Z",
+          "end_utc": "2026-11-18T08:00:00Z",
+          "start_local": "2026-11-18T09:00:00+08:00",
+          "end_local": "2026-11-18T16:00:00+08:00",
+          "title": {
+            "en": "Sleep",
+            "tl": "Tulog"
+          },
+          "rule_ids": ["R3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261118-1630-light_brake",
+          "kind": "light_brake",
+          "start_utc": "2026-11-18T08:30:00Z",
+          "end_utc": "2026-11-18T08:45:00Z",
+          "start_local": "2026-11-18T16:30:00+08:00",
+          "end_local": "2026-11-18T16:45:00+08:00",
+          "title": {
+            "en": "Outdoors after waking",
+            "tl": "Labas pagkagising"
+          },
+          "rule_ids": ["R5"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261118-2030-commute_to_work",
+          "kind": "commute_to_work",
+          "start_utc": "2026-11-18T12:30:00Z",
+          "end_utc": "2026-11-18T14:00:00Z",
+          "start_local": "2026-11-18T20:30:00+08:00",
+          "end_local": "2026-11-18T22:00:00+08:00",
+          "title": {
+            "en": "Commute to work",
+            "tl": "Biyahe papasok"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261118-2200-shift",
+          "kind": "shift",
+          "start_utc": "2026-11-18T14:00:00Z",
+          "end_utc": "2026-11-18T23:00:00Z",
+          "start_local": "2026-11-18T22:00:00+08:00",
+          "end_local": "2026-11-19T07:00:00+08:00",
+          "title": {
+            "en": "Shift",
+            "tl": "Shift"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261118-2200-caffeine",
+          "kind": "caffeine",
+          "start_utc": "2026-11-18T14:00:00Z",
+          "end_utc": "2026-11-18T18:30:00Z",
+          "start_local": "2026-11-18T22:00:00+08:00",
+          "end_local": "2026-11-19T02:30:00+08:00",
+          "title": {
+            "en": "Caffeine OK",
+            "tl": "Pwede ang kape"
+          },
+          "rule_ids": ["C1", "C3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "end"
+          }
+        }
+      ],
+      "cbt_min_local": "2026-11-18T14:10:00+08:00",
+      "category": "complete"
+    },
+    {
+      "date": "2026-11-19",
+      "label": {
+        "en": "Thu 19 Nov",
+        "tl": "Huw 19 Nov"
+      },
+      "events": [
+        {
+          "id": "20261119-0700-commute_home",
+          "kind": "commute_home",
+          "start_utc": "2026-11-18T23:00:00Z",
+          "end_utc": "2026-11-19T00:30:00Z",
+          "start_local": "2026-11-19T07:00:00+08:00",
+          "end_local": "2026-11-19T08:30:00+08:00",
+          "title": {
+            "en": "Commute home",
+            "tl": "Biyahe pauwi"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261119-0700-sunglasses",
+          "kind": "sunglasses",
+          "start_utc": "2026-11-18T23:00:00Z",
+          "end_utc": "2026-11-19T00:30:00Z",
+          "start_local": "2026-11-19T07:00:00+08:00",
+          "end_local": "2026-11-19T08:30:00+08:00",
+          "title": {
+            "en": "Sunglasses on",
+            "tl": "Shades on"
+          },
+          "rule_ids": ["R2", "R7"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261119-0900-sleep",
+          "kind": "sleep",
+          "start_utc": "2026-11-19T01:00:00Z",
+          "end_utc": "2026-11-19T08:00:00Z",
+          "start_local": "2026-11-19T09:00:00+08:00",
+          "end_local": "2026-11-19T16:00:00+08:00",
+          "title": {
+            "en": "Sleep",
+            "tl": "Tulog"
+          },
+          "rule_ids": ["R3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261119-1630-light_brake",
+          "kind": "light_brake",
+          "start_utc": "2026-11-19T08:30:00Z",
+          "end_utc": "2026-11-19T08:45:00Z",
+          "start_local": "2026-11-19T16:30:00+08:00",
+          "end_local": "2026-11-19T16:45:00+08:00",
+          "title": {
+            "en": "Outdoors after waking",
+            "tl": "Labas pagkagising"
+          },
+          "rule_ids": ["R5"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261119-2030-commute_to_work",
+          "kind": "commute_to_work",
+          "start_utc": "2026-11-19T12:30:00Z",
+          "end_utc": "2026-11-19T14:00:00Z",
+          "start_local": "2026-11-19T20:30:00+08:00",
+          "end_local": "2026-11-19T22:00:00+08:00",
+          "title": {
+            "en": "Commute to work",
+            "tl": "Biyahe papasok"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261119-2200-shift",
+          "kind": "shift",
+          "start_utc": "2026-11-19T14:00:00Z",
+          "end_utc": "2026-11-19T23:00:00Z",
+          "start_local": "2026-11-19T22:00:00+08:00",
+          "end_local": "2026-11-20T07:00:00+08:00",
+          "title": {
+            "en": "Shift",
+            "tl": "Shift"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261119-2200-caffeine",
+          "kind": "caffeine",
+          "start_utc": "2026-11-19T14:00:00Z",
+          "end_utc": "2026-11-19T18:30:00Z",
+          "start_local": "2026-11-19T22:00:00+08:00",
+          "end_local": "2026-11-20T02:30:00+08:00",
+          "title": {
+            "en": "Caffeine OK",
+            "tl": "Pwede ang kape"
+          },
+          "rule_ids": ["C1", "C3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "end"
+          }
+        }
+      ],
+      "cbt_min_local": "2026-11-19T14:07:00+08:00",
+      "category": "complete"
+    },
+    {
+      "date": "2026-11-20",
+      "label": {
+        "en": "Fri 20 Nov",
+        "tl": "Biy 20 Nov"
+      },
+      "events": [
+        {
+          "id": "20261120-0700-commute_home",
+          "kind": "commute_home",
+          "start_utc": "2026-11-19T23:00:00Z",
+          "end_utc": "2026-11-20T00:30:00Z",
+          "start_local": "2026-11-20T07:00:00+08:00",
+          "end_local": "2026-11-20T08:30:00+08:00",
+          "title": {
+            "en": "Commute home",
+            "tl": "Biyahe pauwi"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261120-0700-sunglasses",
+          "kind": "sunglasses",
+          "start_utc": "2026-11-19T23:00:00Z",
+          "end_utc": "2026-11-20T00:30:00Z",
+          "start_local": "2026-11-20T07:00:00+08:00",
+          "end_local": "2026-11-20T08:30:00+08:00",
+          "title": {
+            "en": "Sunglasses on",
+            "tl": "Shades on"
+          },
+          "rule_ids": ["R2", "R7"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261120-0900-sleep",
+          "kind": "sleep",
+          "start_utc": "2026-11-20T01:00:00Z",
+          "end_utc": "2026-11-20T08:00:00Z",
+          "start_local": "2026-11-20T09:00:00+08:00",
+          "end_local": "2026-11-20T16:00:00+08:00",
+          "title": {
+            "en": "Sleep",
+            "tl": "Tulog"
+          },
+          "rule_ids": ["R3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261120-1630-light_brake",
+          "kind": "light_brake",
+          "start_utc": "2026-11-20T08:30:00Z",
+          "end_utc": "2026-11-20T08:45:00Z",
+          "start_local": "2026-11-20T16:30:00+08:00",
+          "end_local": "2026-11-20T16:45:00+08:00",
+          "title": {
+            "en": "Outdoors after waking",
+            "tl": "Labas pagkagising"
+          },
+          "rule_ids": ["R5"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261120-2030-commute_to_work",
+          "kind": "commute_to_work",
+          "start_utc": "2026-11-20T12:30:00Z",
+          "end_utc": "2026-11-20T14:00:00Z",
+          "start_local": "2026-11-20T20:30:00+08:00",
+          "end_local": "2026-11-20T22:00:00+08:00",
+          "title": {
+            "en": "Commute to work",
+            "tl": "Biyahe papasok"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261120-2200-shift",
+          "kind": "shift",
+          "start_utc": "2026-11-20T14:00:00Z",
+          "end_utc": "2026-11-20T23:00:00Z",
+          "start_local": "2026-11-20T22:00:00+08:00",
+          "end_local": "2026-11-21T07:00:00+08:00",
+          "title": {
+            "en": "Shift",
+            "tl": "Shift"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261120-2200-caffeine",
+          "kind": "caffeine",
+          "start_utc": "2026-11-20T14:00:00Z",
+          "end_utc": "2026-11-20T18:30:00Z",
+          "start_local": "2026-11-20T22:00:00+08:00",
+          "end_local": "2026-11-21T02:30:00+08:00",
+          "title": {
+            "en": "Caffeine OK",
+            "tl": "Pwede ang kape"
+          },
+          "rule_ids": ["C1", "C3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "end"
+          }
+        }
+      ],
+      "cbt_min_local": "2026-11-20T14:06:00+08:00",
+      "category": "complete"
+    },
+    {
+      "date": "2026-11-21",
+      "label": {
+        "en": "Sat 21 Nov",
+        "tl": "Sab 21 Nov"
+      },
+      "events": [
+        {
+          "id": "20261121-0700-commute_home",
+          "kind": "commute_home",
+          "start_utc": "2026-11-20T23:00:00Z",
+          "end_utc": "2026-11-21T00:30:00Z",
+          "start_local": "2026-11-21T07:00:00+08:00",
+          "end_local": "2026-11-21T08:30:00+08:00",
+          "title": {
+            "en": "Commute home",
+            "tl": "Biyahe pauwi"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261121-0700-sunglasses",
+          "kind": "sunglasses",
+          "start_utc": "2026-11-20T23:00:00Z",
+          "end_utc": "2026-11-21T00:30:00Z",
+          "start_local": "2026-11-21T07:00:00+08:00",
+          "end_local": "2026-11-21T08:30:00+08:00",
+          "title": {
+            "en": "Sunglasses on",
+            "tl": "Shades on"
+          },
+          "rule_ids": ["R2", "R7"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261121-0900-sleep",
+          "kind": "sleep",
+          "start_utc": "2026-11-21T01:00:00Z",
+          "end_utc": "2026-11-21T08:00:00Z",
+          "start_local": "2026-11-21T09:00:00+08:00",
+          "end_local": "2026-11-21T16:00:00+08:00",
+          "title": {
+            "en": "Sleep",
+            "tl": "Tulog"
+          },
+          "rule_ids": ["R3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261121-1630-light_brake",
+          "kind": "light_brake",
+          "start_utc": "2026-11-21T08:30:00Z",
+          "end_utc": "2026-11-21T08:45:00Z",
+          "start_local": "2026-11-21T16:30:00+08:00",
+          "end_local": "2026-11-21T16:45:00+08:00",
+          "title": {
+            "en": "Outdoors after waking",
+            "tl": "Labas pagkagising"
+          },
+          "rule_ids": ["R5"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        }
+      ],
+      "cbt_min_local": "2026-11-21T14:05:00+08:00",
+      "category": "complete"
+    },
+    {
+      "date": "2026-11-22",
+      "label": {
+        "en": "Sun 22 Nov",
+        "tl": "Lin 22 Nov"
+      },
+      "events": [
+        {
+          "id": "20261122-0400-rest_sleep",
+          "kind": "rest_sleep",
+          "start_utc": "2026-11-21T20:00:00Z",
+          "end_utc": "2026-11-22T04:00:00Z",
+          "start_local": "2026-11-22T04:00:00+08:00",
+          "end_local": "2026-11-22T12:00:00+08:00",
+          "title": {
+            "en": "Rest-day sleep",
+            "tl": "Tulog sa rest day"
+          },
+          "rule_ids": ["R4"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "start"
+          }
+        }
+      ],
+      "cbt_min_local": "2026-11-22T12:48:00+08:00",
+      "category": "past"
+    },
+    {
+      "date": "2026-11-23",
+      "label": {
+        "en": "Mon 23 Nov",
+        "tl": "Lun 23 Nov"
+      },
+      "events": [
+        {
+          "id": "20261123-0400-rest_sleep",
+          "kind": "rest_sleep",
+          "start_utc": "2026-11-22T20:00:00Z",
+          "end_utc": "2026-11-23T04:00:00Z",
+          "start_local": "2026-11-23T04:00:00+08:00",
+          "end_local": "2026-11-23T12:00:00+08:00",
+          "title": {
+            "en": "Rest-day sleep",
+            "tl": "Tulog sa rest day"
+          },
+          "rule_ids": ["R4"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261123-2030-commute_to_work",
+          "kind": "commute_to_work",
+          "start_utc": "2026-11-23T12:30:00Z",
+          "end_utc": "2026-11-23T14:00:00Z",
+          "start_local": "2026-11-23T20:30:00+08:00",
+          "end_local": "2026-11-23T22:00:00+08:00",
+          "title": {
+            "en": "Commute to work",
+            "tl": "Biyahe papasok"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261123-2200-shift",
+          "kind": "shift",
+          "start_utc": "2026-11-23T14:00:00Z",
+          "end_utc": "2026-11-23T23:00:00Z",
+          "start_local": "2026-11-23T22:00:00+08:00",
+          "end_local": "2026-11-24T07:00:00+08:00",
+          "title": {
+            "en": "Shift",
+            "tl": "Shift"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261123-2200-caffeine",
+          "kind": "caffeine",
+          "start_utc": "2026-11-23T14:00:00Z",
+          "end_utc": "2026-11-23T18:30:00Z",
+          "start_local": "2026-11-23T22:00:00+08:00",
+          "end_local": "2026-11-24T02:30:00+08:00",
+          "title": {
+            "en": "Caffeine OK",
+            "tl": "Pwede ang kape"
+          },
+          "rule_ids": ["C1", "C3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "end"
+          }
+        }
+      ],
+      "cbt_min_local": "2026-11-23T12:03:00+08:00",
+      "category": "past"
+    },
+    {
+      "date": "2026-11-24",
+      "label": {
+        "en": "Tue 24 Nov",
+        "tl": "Mar 24 Nov"
+      },
+      "events": [
+        {
+          "id": "20261124-0700-commute_home",
+          "kind": "commute_home",
+          "start_utc": "2026-11-23T23:00:00Z",
+          "end_utc": "2026-11-24T00:30:00Z",
+          "start_local": "2026-11-24T07:00:00+08:00",
+          "end_local": "2026-11-24T08:30:00+08:00",
+          "title": {
+            "en": "Commute home",
+            "tl": "Biyahe pauwi"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261124-0700-sunglasses",
+          "kind": "sunglasses",
+          "start_utc": "2026-11-23T23:00:00Z",
+          "end_utc": "2026-11-24T00:30:00Z",
+          "start_local": "2026-11-24T07:00:00+08:00",
+          "end_local": "2026-11-24T08:30:00+08:00",
+          "title": {
+            "en": "Sunglasses on",
+            "tl": "Shades on"
+          },
+          "rule_ids": ["R2", "R7"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261124-0900-sleep",
+          "kind": "sleep",
+          "start_utc": "2026-11-24T01:00:00Z",
+          "end_utc": "2026-11-24T08:00:00Z",
+          "start_local": "2026-11-24T09:00:00+08:00",
+          "end_local": "2026-11-24T16:00:00+08:00",
+          "title": {
+            "en": "Sleep",
+            "tl": "Tulog"
+          },
+          "rule_ids": ["R3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261124-1630-light_brake",
+          "kind": "light_brake",
+          "start_utc": "2026-11-24T08:30:00Z",
+          "end_utc": "2026-11-24T08:45:00Z",
+          "start_local": "2026-11-24T16:30:00+08:00",
+          "end_local": "2026-11-24T16:45:00+08:00",
+          "title": {
+            "en": "Outdoors after waking",
+            "tl": "Labas pagkagising"
+          },
+          "rule_ids": ["R5"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261124-2030-commute_to_work",
+          "kind": "commute_to_work",
+          "start_utc": "2026-11-24T12:30:00Z",
+          "end_utc": "2026-11-24T14:00:00Z",
+          "start_local": "2026-11-24T20:30:00+08:00",
+          "end_local": "2026-11-24T22:00:00+08:00",
+          "title": {
+            "en": "Commute to work",
+            "tl": "Biyahe papasok"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261124-2200-shift",
+          "kind": "shift",
+          "start_utc": "2026-11-24T14:00:00Z",
+          "end_utc": "2026-11-24T23:00:00Z",
+          "start_local": "2026-11-24T22:00:00+08:00",
+          "end_local": "2026-11-25T07:00:00+08:00",
+          "title": {
+            "en": "Shift",
+            "tl": "Shift"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261124-2200-caffeine",
+          "kind": "caffeine",
+          "start_utc": "2026-11-24T14:00:00Z",
+          "end_utc": "2026-11-24T18:30:00Z",
+          "start_local": "2026-11-24T22:00:00+08:00",
+          "end_local": "2026-11-25T02:30:00+08:00",
+          "title": {
+            "en": "Caffeine OK",
+            "tl": "Pwede ang kape"
+          },
+          "rule_ids": ["C1", "C3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "end"
+          }
+        }
+      ],
+      "cbt_min_local": "2026-11-24T13:02:00+08:00",
+      "category": "complete"
+    },
+    {
+      "date": "2026-11-25",
+      "label": {
+        "en": "Wed 25 Nov",
+        "tl": "Miy 25 Nov"
+      },
+      "events": [
+        {
+          "id": "20261125-0700-commute_home",
+          "kind": "commute_home",
+          "start_utc": "2026-11-24T23:00:00Z",
+          "end_utc": "2026-11-25T00:30:00Z",
+          "start_local": "2026-11-25T07:00:00+08:00",
+          "end_local": "2026-11-25T08:30:00+08:00",
+          "title": {
+            "en": "Commute home",
+            "tl": "Biyahe pauwi"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261125-0700-sunglasses",
+          "kind": "sunglasses",
+          "start_utc": "2026-11-24T23:00:00Z",
+          "end_utc": "2026-11-25T00:30:00Z",
+          "start_local": "2026-11-25T07:00:00+08:00",
+          "end_local": "2026-11-25T08:30:00+08:00",
+          "title": {
+            "en": "Sunglasses on",
+            "tl": "Shades on"
+          },
+          "rule_ids": ["R2", "R7"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261125-0900-sleep",
+          "kind": "sleep",
+          "start_utc": "2026-11-25T01:00:00Z",
+          "end_utc": "2026-11-25T08:00:00Z",
+          "start_local": "2026-11-25T09:00:00+08:00",
+          "end_local": "2026-11-25T16:00:00+08:00",
+          "title": {
+            "en": "Sleep",
+            "tl": "Tulog"
+          },
+          "rule_ids": ["R3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261125-1630-light_brake",
+          "kind": "light_brake",
+          "start_utc": "2026-11-25T08:30:00Z",
+          "end_utc": "2026-11-25T08:45:00Z",
+          "start_local": "2026-11-25T16:30:00+08:00",
+          "end_local": "2026-11-25T16:45:00+08:00",
+          "title": {
+            "en": "Outdoors after waking",
+            "tl": "Labas pagkagising"
+          },
+          "rule_ids": ["R5"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261125-2030-commute_to_work",
+          "kind": "commute_to_work",
+          "start_utc": "2026-11-25T12:30:00Z",
+          "end_utc": "2026-11-25T14:00:00Z",
+          "start_local": "2026-11-25T20:30:00+08:00",
+          "end_local": "2026-11-25T22:00:00+08:00",
+          "title": {
+            "en": "Commute to work",
+            "tl": "Biyahe papasok"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261125-2200-shift",
+          "kind": "shift",
+          "start_utc": "2026-11-25T14:00:00Z",
+          "end_utc": "2026-11-25T23:00:00Z",
+          "start_local": "2026-11-25T22:00:00+08:00",
+          "end_local": "2026-11-26T07:00:00+08:00",
+          "title": {
+            "en": "Shift",
+            "tl": "Shift"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261125-2200-caffeine",
+          "kind": "caffeine",
+          "start_utc": "2026-11-25T14:00:00Z",
+          "end_utc": "2026-11-25T18:30:00Z",
+          "start_local": "2026-11-25T22:00:00+08:00",
+          "end_local": "2026-11-26T02:30:00+08:00",
+          "title": {
+            "en": "Caffeine OK",
+            "tl": "Pwede ang kape"
+          },
+          "rule_ids": ["C1", "C3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "end"
+          }
+        }
+      ],
+      "cbt_min_local": "2026-11-25T13:19:00+08:00",
+      "category": "complete"
+    },
+    {
+      "date": "2026-11-26",
+      "label": {
+        "en": "Thu 26 Nov",
+        "tl": "Huw 26 Nov"
+      },
+      "events": [
+        {
+          "id": "20261126-0700-commute_home",
+          "kind": "commute_home",
+          "start_utc": "2026-11-25T23:00:00Z",
+          "end_utc": "2026-11-26T00:30:00Z",
+          "start_local": "2026-11-26T07:00:00+08:00",
+          "end_local": "2026-11-26T08:30:00+08:00",
+          "title": {
+            "en": "Commute home",
+            "tl": "Biyahe pauwi"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261126-0700-sunglasses",
+          "kind": "sunglasses",
+          "start_utc": "2026-11-25T23:00:00Z",
+          "end_utc": "2026-11-26T00:30:00Z",
+          "start_local": "2026-11-26T07:00:00+08:00",
+          "end_local": "2026-11-26T08:30:00+08:00",
+          "title": {
+            "en": "Sunglasses on",
+            "tl": "Shades on"
+          },
+          "rule_ids": ["R2", "R7"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261126-0900-sleep",
+          "kind": "sleep",
+          "start_utc": "2026-11-26T01:00:00Z",
+          "end_utc": "2026-11-26T08:00:00Z",
+          "start_local": "2026-11-26T09:00:00+08:00",
+          "end_local": "2026-11-26T16:00:00+08:00",
+          "title": {
+            "en": "Sleep",
+            "tl": "Tulog"
+          },
+          "rule_ids": ["R3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261126-1630-light_brake",
+          "kind": "light_brake",
+          "start_utc": "2026-11-26T08:30:00Z",
+          "end_utc": "2026-11-26T08:45:00Z",
+          "start_local": "2026-11-26T16:30:00+08:00",
+          "end_local": "2026-11-26T16:45:00+08:00",
+          "title": {
+            "en": "Outdoors after waking",
+            "tl": "Labas pagkagising"
+          },
+          "rule_ids": ["R5"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261126-2030-commute_to_work",
+          "kind": "commute_to_work",
+          "start_utc": "2026-11-26T12:30:00Z",
+          "end_utc": "2026-11-26T14:00:00Z",
+          "start_local": "2026-11-26T20:30:00+08:00",
+          "end_local": "2026-11-26T22:00:00+08:00",
+          "title": {
+            "en": "Commute to work",
+            "tl": "Biyahe papasok"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261126-2200-shift",
+          "kind": "shift",
+          "start_utc": "2026-11-26T14:00:00Z",
+          "end_utc": "2026-11-26T23:00:00Z",
+          "start_local": "2026-11-26T22:00:00+08:00",
+          "end_local": "2026-11-27T07:00:00+08:00",
+          "title": {
+            "en": "Shift",
+            "tl": "Shift"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261126-2200-caffeine",
+          "kind": "caffeine",
+          "start_utc": "2026-11-26T14:00:00Z",
+          "end_utc": "2026-11-26T18:30:00Z",
+          "start_local": "2026-11-26T22:00:00+08:00",
+          "end_local": "2026-11-27T02:30:00+08:00",
+          "title": {
+            "en": "Caffeine OK",
+            "tl": "Pwede ang kape"
+          },
+          "rule_ids": ["C1", "C3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "end"
+          }
+        }
+      ],
+      "cbt_min_local": "2026-11-26T13:32:00+08:00",
+      "category": "complete"
+    },
+    {
+      "date": "2026-11-27",
+      "label": {
+        "en": "Fri 27 Nov",
+        "tl": "Biy 27 Nov"
+      },
+      "events": [
+        {
+          "id": "20261127-0700-commute_home",
+          "kind": "commute_home",
+          "start_utc": "2026-11-26T23:00:00Z",
+          "end_utc": "2026-11-27T00:30:00Z",
+          "start_local": "2026-11-27T07:00:00+08:00",
+          "end_local": "2026-11-27T08:30:00+08:00",
+          "title": {
+            "en": "Commute home",
+            "tl": "Biyahe pauwi"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261127-0700-sunglasses",
+          "kind": "sunglasses",
+          "start_utc": "2026-11-26T23:00:00Z",
+          "end_utc": "2026-11-27T00:30:00Z",
+          "start_local": "2026-11-27T07:00:00+08:00",
+          "end_local": "2026-11-27T08:30:00+08:00",
+          "title": {
+            "en": "Sunglasses on",
+            "tl": "Shades on"
+          },
+          "rule_ids": ["R2", "R7"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261127-0900-sleep",
+          "kind": "sleep",
+          "start_utc": "2026-11-27T01:00:00Z",
+          "end_utc": "2026-11-27T08:00:00Z",
+          "start_local": "2026-11-27T09:00:00+08:00",
+          "end_local": "2026-11-27T16:00:00+08:00",
+          "title": {
+            "en": "Sleep",
+            "tl": "Tulog"
+          },
+          "rule_ids": ["R3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261127-1630-light_brake",
+          "kind": "light_brake",
+          "start_utc": "2026-11-27T08:30:00Z",
+          "end_utc": "2026-11-27T08:45:00Z",
+          "start_local": "2026-11-27T16:30:00+08:00",
+          "end_local": "2026-11-27T16:45:00+08:00",
+          "title": {
+            "en": "Outdoors after waking",
+            "tl": "Labas pagkagising"
+          },
+          "rule_ids": ["R5"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261127-2030-commute_to_work",
+          "kind": "commute_to_work",
+          "start_utc": "2026-11-27T12:30:00Z",
+          "end_utc": "2026-11-27T14:00:00Z",
+          "start_local": "2026-11-27T20:30:00+08:00",
+          "end_local": "2026-11-27T22:00:00+08:00",
+          "title": {
+            "en": "Commute to work",
+            "tl": "Biyahe papasok"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261127-2200-shift",
+          "kind": "shift",
+          "start_utc": "2026-11-27T14:00:00Z",
+          "end_utc": "2026-11-27T23:00:00Z",
+          "start_local": "2026-11-27T22:00:00+08:00",
+          "end_local": "2026-11-28T07:00:00+08:00",
+          "title": {
+            "en": "Shift",
+            "tl": "Shift"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261127-2200-caffeine",
+          "kind": "caffeine",
+          "start_utc": "2026-11-27T14:00:00Z",
+          "end_utc": "2026-11-27T18:30:00Z",
+          "start_local": "2026-11-27T22:00:00+08:00",
+          "end_local": "2026-11-28T02:30:00+08:00",
+          "title": {
+            "en": "Caffeine OK",
+            "tl": "Pwede ang kape"
+          },
+          "rule_ids": ["C1", "C3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "end"
+          }
+        }
+      ],
+      "cbt_min_local": "2026-11-27T13:41:00+08:00",
+      "category": "complete"
+    },
+    {
+      "date": "2026-11-28",
+      "label": {
+        "en": "Sat 28 Nov",
+        "tl": "Sab 28 Nov"
+      },
+      "events": [
+        {
+          "id": "20261128-0700-commute_home",
+          "kind": "commute_home",
+          "start_utc": "2026-11-27T23:00:00Z",
+          "end_utc": "2026-11-28T00:30:00Z",
+          "start_local": "2026-11-28T07:00:00+08:00",
+          "end_local": "2026-11-28T08:30:00+08:00",
+          "title": {
+            "en": "Commute home",
+            "tl": "Biyahe pauwi"
+          },
+          "rule_ids": [],
+          "recommended": false,
+          "reminder": null
+        },
+        {
+          "id": "20261128-0700-sunglasses",
+          "kind": "sunglasses",
+          "start_utc": "2026-11-27T23:00:00Z",
+          "end_utc": "2026-11-28T00:30:00Z",
+          "start_local": "2026-11-28T07:00:00+08:00",
+          "end_local": "2026-11-28T08:30:00+08:00",
+          "title": {
+            "en": "Sunglasses on",
+            "tl": "Shades on"
+          },
+          "rule_ids": ["R2", "R7"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261128-0900-sleep",
+          "kind": "sleep",
+          "start_utc": "2026-11-28T01:00:00Z",
+          "end_utc": "2026-11-28T08:00:00Z",
+          "start_local": "2026-11-28T09:00:00+08:00",
+          "end_local": "2026-11-28T16:00:00+08:00",
+          "title": {
+            "en": "Sleep",
+            "tl": "Tulog"
+          },
+          "rule_ids": ["R3"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "start"
+          }
+        },
+        {
+          "id": "20261128-1630-light_brake",
+          "kind": "light_brake",
+          "start_utc": "2026-11-28T08:30:00Z",
+          "end_utc": "2026-11-28T08:45:00Z",
+          "start_local": "2026-11-28T16:30:00+08:00",
+          "end_local": "2026-11-28T16:45:00+08:00",
+          "title": {
+            "en": "Outdoors after waking",
+            "tl": "Labas pagkagising"
+          },
+          "rule_ids": ["R5"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 0,
+            "related": "start"
+          }
+        }
+      ],
+      "cbt_min_local": "2026-11-28T13:48:00+08:00",
+      "category": "complete"
+    },
+    {
+      "date": "2026-11-29",
+      "label": {
+        "en": "Sun 29 Nov",
+        "tl": "Lin 29 Nov"
+      },
+      "events": [
+        {
+          "id": "20261129-0400-rest_sleep",
+          "kind": "rest_sleep",
+          "start_utc": "2026-11-28T20:00:00Z",
+          "end_utc": "2026-11-29T04:00:00Z",
+          "start_local": "2026-11-29T04:00:00+08:00",
+          "end_local": "2026-11-29T12:00:00+08:00",
+          "title": {
+            "en": "Rest-day sleep",
+            "tl": "Tulog sa rest day"
+          },
+          "rule_ids": ["R4"],
+          "recommended": true,
+          "reminder": {
+            "minutes_before": 30,
+            "related": "start"
+          }
+        }
+      ],
+      "cbt_min_local": "2026-11-29T12:30:00+08:00",
+      "category": "past"
+    }
+  ],
+  "nudges": [
+    {
+      "event_id": "20261116-0400-rest_sleep",
+      "template": "nudge.rest_sleep",
+      "text": {
+        "en": "Rest day: sleep from 4 AM to 12 PM. A late night keeps your body clock close to your work nights.",
+        "tl": "Rest day: tulog ka mula 4 AM hanggang 12 PM. Ang medyo late na tulog ang nagpapanatili sa body clock mo na malapit sa work nights mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261116-2200-caffeine",
+      "template": "nudge.caffeine",
+      "text": {
+        "en": "2:30 AM is your last coffee. Water after that, so you fall asleep more easily when you get home.",
+        "tl": "2:30 AM ang huling kape mo. Tubig na lang pagkatapos, para madali kang makatulog pag-uwi."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261117-0700-sunglasses",
+      "template": "nudge.sunglasses",
+      "text": {
+        "en": "Shades on for the ride home, even if it is cloudy. Morning light tells your body it is morning. We want it to stay night for your body until you fall asleep.",
+        "tl": "Shades on pauwi, kahit maulap. Ang liwanag sa umaga ang nagsasabi sa katawan mo na umaga na. Gusto nating gabi pa rin para sa kanya hanggang makatulog ka."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261117-0900-sleep",
+      "template": "nudge.sleep_low",
+      "text": {
+        "en": "Lights out by 9 AM. Blackout curtains on, phone face down. Sleep now, while your body clock is at its lowest.",
+        "tl": "Lights out na by 9 AM. Sarado ang blackout curtains, nakataob ang phone. Matulog ka na habang pinakamababa ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261117-1630-light_brake",
+      "template": "nudge.light_brake",
+      "text": {
+        "en": "Go outside for 15 minutes at 4:30 PM. Daylight after you wake keeps your body clock from drifting too late.",
+        "tl": "Lumabas ka nang 15 minuto sa 4:30 PM. Ang liwanag ng araw pagkagising ang pumipigil na masyadong ma-late ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261117-2200-caffeine",
+      "template": "nudge.caffeine",
+      "text": {
+        "en": "2:30 AM is your last coffee. Water after that, so you fall asleep more easily when you get home.",
+        "tl": "2:30 AM ang huling kape mo. Tubig na lang pagkatapos, para madali kang makatulog pag-uwi."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261118-0700-sunglasses",
+      "template": "nudge.sunglasses",
+      "text": {
+        "en": "Shades on for the ride home, even if it is cloudy. Morning light tells your body it is morning. We want it to stay night for your body until you fall asleep.",
+        "tl": "Shades on pauwi, kahit maulap. Ang liwanag sa umaga ang nagsasabi sa katawan mo na umaga na. Gusto nating gabi pa rin para sa kanya hanggang makatulog ka."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261118-0900-sleep",
+      "template": "nudge.sleep_low",
+      "text": {
+        "en": "Lights out by 9 AM. Blackout curtains on, phone face down. Sleep now, while your body clock is at its lowest.",
+        "tl": "Lights out na by 9 AM. Sarado ang blackout curtains, nakataob ang phone. Matulog ka na habang pinakamababa ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261118-1630-light_brake",
+      "template": "nudge.light_brake",
+      "text": {
+        "en": "Go outside for 15 minutes at 4:30 PM. Daylight after you wake keeps your body clock from drifting too late.",
+        "tl": "Lumabas ka nang 15 minuto sa 4:30 PM. Ang liwanag ng araw pagkagising ang pumipigil na masyadong ma-late ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261118-2200-caffeine",
+      "template": "nudge.caffeine",
+      "text": {
+        "en": "2:30 AM is your last coffee. Water after that, so you fall asleep more easily when you get home.",
+        "tl": "2:30 AM ang huling kape mo. Tubig na lang pagkatapos, para madali kang makatulog pag-uwi."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261119-0700-sunglasses",
+      "template": "nudge.sunglasses",
+      "text": {
+        "en": "Shades on for the ride home, even if it is cloudy. Morning light tells your body it is morning. We want it to stay night for your body until you fall asleep.",
+        "tl": "Shades on pauwi, kahit maulap. Ang liwanag sa umaga ang nagsasabi sa katawan mo na umaga na. Gusto nating gabi pa rin para sa kanya hanggang makatulog ka."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261119-0900-sleep",
+      "template": "nudge.sleep_low",
+      "text": {
+        "en": "Lights out by 9 AM. Blackout curtains on, phone face down. Sleep now, while your body clock is at its lowest.",
+        "tl": "Lights out na by 9 AM. Sarado ang blackout curtains, nakataob ang phone. Matulog ka na habang pinakamababa ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261119-1630-light_brake",
+      "template": "nudge.light_brake",
+      "text": {
+        "en": "Go outside for 15 minutes at 4:30 PM. Daylight after you wake keeps your body clock from drifting too late.",
+        "tl": "Lumabas ka nang 15 minuto sa 4:30 PM. Ang liwanag ng araw pagkagising ang pumipigil na masyadong ma-late ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261119-2200-caffeine",
+      "template": "nudge.caffeine",
+      "text": {
+        "en": "2:30 AM is your last coffee. Water after that, so you fall asleep more easily when you get home.",
+        "tl": "2:30 AM ang huling kape mo. Tubig na lang pagkatapos, para madali kang makatulog pag-uwi."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261120-0700-sunglasses",
+      "template": "nudge.sunglasses",
+      "text": {
+        "en": "Shades on for the ride home, even if it is cloudy. Morning light tells your body it is morning. We want it to stay night for your body until you fall asleep.",
+        "tl": "Shades on pauwi, kahit maulap. Ang liwanag sa umaga ang nagsasabi sa katawan mo na umaga na. Gusto nating gabi pa rin para sa kanya hanggang makatulog ka."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261120-0900-sleep",
+      "template": "nudge.sleep_low",
+      "text": {
+        "en": "Lights out by 9 AM. Blackout curtains on, phone face down. Sleep now, while your body clock is at its lowest.",
+        "tl": "Lights out na by 9 AM. Sarado ang blackout curtains, nakataob ang phone. Matulog ka na habang pinakamababa ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261120-1630-light_brake",
+      "template": "nudge.light_brake",
+      "text": {
+        "en": "Go outside for 15 minutes at 4:30 PM. Daylight after you wake keeps your body clock from drifting too late.",
+        "tl": "Lumabas ka nang 15 minuto sa 4:30 PM. Ang liwanag ng araw pagkagising ang pumipigil na masyadong ma-late ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261120-2200-caffeine",
+      "template": "nudge.caffeine",
+      "text": {
+        "en": "2:30 AM is your last coffee. Water after that, so you fall asleep more easily when you get home.",
+        "tl": "2:30 AM ang huling kape mo. Tubig na lang pagkatapos, para madali kang makatulog pag-uwi."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261121-0700-sunglasses",
+      "template": "nudge.sunglasses",
+      "text": {
+        "en": "Shades on for the ride home, even if it is cloudy. Morning light tells your body it is morning. We want it to stay night for your body until you fall asleep.",
+        "tl": "Shades on pauwi, kahit maulap. Ang liwanag sa umaga ang nagsasabi sa katawan mo na umaga na. Gusto nating gabi pa rin para sa kanya hanggang makatulog ka."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261121-0900-sleep",
+      "template": "nudge.sleep_low",
+      "text": {
+        "en": "Lights out by 9 AM. Blackout curtains on, phone face down. Sleep now, while your body clock is at its lowest.",
+        "tl": "Lights out na by 9 AM. Sarado ang blackout curtains, nakataob ang phone. Matulog ka na habang pinakamababa ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261121-1630-light_brake",
+      "template": "nudge.light_brake",
+      "text": {
+        "en": "Go outside for 15 minutes at 4:30 PM. Daylight after you wake keeps your body clock from drifting too late.",
+        "tl": "Lumabas ka nang 15 minuto sa 4:30 PM. Ang liwanag ng araw pagkagising ang pumipigil na masyadong ma-late ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261122-0400-rest_sleep",
+      "template": "nudge.rest_sleep",
+      "text": {
+        "en": "Rest day: sleep from 4 AM to 12 PM. A late night keeps your body clock close to your work nights.",
+        "tl": "Rest day: tulog ka mula 4 AM hanggang 12 PM. Ang medyo late na tulog ang nagpapanatili sa body clock mo na malapit sa work nights mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261123-0400-rest_sleep",
+      "template": "nudge.rest_sleep",
+      "text": {
+        "en": "Rest day: sleep from 4 AM to 12 PM. A late night keeps your body clock close to your work nights.",
+        "tl": "Rest day: tulog ka mula 4 AM hanggang 12 PM. Ang medyo late na tulog ang nagpapanatili sa body clock mo na malapit sa work nights mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261123-2200-caffeine",
+      "template": "nudge.caffeine",
+      "text": {
+        "en": "2:30 AM is your last coffee. Water after that, so you fall asleep more easily when you get home.",
+        "tl": "2:30 AM ang huling kape mo. Tubig na lang pagkatapos, para madali kang makatulog pag-uwi."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261124-0700-sunglasses",
+      "template": "nudge.sunglasses",
+      "text": {
+        "en": "Shades on for the ride home, even if it is cloudy. Morning light tells your body it is morning. We want it to stay night for your body until you fall asleep.",
+        "tl": "Shades on pauwi, kahit maulap. Ang liwanag sa umaga ang nagsasabi sa katawan mo na umaga na. Gusto nating gabi pa rin para sa kanya hanggang makatulog ka."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261124-0900-sleep",
+      "template": "nudge.sleep_low",
+      "text": {
+        "en": "Lights out by 9 AM. Blackout curtains on, phone face down. Sleep now, while your body clock is at its lowest.",
+        "tl": "Lights out na by 9 AM. Sarado ang blackout curtains, nakataob ang phone. Matulog ka na habang pinakamababa ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261124-1630-light_brake",
+      "template": "nudge.light_brake",
+      "text": {
+        "en": "Go outside for 15 minutes at 4:30 PM. Daylight after you wake keeps your body clock from drifting too late.",
+        "tl": "Lumabas ka nang 15 minuto sa 4:30 PM. Ang liwanag ng araw pagkagising ang pumipigil na masyadong ma-late ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261124-2200-caffeine",
+      "template": "nudge.caffeine",
+      "text": {
+        "en": "2:30 AM is your last coffee. Water after that, so you fall asleep more easily when you get home.",
+        "tl": "2:30 AM ang huling kape mo. Tubig na lang pagkatapos, para madali kang makatulog pag-uwi."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261125-0700-sunglasses",
+      "template": "nudge.sunglasses",
+      "text": {
+        "en": "Shades on for the ride home, even if it is cloudy. Morning light tells your body it is morning. We want it to stay night for your body until you fall asleep.",
+        "tl": "Shades on pauwi, kahit maulap. Ang liwanag sa umaga ang nagsasabi sa katawan mo na umaga na. Gusto nating gabi pa rin para sa kanya hanggang makatulog ka."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261125-0900-sleep",
+      "template": "nudge.sleep_low",
+      "text": {
+        "en": "Lights out by 9 AM. Blackout curtains on, phone face down. Sleep now, while your body clock is at its lowest.",
+        "tl": "Lights out na by 9 AM. Sarado ang blackout curtains, nakataob ang phone. Matulog ka na habang pinakamababa ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261125-1630-light_brake",
+      "template": "nudge.light_brake",
+      "text": {
+        "en": "Go outside for 15 minutes at 4:30 PM. Daylight after you wake keeps your body clock from drifting too late.",
+        "tl": "Lumabas ka nang 15 minuto sa 4:30 PM. Ang liwanag ng araw pagkagising ang pumipigil na masyadong ma-late ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261125-2200-caffeine",
+      "template": "nudge.caffeine",
+      "text": {
+        "en": "2:30 AM is your last coffee. Water after that, so you fall asleep more easily when you get home.",
+        "tl": "2:30 AM ang huling kape mo. Tubig na lang pagkatapos, para madali kang makatulog pag-uwi."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261126-0700-sunglasses",
+      "template": "nudge.sunglasses",
+      "text": {
+        "en": "Shades on for the ride home, even if it is cloudy. Morning light tells your body it is morning. We want it to stay night for your body until you fall asleep.",
+        "tl": "Shades on pauwi, kahit maulap. Ang liwanag sa umaga ang nagsasabi sa katawan mo na umaga na. Gusto nating gabi pa rin para sa kanya hanggang makatulog ka."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261126-0900-sleep",
+      "template": "nudge.sleep_low",
+      "text": {
+        "en": "Lights out by 9 AM. Blackout curtains on, phone face down. Sleep now, while your body clock is at its lowest.",
+        "tl": "Lights out na by 9 AM. Sarado ang blackout curtains, nakataob ang phone. Matulog ka na habang pinakamababa ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261126-1630-light_brake",
+      "template": "nudge.light_brake",
+      "text": {
+        "en": "Go outside for 15 minutes at 4:30 PM. Daylight after you wake keeps your body clock from drifting too late.",
+        "tl": "Lumabas ka nang 15 minuto sa 4:30 PM. Ang liwanag ng araw pagkagising ang pumipigil na masyadong ma-late ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261126-2200-caffeine",
+      "template": "nudge.caffeine",
+      "text": {
+        "en": "2:30 AM is your last coffee. Water after that, so you fall asleep more easily when you get home.",
+        "tl": "2:30 AM ang huling kape mo. Tubig na lang pagkatapos, para madali kang makatulog pag-uwi."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261127-0700-sunglasses",
+      "template": "nudge.sunglasses",
+      "text": {
+        "en": "Shades on for the ride home, even if it is cloudy. Morning light tells your body it is morning. We want it to stay night for your body until you fall asleep.",
+        "tl": "Shades on pauwi, kahit maulap. Ang liwanag sa umaga ang nagsasabi sa katawan mo na umaga na. Gusto nating gabi pa rin para sa kanya hanggang makatulog ka."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261127-0900-sleep",
+      "template": "nudge.sleep_low",
+      "text": {
+        "en": "Lights out by 9 AM. Blackout curtains on, phone face down. Sleep now, while your body clock is at its lowest.",
+        "tl": "Lights out na by 9 AM. Sarado ang blackout curtains, nakataob ang phone. Matulog ka na habang pinakamababa ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261127-1630-light_brake",
+      "template": "nudge.light_brake",
+      "text": {
+        "en": "Go outside for 15 minutes at 4:30 PM. Daylight after you wake keeps your body clock from drifting too late.",
+        "tl": "Lumabas ka nang 15 minuto sa 4:30 PM. Ang liwanag ng araw pagkagising ang pumipigil na masyadong ma-late ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261127-2200-caffeine",
+      "template": "nudge.caffeine",
+      "text": {
+        "en": "2:30 AM is your last coffee. Water after that, so you fall asleep more easily when you get home.",
+        "tl": "2:30 AM ang huling kape mo. Tubig na lang pagkatapos, para madali kang makatulog pag-uwi."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261128-0700-sunglasses",
+      "template": "nudge.sunglasses",
+      "text": {
+        "en": "Shades on for the ride home, even if it is cloudy. Morning light tells your body it is morning. We want it to stay night for your body until you fall asleep.",
+        "tl": "Shades on pauwi, kahit maulap. Ang liwanag sa umaga ang nagsasabi sa katawan mo na umaga na. Gusto nating gabi pa rin para sa kanya hanggang makatulog ka."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261128-0900-sleep",
+      "template": "nudge.sleep_low",
+      "text": {
+        "en": "Lights out by 9 AM. Blackout curtains on, phone face down. Sleep now, while your body clock is at its lowest.",
+        "tl": "Lights out na by 9 AM. Sarado ang blackout curtains, nakataob ang phone. Matulog ka na habang pinakamababa ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261128-1630-light_brake",
+      "template": "nudge.light_brake",
+      "text": {
+        "en": "Go outside for 15 minutes at 4:30 PM. Daylight after you wake keeps your body clock from drifting too late.",
+        "tl": "Lumabas ka nang 15 minuto sa 4:30 PM. Ang liwanag ng araw pagkagising ang pumipigil na masyadong ma-late ang body clock mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    },
+    {
+      "event_id": "20261129-0400-rest_sleep",
+      "template": "nudge.rest_sleep",
+      "text": {
+        "en": "Rest day: sleep from 4 AM to 12 PM. A late night keeps your body clock close to your work nights.",
+        "tl": "Rest day: tulog ka mula 4 AM hanggang 12 PM. Ang medyo late na tulog ang nagpapanatili sa body clock mo na malapit sa work nights mo."
+      },
+      "source": {
+        "en": "template",
+        "tl": "template"
+      }
+    }
+  ]
+}
