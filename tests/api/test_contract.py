@@ -15,11 +15,17 @@ client = TestClient(app)
 
 def test_openapi_lists_the_routes_and_states_the_privacy_rules() -> None:
     spec = app.openapi()
-    assert set(spec["paths"]) == {"/v1/health", "/v1/plan", "/v1/plan.ics", "/v1/simulate"}
+    assert set(spec["paths"]) == {
+        "/v1/health",
+        "/v1/plan",
+        "/v1/plan.ics",
+        "/v1/calendar",
+        "/v1/simulate",
+    }
     text = spec["info"]["description"]
     for promise in ("Stateless by design", "Nothing is stored", "never logged"):
         assert promise in text
-    for path in ("/v1/plan", "/v1/plan.ics", "/v1/simulate"):
+    for path in ("/v1/plan", "/v1/plan.ics", "/v1/calendar", "/v1/simulate"):
         responses = spec["paths"][path]["post"]["responses"]
         assert {"200", "413", "422", "429"} <= set(responses)
 
@@ -74,3 +80,16 @@ def test_error_bodies_match_the_problem_schema() -> None:
     assert response.status_code == 422
     assert response.headers["content-type"] == "application/problem+json"
     validate(app, "Problem", response.json())
+
+
+def test_calendar_renders_a_returned_plan_without_a_new_search() -> None:
+    body = {"schedule": schedule(), "options": {"cross_check": False}}
+    plan = client.post("/v1/plan", json=body).json()
+    response = client.post("/v1/calendar", json={"plan": plan, "lang": "tl"})
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/calendar")
+    events = list(icalendar.Calendar.from_ical(response.text).walk("VEVENT"))
+    assert len(events) == sum(len(d["events"]) for d in plan["days"])
+    assert any("ang huling kape mo" in str(e.get("DESCRIPTION")) for e in events)
+    broken = client.post("/v1/calendar", json={"plan": {**plan, "schema_version": "9"}})
+    assert broken.status_code == 422
