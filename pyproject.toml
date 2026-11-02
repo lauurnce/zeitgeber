@@ -1,0 +1,43 @@
+[project]
+name = "zeitgeber-core"
+version = "0.0.1"
+description = "Body-clock planner for night-shift workers: circadian simulation and schedule planning."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Lawrence Panes" }]
+requires-python = ">=3.12"
+dependencies = [
+    "circadian==1.0.3",
+]
+
+[project.optional-dependencies]
+api = [
+    "fastapi>=0.160",
+    "uvicorn>=0.50",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28",
+    "hypothesis>=6.170",
+    "mypy>=2.4",
+    "pre-commit>=4.7",
+    "pytest>=9.2",
+    "ruff>=0.17",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["zeitgeber"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "science: published-result reproduction tests (docs/SCIENCE.md section 4)",
+    "perf: runtime budget checks",
+]
