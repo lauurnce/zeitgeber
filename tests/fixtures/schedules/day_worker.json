@@ -1,0 +1,23 @@
+{
+  "description": "Control: day worker, 09:00 to 18:00 Monday to Friday, regular night sleep. The planner should recommend little or nothing.",
+  "anchor_date": "2026-11-16",
+  "plan_days": 14,
+  "location": {"name": "Manila", "latitude": 14.5995, "longitude": 120.9842, "timezone": "Asia/Manila"},
+  "shifts": [
+    {"weekday": 0, "start": "09:00", "end": "18:00"},
+    {"weekday": 1, "start": "09:00", "end": "18:00"},
+    {"weekday": 2, "start": "09:00", "end": "18:00"},
+    {"weekday": 3, "start": "09:00", "end": "18:00"},
+    {"weekday": 4, "start": "09:00", "end": "18:00"}
+  ],
+  "commute_to_work": {"duration_min": 60, "outdoor_min": 20, "mode": "jeepney_bus"},
+  "commute_home": {"duration_min": 60, "outdoor_min": 20, "mode": "jeepney_bus"},
+  "sleep": {
+    "workday_sleep_start": "23:00",
+    "workday_sleep_end": "07:00",
+    "restday_sleep_start": "23:30",
+    "restday_sleep_end": "08:00",
+    "phone_in_bed_min": 15
+  },
+  "rest_days": {"weekdays": [5, 6], "keep_night_schedule": false}
+}
