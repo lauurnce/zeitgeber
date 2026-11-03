@@ -1,0 +1,23 @@
+{
+  "description": "Permanent nights: 22:00 to 07:00 Monday to Friday. Commute home 90 min, 40 min of it outdoors. Sleeps 09:00 to 15:00 after shifts and 23:00 to 07:00 on rest days. The worked example in Z3.",
+  "anchor_date": "2026-11-16",
+  "plan_days": 14,
+  "location": {"name": "Manila", "latitude": 14.5995, "longitude": 120.9842, "timezone": "Asia/Manila"},
+  "shifts": [
+    {"weekday": 0, "start": "22:00", "end": "07:00"},
+    {"weekday": 1, "start": "22:00", "end": "07:00"},
+    {"weekday": 2, "start": "22:00", "end": "07:00"},
+    {"weekday": 3, "start": "22:00", "end": "07:00"},
+    {"weekday": 4, "start": "22:00", "end": "07:00"}
+  ],
+  "commute_to_work": {"duration_min": 90, "outdoor_min": 30, "mode": "jeepney_bus"},
+  "commute_home": {"duration_min": 90, "outdoor_min": 40, "mode": "jeepney_bus"},
+  "sleep": {
+    "workday_sleep_start": "09:00",
+    "workday_sleep_end": "15:00",
+    "restday_sleep_start": "23:00",
+    "restday_sleep_end": "07:00",
+    "phone_in_bed_min": 30
+  },
+  "rest_days": {"weekdays": [5, 6], "keep_night_schedule": false}
+}
