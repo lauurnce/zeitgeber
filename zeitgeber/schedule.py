@@ -7,7 +7,8 @@ where they become timezone-aware UTC intervals, so shifts that cross midnight ar
 
 from __future__ import annotations
 
-from datetime import time
+from dataclasses import dataclass
+from datetime import UTC, date, datetime, time, timedelta
 from typing import Literal
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -158,3 +159,193 @@ class RestDayPolicy(_Model):
     """
 
     mode: RestDayMode = "flip_to_days"
+
+
+IntervalKind = Literal["shift", "commute_to_work", "commute_home", "sleep", "rest_sleep"]
+
+
+@dataclass(frozen=True)
+class Interval:
+    """An absolute, timezone-aware UTC interval ``[start, end)`` with a readable label."""
+
+    start: datetime
+    end: datetime
+    kind: IntervalKind
+    label: str
+
+    def overlaps(self, other: Interval) -> bool:
+        return self.start < other.end and other.start < self.end
+
+
+def _local(d: date, t: time, tz: ZoneInfo) -> datetime:
+    return datetime.combine(d, t, tzinfo=tz)
+
+
+def _hm(dt: datetime, tz: ZoneInfo) -> str:
+    local = dt.astimezone(tz)
+    return f"{WEEKDAY_NAMES[local.weekday()]} {local:%H:%M}"
+
+
+class Schedule(_Model):
+    """A weekly repeating work and sleep pattern, planned from ``anchor_date`` for ``plan_days``."""
+
+    anchor_date: date
+    plan_days: int = Field(14, ge=1, le=28)
+    location: Location = Field(default_factory=Location)
+    shifts: list[Shift] = Field(min_length=1)
+    commute_to_work: Commute
+    commute_home: Commute
+    sleep: SleepWindows
+    rest_days: RestDayPolicy = Field(default_factory=RestDayPolicy)
+
+    @model_validator(mode="after")
+    def _consistent(self) -> Schedule:
+        seen: dict[int, Shift] = {}
+        for shift in self.shifts:
+            if shift.weekday in seen:
+                raise ValueError(
+                    f"two shifts start on {WEEKDAY_NAMES[shift.weekday]}; "
+                    "v0.1 allows one shift per weekday"
+                )
+            seen[shift.weekday] = shift
+        if self.rest_days.mode == "split" and self.sleep.rest_day_second is None:
+            raise ValueError("rest-day policy 'split' needs sleep.rest_day_second")
+        problems = self._conflicts()
+        if problems:
+            raise ValueError("schedule conflicts: " + "; ".join(problems[:3]))
+        return self
+
+    @property
+    def rest_weekdays(self) -> list[int]:
+        worked = {s.weekday for s in self.shifts}
+        return [d for d in range(7) if d not in worked]
+
+    def window_utc(
+        self, start: date | None = None, days: int | None = None
+    ) -> tuple[datetime, datetime]:
+        """UTC bounds of the local days ``[start, start + days)``."""
+        first = start or self.anchor_date
+        tz = self.location.tz
+        begin = _local(first, time(0), tz)
+        end = _local(first + timedelta(days=days or self.plan_days), time(0), tz)
+        return begin.astimezone(UTC), end.astimezone(UTC)
+
+    def materialize(self, start: date | None = None, days: int | None = None) -> list[Interval]:
+        """Shifts, commutes and sleeps as UTC intervals, clipped to the requested local days."""
+        first = start or self.anchor_date
+        span = days or self.plan_days
+        begin, end = self.window_utc(first, span)
+        clipped: list[Interval] = []
+        built, _ = self._build(first - timedelta(days=1), span + 2)
+        for iv in built:
+            s, e = max(iv.start, begin), min(iv.end, end)
+            if s < e:
+                clipped.append(Interval(s, e, iv.kind, iv.label))
+        return clipped
+
+    def _build(self, first: date, days: int) -> tuple[list[Interval], list[str]]:
+        """Intervals for ``days`` local days from ``first``, and any conflicts found."""
+        tz = self.location.tz
+        by_day = {s.weekday: s for s in self.shifts}
+        work: list[Interval] = []
+        problems: list[str] = []
+        for offset in range(days):
+            d = first + timedelta(days=offset)
+            shift = by_day.get(d.weekday())
+            if shift is None:
+                continue
+            name = f"{WEEKDAY_NAMES[shift.weekday]} shift"
+            s = _local(d, shift.start, tz)
+            e = s + timedelta(minutes=shift.duration_min)
+            work.append(
+                Interval(
+                    s.astimezone(UTC),
+                    e.astimezone(UTC),
+                    "shift",
+                    f"{name} ({shift.start:%H:%M} to {shift.end:%H:%M})",
+                )
+            )
+            to_work = timedelta(minutes=self.commute_to_work.duration_min)
+            home = timedelta(minutes=self.commute_home.duration_min)
+            if to_work:
+                work.append(
+                    Interval(
+                        (s - to_work).astimezone(UTC),
+                        s.astimezone(UTC),
+                        "commute_to_work",
+                        f"commute to the {name}",
+                    )
+                )
+            if home:
+                work.append(
+                    Interval(
+                        e.astimezone(UTC),
+                        (e + home).astimezone(UTC),
+                        "commute_home",
+                        f"commute home from the {name}",
+                    )
+                )
+            window = self.sleep.for_shift(shift.weekday)
+            local_end = e.astimezone(tz)
+            sleep_start = _local(local_end.date(), window.start, tz)
+            if sleep_start < local_end:
+                sleep_start += timedelta(days=1)
+            arrive = local_end + home
+            if sleep_start < arrive:
+                problems.append(
+                    f"the sleep after the {name} starts at {_hm(sleep_start, tz)}, "
+                    f"before you get home at {_hm(arrive, tz)}"
+                )
+            elif sleep_start - arrive > timedelta(hours=12):
+                problems.append(
+                    f"the sleep after the {name} would start "
+                    f"{(sleep_start - arrive) / timedelta(hours=1):.0f} h after you get "
+                    "home; check the after-shift sleep window"
+                )
+            sleep_end = sleep_start + timedelta(minutes=window.duration_min)
+            work.append(
+                Interval(
+                    sleep_start.astimezone(UTC),
+                    sleep_end.astimezone(UTC),
+                    "sleep",
+                    f"sleep after the {name} ({window.start:%H:%M} to {window.end:%H:%M})",
+                )
+            )
+        work.sort(key=lambda iv: (iv.start, iv.end))
+        for i, a in enumerate(work):
+            for b in work[i + 1 :]:
+                if b.start >= a.end:
+                    break
+                problems.append(f"{a.label} overlaps {b.label} on {_hm(max(a.start, b.start), tz)}")
+        intervals = list(work)
+        rest = self._rest_windows()
+        for offset in range(days):
+            d = first + timedelta(days=offset)
+            if d.weekday() in by_day:
+                continue
+            for window in rest:
+                s = _local(d, window.start, tz)
+                e = s + timedelta(minutes=window.duration_min)
+                candidate = Interval(
+                    s.astimezone(UTC),
+                    e.astimezone(UTC),
+                    "rest_sleep",
+                    f"rest-day sleep ({window.start:%H:%M} to {window.end:%H:%M})",
+                )
+                if not any(candidate.overlaps(iv) for iv in intervals):
+                    intervals.append(candidate)
+        intervals.sort(key=lambda iv: (iv.start, iv.end))
+        return intervals, list(dict.fromkeys(problems))
+
+    def _rest_windows(self) -> list[SleepWindow]:
+        if self.rest_days.mode == "keep_nights":
+            return [self.sleep.after_shift]
+        windows = [self.sleep.rest_day]
+        if self.rest_days.mode == "split" and self.sleep.rest_day_second is not None:
+            windows.append(self.sleep.rest_day_second)
+        return windows
+
+    def _conflicts(self) -> list[str]:
+        """Conflicts over two weeks, which covers every pair of weekdays in the pattern."""
+        _, problems = self._build(self.anchor_date, 14)
+        return problems
