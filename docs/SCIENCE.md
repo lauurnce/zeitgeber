@@ -310,7 +310,14 @@ The models in section 1 accept photopic lux. The circadian system is most sensit
 | Sleep in a dark room | 1 lux | design; Burgess and Molina minimized to about 3 lux [3.6] |
 | Outdoors at night, street | 10 lux | UNVERIFIED |
 
-Every constant is a named parameter. The sensitivity test in Z7 scales each by 0.3 and 3 and reports whether the plan changes.
+How the constants are applied (design, implemented in `zeitgeber/light.py`):
+
+- A commute's outdoor share is split half at the start and half at the end (walking to and from transport); the rest is transit.
+- Outdoors uses 10,000 lux and transit 1,000 lux only between sunrise and sunset; before sunrise and after sunset both use the 10 lux night value. Civil twilight counts as dark.
+- Sunglasses apply to the whole commute home while the sun is up (rule R2).
+- Minutes of phone use before a sleep window replace home light only, never a shift or a commute.
+
+Every constant is a named parameter. The sensitivity test in Z8 scales each by 0.3 and 3 and reports whether the plan changes.
 
 ### 3.6 Limitations
 
@@ -635,7 +642,7 @@ Civil twilight (dawn and dusk) is the time when the sun's center is 6 degrees be
 
 ### 9.3 Library
 
-Zeitgeber v0.1 uses the `astral` Python package, version 3.2 (design). It implements the same Meeus-based approach and exposes `sun(observer, date, tzinfo)` returning dawn, sunrise, noon, sunset and dusk. Its license is reported as Apache License 2.0 on PyPI (UNVERIFIED here). The Z7 tests compare its output for Manila against the NOAA calculator on four dates within 2 minutes (design tolerance). If the dependency becomes a problem, the NOAA equations are small enough to implement directly.
+Zeitgeber v0.1 uses the `astral` Python package, version 3.2 (design). It implements the same Meeus-based approach and exposes `sun(observer, date, tzinfo)` returning dawn, sunrise, noon, sunset and dusk. Its license is Apache License 2.0 (PyPI metadata for 3.2). The tests compare its output for Manila with the U.S. Naval Observatory one-day tables for 2026-03-21 and 2026-12-21 within 2 minutes (design tolerance); sunrise, sunset and civil twilight all agree within 1 minute [9.4]. If the dependency becomes a problem, the NOAA equations are small enough to implement directly.
 
 ### 9.4 Manila reference values
 
@@ -663,3 +670,4 @@ Sunrise moves between about 05:28 and 06:21 and sunset between about 17:25 and 1
 - [9.1] NOAA Global Monitoring Laboratory. Solar Calculator: Calculation Details. https://gml.noaa.gov/grad/solcalc/calcdetails.html (read 2026-11-09)
 - [9.2] Meeus J (1998). Astronomical Algorithms, 2nd edition. Willmann-Bell. (book; not accessed, cited as NOAA's stated source)
 - [9.3] astral, Python package, version 3.2. https://pypi.org/project/astral/
+- [9.4] U.S. Naval Observatory, Astronomical Applications Department. Sun and Moon Data for One Day, Manila (14.5995 N, 120.9842 E, UTC+8), 2026-03-21 and 2026-12-21. https://aa.usno.navy.mil/data/RS_OneDay (queried 2026-11-09)
