@@ -15,8 +15,8 @@ from astral.sun import sun
 from numpy.typing import NDArray
 from pydantic import BaseModel, ConfigDict, Field
 
-from zeitgeber.grid import TimeGrid
-from zeitgeber.schedule import Location
+from zeitgeber.grid import REQUEST_STEP_H, TimeGrid
+from zeitgeber.schedule import Location, Schedule
 
 
 class LuxConstants(BaseModel):
@@ -69,3 +69,87 @@ def sun_up(location: Location, grid: TimeGrid) -> NDArray[np.bool_]:
         out |= grid.mask(times.sunrise, times.sunset)
         day += timedelta(days=1)
     return out
+
+
+# Environment codes stored with every sample, used by the timeline and the explanations.
+HOME, OFFICE, COMMUTE_OUTDOOR, COMMUTE_TRANSIT, SLEEP, PRE_SLEEP_DIM = range(6)
+LABELS = {
+    HOME: "home",
+    OFFICE: "office",
+    COMMUTE_OUTDOOR: "commute, outdoors",
+    COMMUTE_TRANSIT: "commute, in transit",
+    SLEEP: "sleep",
+    PRE_SLEEP_DIM: "phone in bed",
+}
+
+
+class LightInterventions(BaseModel):
+    """Interventions that change the light profile. More arrive with the planner (Z9)."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    sunglasses: str = Field("none", pattern="^(none|cat3|dark)$")
+
+
+@dataclass(frozen=True)
+class LightProfile:
+    """Lux at the eye and the environment code for every sample of ``grid``."""
+
+    grid: TimeGrid
+    lux: NDArray[np.float64]
+    labels: NDArray[np.int8]
+
+
+def build_light_profile(
+    schedule: Schedule,
+    start: date | None = None,
+    days: int | None = None,
+    step_h: float = REQUEST_STEP_H,
+    interventions: LightInterventions | None = None,
+    constants: LuxConstants | None = None,
+) -> LightProfile:
+    """Lux over ``days`` local days from ``start`` (defaults: the schedule's plan window).
+
+    Awake time at home is indoor light; shifts are office light; sleep is dark; the minutes of
+    phone use before each sleep are dim. Commutes put the outdoor share half at the start and half
+    at the end (walking to and from transport) and the rest in transit. Outdoors means
+    ``outdoor_sun`` and transit means ``shade_or_vehicle`` while the sun is up, and
+    ``night_street`` for both after sunset. Sunglasses scale the commute home while the sun is up
+    (rule R2, docs/SCIENCE.md 5.4).
+    """
+    k = constants or LuxConstants()
+    chosen = interventions or LightInterventions()
+    grid = TimeGrid.covering(*schedule.window_utc(start, days), step_h=step_h)
+    daylight = sun_up(schedule.location, grid)
+    lux = np.full(grid.n, k.home, dtype=np.float64)
+    labels = np.full(grid.n, HOME, dtype=np.int8)
+    intervals = schedule.materialize(start, days)
+    dim = timedelta(minutes=schedule.sleep.phone_in_bed_min)
+
+    for iv in intervals:
+        if iv.kind in ("sleep", "rest_sleep") and dim:
+            m = grid.mask(iv.start - dim, iv.start) & (labels == HOME)
+            lux[m], labels[m] = k.home_dim_phone, PRE_SLEEP_DIM
+    for iv in intervals:
+        m = grid.mask(iv.start, iv.end)
+        if iv.kind == "shift":
+            lux[m], labels[m] = k.office, OFFICE
+        elif iv.kind in ("sleep", "rest_sleep"):
+            lux[m], labels[m] = k.sleep, SLEEP
+        else:
+            commute = (
+                schedule.commute_home if iv.kind == "commute_home" else schedule.commute_to_work
+            )
+            first = timedelta(minutes=commute.outdoor_min // 2)
+            last = timedelta(minutes=commute.outdoor_min - commute.outdoor_min // 2)
+            outdoor = grid.mask(iv.start, iv.start + first) | grid.mask(iv.end - last, iv.end)
+            outdoor &= m
+            transit = m & ~outdoor
+            lux[outdoor] = np.where(daylight[outdoor], k.outdoor_sun, k.night_street)
+            lux[transit] = np.where(daylight[transit], k.shade_or_vehicle, k.night_street)
+            labels[outdoor], labels[transit] = COMMUTE_OUTDOOR, COMMUTE_TRANSIT
+            if iv.kind == "commute_home":
+                shaded = m & daylight
+                lux[shaded] *= k.sunglasses[chosen.sunglasses]
+    np.minimum(lux, k.max_lux, out=lux)
+    return LightProfile(grid, lux, labels)
