@@ -1,5 +1,5 @@
 {
-  "description": "Weekly rotation inside one week: mornings Monday and Tuesday, mid shifts Wednesday and Thursday, nights Friday and Saturday, rest on Sunday. v0.1 models weekly repeating patterns only (docs/DECISIONS.md D9).",
+  "description": "Weekly rotation inside one week: mornings Monday and Tuesday, mid shifts Wednesday and Thursday, nights Friday and Saturday, rest on Sunday. Sleep after each shift type differs. v0.1 models weekly repeating patterns only (docs/DECISIONS.md D9).",
   "anchor_date": "2026-11-16",
   "plan_days": 14,
   "location": {"name": "Manila", "latitude": 14.5995, "longitude": 120.9842, "timezone": "Asia/Manila"},
@@ -11,14 +11,18 @@
     {"weekday": 4, "start": "22:00", "end": "07:00"},
     {"weekday": 5, "start": "22:00", "end": "07:00"}
   ],
-  "commute_to_work": {"duration_min": 60, "outdoor_min": 20, "mode": "train"},
-  "commute_home": {"duration_min": 60, "outdoor_min": 20, "mode": "train"},
+  "commute_to_work": {"duration_min": 60, "outdoor_share": 0.333, "mode": "train"},
+  "commute_home": {"duration_min": 60, "outdoor_share": 0.333, "mode": "train"},
   "sleep": {
-    "workday_sleep_start": "23:30",
-    "workday_sleep_end": "05:00",
-    "restday_sleep_start": "00:00",
-    "restday_sleep_end": "08:00",
+    "after_shift": {"start": "09:00", "end": "15:00"},
+    "after_shift_by_weekday": {
+      "0": {"start": "21:30", "end": "05:00"},
+      "1": {"start": "21:30", "end": "05:00"},
+      "2": {"start": "00:30", "end": "08:30"},
+      "3": {"start": "00:30", "end": "08:30"}
+    },
+    "rest_day": {"start": "22:00", "end": "04:30"},
     "phone_in_bed_min": 15
   },
-  "rest_days": {"weekdays": [6], "keep_night_schedule": false}
+  "rest_days": {"mode": "flip_to_days"}
 }
