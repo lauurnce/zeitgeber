@@ -24,7 +24,7 @@ REQUIRED = {
 @pytest.mark.parametrize("name", ["permanent_nights", "rotating", "day_worker"])
 def test_fixture_has_required_fields(name: str) -> None:
     data = json.loads((FIXTURES / f"{name}.json").read_text(encoding="utf-8"))
-    assert REQUIRED <= data.keys()
+    assert data.keys() >= REQUIRED
     weekdays = [shift["weekday"] for shift in data["shifts"]]
     assert len(weekdays) == len(set(weekdays))
     assert not set(weekdays) & set(data["rest_days"]["weekdays"])
