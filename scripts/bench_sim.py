@@ -94,15 +94,25 @@ def rk4_batch(model, time_h: np.ndarray, state0: np.ndarray, light: np.ndarray) 
     return sol
 
 
+def row(*cells: str) -> None:
+    """Print one Markdown table row; missing trailing cells print as empty."""
+    padded = [*cells, *([""] * (5 - len(cells)))]
+    print("| " + " | ".join(padded) + " |")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--candidates", type=int, default=200)
-    parser.add_argument("--minute-candidates", type=int, default=10,
-                        help="candidates to run one at a time at the 1 min step (extrapolated)")
+    parser.add_argument(
+        "--minute-candidates",
+        type=int,
+        default=10,
+        help="candidates to run one at a time at the 1 min step (extrapolated)",
+    )
     args = parser.parse_args()
 
     t0 = time.perf_counter()
-    from circadian.models import Forger99, Hannay19  # noqa: E402
+    from circadian.models import Forger99, Hannay19
 
     import_s = time.perf_counter() - t0
 
@@ -116,8 +126,8 @@ def main() -> int:
     n = len(cands)
     results: dict[str, float] = {}
 
-    for model_name, Model in (("Forger99", Forger99), ("Hannay19", Hannay19)):
-        model = Model()
+    for model_name, model_cls in (("Forger99", Forger99), ("Hannay19", Hannay19)):
+        model = model_cls()
         for dt in (0.1, 1.0 / 60.0):
             label = "0.1" if dt == 0.1 else "1/60"
             time_burn = np.arange(0.0, 14 * HOURS_PER_DAY, dt)
@@ -127,9 +137,14 @@ def main() -> int:
             t0 = time.perf_counter()
             state = model.equilibrate(time_burn, base, num_loops=3)
             traj = model.integrate(time_burn, state, base)
-            cbt = model.cbt(traj)
+            model.cbt(traj)
             one_s = time.perf_counter() - t0
-            print(f"| {model_name} | {label} | one schedule: 3 burn-in loops + 14 days + markers | {one_s:.2f} s | |")
+            row(
+                model_name,
+                label,
+                "one schedule: 3 burn-in loops + 14 days + markers",
+                f"{one_s:.2f} s",
+            )
 
             # candidates one at a time with the package loop
             k = n if dt == 0.1 else min(args.minute_candidates, n)
@@ -141,7 +156,8 @@ def main() -> int:
             loop_s = time.perf_counter() - t0
             per = loop_s / k
             note = "" if k == n else f" (measured {k}, extrapolated to {n})"
-            print(f"| {model_name} | {label} | {n} candidates, package integrate loop{note} | {per * n:.1f} s | {per * 1000:.0f} ms |")
+            what = f"{n} candidates, package integrate loop{note}"
+            row(model_name, label, what, f"{per * n:.1f} s", f"{per * 1000:.0f} ms")
             results[f"{model_name} {label} loop"] = per * n
 
             # all candidates in one batched RK4 pass
@@ -151,22 +167,29 @@ def main() -> int:
             sol = rk4_batch(model, time_burn, state_batch, lux_batch)
             batch_s = time.perf_counter() - t0
             t0 = time.perf_counter()
-            from scipy.signal import find_peaks  # noqa: E402
+            from scipy.signal import find_peaks
 
             x_idx = 0 if model_name == "Forger99" else 1
             for j in range(n):
                 series = sol[:, x_idx, j] if model_name == "Forger99" else np.cos(sol[:, x_idx, j])
                 find_peaks(-series, distance=int(np.ceil(13.0 / dt)))
             markers_s = time.perf_counter() - t0
-            print(f"| {model_name} | {label} | {n} candidates, batched RK4 on package derv | {batch_s:.2f} s | {batch_s / n * 1000:.1f} ms |")
-            print(f"| {model_name} | {label} | {n} candidates, marker extraction | {markers_s:.2f} s | {markers_s / n * 1000:.1f} ms |")
+            what = f"{n} candidates, batched RK4 on package derv"
+            row(model_name, label, what, f"{batch_s:.2f} s", f"{batch_s / n * 1000:.1f} ms")
+            what = f"{n} candidates, marker extraction"
+            row(model_name, label, what, f"{markers_s:.2f} s", f"{markers_s / n * 1000:.1f} ms")
             results[f"{model_name} {label} batch"] = batch_s
 
             # parity between the two loops on the first candidate
             lux0 = light_profile(dt, 14, **cands[0])
             ref = model.integrate(time_burn, state, lux0).states
             diff = float(np.max(np.abs(ref - sol[:, :, 0])))
-            print(f"| {model_name} | {label} | max abs state difference, package loop vs batched | {diff:.1e} | |")
+            row(
+                model_name,
+                label,
+                "max abs state difference, package loop vs batched",
+                f"{diff:.1e}",
+            )
 
     print()
     print("steps per 14 days: 0.1 h step = 3360; 1 min step = 20160")
