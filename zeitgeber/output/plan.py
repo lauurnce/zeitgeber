@@ -18,7 +18,7 @@ from pydantic import BaseModel, ConfigDict
 
 from zeitgeber.light import solar_times
 from zeitgeber.output.copy import LANGS, Lang, clock, day_label, text
-from zeitgeber.plan import BRAKE_MIN, PlanResult
+from zeitgeber.plan import BRAKE_MIN, MIN_WORKDAY_SLEEP_H, PlanResult
 from zeitgeber.schedule import Interval, Schedule
 from zeitgeber.score import ScoreBreakdown
 
@@ -156,7 +156,12 @@ class PlanDocument(_Model):
 
 
 def both(key: str, **values: object) -> Text:
-    return Text(**{lang: text(key, lang, **values) for lang in LANGS})
+    """A catalog string in both languages; a :class:`Text` value is filled per language."""
+
+    def fill(lang: Lang) -> dict[str, object]:
+        return {k: v.get(lang) if isinstance(v, Text) else v for k, v in values.items()}
+
+    return Text(**{lang: text(key, lang, **fill(lang)) for lang in LANGS})
 
 
 def _r(x: float | None, nd: int = 3) -> float | None:
@@ -298,19 +303,18 @@ def _recommendations(result: PlanResult, events: Sequence[PlanEvent]) -> list[Re
 def _explanations(result: PlanResult) -> list[Explanation]:
     out = []
     for e in result.explanations:
-        change = {lang: text(f"change.{e.intervention}", lang) for lang in LANGS}
+        change = both(f"change.{e.intervention}")
+        values = {"with": f"{e.score_with_h:.1f}", "without": f"{e.score_without_h or 0:.1f}"}
         if e.score_without_h is None:
-            words = Text(
-                **{lang: text("explain.needed", lang, change=change[lang]) for lang in LANGS}
-            )
+            words = both("explain.needed", change=change)
+        elif e.score_without_h < e.score_with_h:
+            if e.intervention == "sleep_len_h":
+                hours = f"{MIN_WORKDAY_SLEEP_H:g}"
+                words = both("explain.sleep_floor", change=change, hours=hours, **values)
+            else:
+                words = both("explain.cost", change=change, **values)
         else:
-            values = {"with": f"{e.score_with_h:.1f}", "without": f"{e.score_without_h:.1f}"}
-            words = Text(
-                **{
-                    lang: text("explain.score", lang, change=change[lang], **values)
-                    for lang in LANGS
-                }
-            )
+            words = both("explain.score", change=change, **values)
         out.append(
             Explanation(
                 intervention=e.intervention,

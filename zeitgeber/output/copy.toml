@@ -207,6 +207,16 @@ where = "explanation"
 en = "{change}: without it, the misalignment score goes from {with} h to {without} h."
 tl = "{change}: kung wala ito, ang misalignment score ay magiging {without} h mula {with} h."
 
+[strings."explain.cost"]
+where = "explanation, when the change on its own raises the score"
+en = "{change}: on its own this raises the misalignment score from {without} h to {with} h, but the plan as a whole works better with it."
+tl = "{change}: kung ito lang, tumataas ang misalignment score mula {without} h hanggang {with} h, pero mas maayos ang buong plan kapag kasama ito."
+
+[strings."explain.sleep_floor"]
+where = "explanation, when a longer day sleep raises the score"
+en = "{change}: a shorter sleep would score {without} h instead of {with} h, but the plan keeps at least {hours} hours of sleep."
+tl = "{change}: mas mababa sana ang score sa mas maikling tulog ({without} h imbes na {with} h), pero sinisigurado ng plan na may {hours} oras ka man lang na tulog."
+
 [strings."explain.needed"]
 where = "explanation, when the plan does not work without the change"
 en = "{change}: the rest of the plan does not fit without it."
