@@ -241,7 +241,7 @@ def _events(result: PlanResult) -> list[PlanEvent]:
         out.append(
             PlanEvent(
                 id=event_id,
-                kind=kind,  # type: ignore[arg-type]
+                kind=kind,
                 start_utc=_minute(s),
                 end_utc=_minute(e),
                 start_local=s_loc,
