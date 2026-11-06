@@ -1,0 +1,43 @@
+# Install with `make setup`. Hooks call the project's own pinned tools through uv and pnpm.
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # v6.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff check
+        entry: uv run ruff check
+        language: system
+        types_or: [python, pyi]
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format --check
+        language: system
+        types_or: [python, pyi]
+      - id: mypy
+        name: mypy
+        entry: uv run mypy
+        language: system
+        types_or: [python, pyi]
+        pass_filenames: false
+      - id: web-lint
+        name: web eslint
+        entry: pnpm -C web lint
+        language: system
+        files: ^web/
+        pass_filenames: false
+      - id: web-format
+        name: web prettier
+        entry: pnpm -C web format:check
+        language: system
+        files: ^web/
+        pass_filenames: false
