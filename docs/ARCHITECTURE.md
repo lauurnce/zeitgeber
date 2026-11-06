@@ -67,8 +67,15 @@ zeitgeber/
   prc.py        # phase response protocol for the science tests (SCIENCE 4)
   score.py      # misalignment score (SCIENCE 7)
   plan.py       # intervention space, constraints, search, explanations (SCIENCE 5, 6, 7)
-  output.py     # PlanDocument, timeline, .ics, nudges, grounding check, rewriter protocol
-  settings.py   # runtime settings (model, language, llm_wording, provider)
+  output/       # change: a package (section 2.7)
+    copy.toml   # every user-facing string, English and Taglish
+    copy.py     # catalog loader, clock format, copy review table
+    plan.py     # PlanDocument (schema 1.0) and the text timeline
+    nudges.py   # template nudges tied to plan events
+    wording.py  # grounding check, Rewriter protocol, template fallback
+    providers.py  # wording provider adapter (optional)
+    ics.py      # calendar export
+  settings.py   # runtime settings: wording on or off, provider, model
 api/            # FastAPI app and Vercel function entry
 web/            # Next.js planner and landing page
 scripts/        # benchmarks and one-off tools
@@ -313,47 +320,65 @@ Change: the cross-check model runs on the baseline and the final plan only, not 
 
 ### 2.7 zeitgeber/output
 
+Built in Z10. A package with five modules; `zeitgeber/settings.py` holds the wording settings.
+
 ```python
+# output/copy.py: string catalog (copy.toml), clock format, review table
+Lang = Literal["en", "tl"]
+def text(key: str, lang: Lang, **values) -> str
+def clock(t) -> str                          # "2 AM", "9:30 AM"
+def day_label(d: date, lang: Lang) -> str    # "Mon 16 Nov", "Lun 16 Nov"
+def review_markdown() -> str                 # docs/COPY_REVIEW.md
+
+# output/plan.py: plan document, schema 1.0 (docs/schema/plan-1.0.json)
 class PlanEvent(BaseModel):
-    kind: Literal["sleep", "nap", "sunglasses", "light_seek", "light_brake", "caffeine_cutoff", "shift", "commute"]
-    start_utc: datetime; end_utc: datetime
-    start_local: str; end_local: str            # "HH:MM" in the schedule timezone
-    rule_id: str | None
-    text_en: str; text_tl: str
-    numbers: dict[str, float]                   # every number that appears in the texts
-
-class PlanDay(BaseModel):
-    date: date; label: str                      # "Night of Tue to Wed"
-    events: list[PlanEvent]
-    cbt_min_local: str | None; category: str
-
+    id: str                                  # "20261116-0900-sleep"
+    kind: Literal["shift", "commute_to_work", "commute_home", "sleep", "rest_sleep",
+                  "nap", "light_seek", "light_brake", "sunglasses", "caffeine"]
+    start_utc, end_utc, start_local, end_local: datetime
+    title: Text                              # {en, tl}
+    rule_ids: list[str]; recommended: bool; reminder: Reminder | None
 class PlanDocument(BaseModel):
-    version: str; generated_at: datetime; timezone: str; language: Literal["en", "tl"]
-    days: list[PlanDay]
-    score: ScoreBreakdown; baseline_score: ScoreBreakdown
-    explanations: list[Explanation]
-    cross_check_note: str | None
-    disclaimers: list[str]                      # wellness framing, doctor referral
+    schema_version: Literal["1.0"]; plan_id: str; generated_at: datetime
+    timezone: str; start_date: date; days_count: int; seed: int
+    disclaimers: list[Text]; recommendations: list[Recommendation]
+    explanations: list[Explanation]; score: Scores      # baseline, plan, cross-check
+    days: list[PlanDay]; nudges: list[Nudge]
+def build_document(result: PlanResult, generated_at: datetime) -> PlanDocument
+def render_timeline(doc: PlanDocument, lang: Lang = "en") -> str
+def json_schema() -> dict
 
-def render_timeline(doc: PlanDocument) -> list[dict]          # rows for the web timeline
-def render_ics(doc: PlanDocument, alarms: bool = True) -> bytes   # one VEVENT per event, VALARM, TZID
-def render_nudges(doc: PlanDocument, lang: Literal["en", "tl"]) -> list[str]
+# output/nudges.py
+def build_nudges(doc, rewriter: Rewriter | None = None, check=None) -> list[Nudge]
 
-class GroundingCheck:
-    banned_terms: tuple[str, ...]               # melatonin, dose, disorder, treat, cure, diagnose, and translations
-    def numbers_in(self, text: str) -> set[str]
-    def passes(self, text: str, allowed: set[str]) -> bool   # no new numbers or times, no banned term
-
+# output/wording.py
+def tokens(text: str) -> set[str]            # times and numbers, digits or words, en and tl
+class GroundingCheck:                        # banned terms, max growth 1.6x + 40 chars
+    def problems(self, text: str, template: str) -> list[str]
 class Rewriter(Protocol):
-    def rewrite(self, text: str, tone: str, lang: str) -> str
+    def rewrite(self, text: str, lang: Lang) -> str
+def finalize(template, lang, rewriter, check) -> Worded        # falls back to the template
+def finalize_all(items, rewriter, check=None) -> dict          # once per distinct text
 
-class AnthropicRewriter: ...                     # provider adapter; enabled only when settings.llm_wording is true
+# output/providers.py
+class AnthropicRewriter: ...                 # needs the optional extra zeitgeber-core[llm]
+def rewriter_from_settings(settings=None) -> Rewriter | None   # None unless wording is on
 
-def finalize_nudge(template_text: str, allowed_numbers: set[str],
-                   rewriter: Rewriter | None, check: GroundingCheck) -> str   # falls back to the template
+# output/ics.py
+def render_ics(doc, lang="en", alarms=True, include_fixed=True) -> str
+
+# output/__init__.py
+def plan_document(result, generated_at, rewriter=None, check=None) -> PlanDocument
 ```
 
-Change: the grounding check is its own class with the banned-term list, and the language-model provider sits behind a `Rewriter` protocol so the product never names a vendor outside `settings.py`.
+Changes from the Z4 design:
+- Texts carry both languages (`Text`), so the client switches language without a second request; the document has no `language` field.
+- Nudges are part of the document and name their event; the calendar uses a nudge as the event description and reminder text.
+- The grounding check compares a rewording with its own filled template, not with every number in the plan: a time from another day is also rejected (D36).
+- The provider adapter sits in `output/providers.py`; vendor names appear only there and in `settings.py`.
+- The calendar is text (`str`), written with CRLF line endings.
+
+`scripts/plan_outputs.py` writes all outputs for a fixture worker; `scripts/copy_review.py` regenerates docs/COPY_REVIEW.md.
 
 ### 2.8 api/
 
