@@ -135,3 +135,10 @@ Alternatives: exhaustive grid search (tens of thousands of candidates); gradient
 Decision: Z4 is the architecture step on Day 1. The package scaffold and schedule model move to Z5 on Day 2, and Z5 to Z13 map to Days 2 to 10 as in docs/ARCHITECTURE.md section 8, one step per build day.
 Reason: the architecture and benchmark had to come before any package code so that the interfaces and runtime are fixed first.
 Alternatives: keep the scaffold in Z4 and push the architecture into Z5.
+
+## Scaffold
+
+### D26. The scaffold is its own step; schedule and grid code moves to Z6
+Decision: Z5 builds only the empty skeleton (package with docstring modules, API health route, web placeholder, fixtures, tooling, CI). The `schedule` and `grid` implementations move into Z6 alongside the light builder. The API health route is `/v1/health`, as in docs/ARCHITECTURE.md 2.8.
+Reason: the scaffold step was scoped as "no algorithm code"; keeping it free of models lets CI, tooling and fixtures settle before the first real module.
+Alternatives: implement the schedule models in the scaffold step.
