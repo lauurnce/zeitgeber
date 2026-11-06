@@ -18,11 +18,15 @@ api = [
     "fastapi>=0.160",
     "uvicorn>=0.50",
 ]
+llm = [
+    "anthropic>=1.0",
+]
 
 [dependency-groups]
 dev = [
     "httpx>=0.28",
     "hypothesis>=6.170",
+    "icalendar>=7.3.0",
     "mypy>=2.4",
     "pre-commit>=4.7",
     "pytest>=9.2",
