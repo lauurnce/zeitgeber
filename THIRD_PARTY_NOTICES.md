@@ -41,3 +41,11 @@ https://github.com/sffjunkie/astral. Apache License 2.0. Used for sunrise, sunse
 ## pydantic
 
 https://github.com/pydantic/pydantic. MIT License. Used for schedule input models and validation.
+
+## anthropic (optional)
+
+https://github.com/anthropics/anthropic-sdk-python. MIT License. Installed only with the `llm` extra (`zeitgeber-core[llm]`) for the optional nudge rewording, which is off by default.
+
+## icalendar (tests only)
+
+https://github.com/collective/icalendar. BSD 2-Clause License. Used in the test suite to parse the calendar export back.
