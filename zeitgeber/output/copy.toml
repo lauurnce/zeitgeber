@@ -1,0 +1,272 @@
+# Every user-facing string in plan outputs, in English (en) and Taglish (tl).
+# docs/COPY_REVIEW.md is generated from this file (scripts/copy_review.py). Edit here.
+# Placeholders in braces are filled from the plan; en and tl must use the same set.
+# "where" says where the string appears.
+
+[weekdays]
+en = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+tl = ["Lun", "Mar", "Miy", "Huw", "Biy", "Sab", "Lin"]
+
+# Disclaimers: top of the timeline, the JSON plan and the calendar description.
+
+[strings."disclaimer.wellness"]
+where = "disclaimer"
+en = "Zeitgeber is a wellness planning tool, not medical advice."
+tl = "Ang Zeitgeber ay wellness planning tool, hindi medical advice."
+
+[strings."disclaimer.doctor"]
+where = "disclaimer"
+en = "If you have a sleep condition, are pregnant or have a health condition, talk to a doctor before changing your sleep."
+tl = "Kung may problema ka sa tulog, buntis ka, o may health condition, kausapin muna ang doktor bago baguhin ang tulog mo."
+
+[strings."disclaimer.model"]
+where = "disclaimer"
+en = "The times come from a body-clock model. Your body may differ, so adjust a time if it does not suit you."
+tl = "Galing sa body-clock model ang mga oras. Pwedeng iba ang katawan mo, kaya i-adjust ang oras kung hindi bagay sa iyo."
+
+# Event titles: timeline rows and calendar event names.
+
+[strings."event.shift"]
+where = "event title"
+en = "Shift"
+tl = "Shift"
+
+[strings."event.commute_to_work"]
+where = "event title"
+en = "Commute to work"
+tl = "Biyahe papasok"
+
+[strings."event.commute_home"]
+where = "event title"
+en = "Commute home"
+tl = "Biyahe pauwi"
+
+[strings."event.sleep"]
+where = "event title"
+en = "Sleep"
+tl = "Tulog"
+
+[strings."event.rest_sleep"]
+where = "event title"
+en = "Rest-day sleep"
+tl = "Tulog sa rest day"
+
+[strings."event.nap"]
+where = "event title"
+en = "Nap"
+tl = "Idlip"
+
+[strings."event.light_seek"]
+where = "event title"
+en = "Bright light"
+tl = "Maliwanag na pwesto"
+
+[strings."event.light_brake"]
+where = "event title"
+en = "Outdoors after waking"
+tl = "Labas pagkagising"
+
+[strings."event.sunglasses"]
+where = "event title"
+en = "Sunglasses on"
+tl = "Shades on"
+
+[strings."event.caffeine"]
+where = "event title"
+en = "Caffeine OK"
+tl = "Pwede ang kape"
+
+# Nudges: one per plan event, shown in the app and as calendar reminders.
+
+[strings."nudge.sunglasses"]
+where = "nudge"
+en = "Shades on for the ride home, even if it is cloudy. Morning light tells your body it is morning. We want it to stay night for your body until you fall asleep."
+tl = "Shades on pauwi, kahit maulap. Ang liwanag sa umaga ang nagsasabi sa katawan mo na umaga na. Gusto nating gabi pa rin para sa kanya hanggang makatulog ka."
+
+[strings."nudge.caffeine"]
+where = "nudge"
+en = "{end} is your last coffee. Water after that, so you fall asleep more easily when you get home."
+tl = "{end} ang huling kape mo. Tubig na lang pagkatapos, para madali kang makatulog pag-uwi."
+
+[strings."nudge.light_seek"]
+where = "nudge"
+en = "{start} to {end}: stay in the brightest spot you can. This helps move your body clock toward your night schedule."
+tl = "{start} hanggang {end}: dito ka sa pinakamaliwanag na pwesto. Ito ang tumutulong ilipat ang body clock mo papunta sa night schedule."
+
+[strings."nudge.sleep_low"]
+where = "nudge, when the body-clock low falls inside this sleep"
+en = "Lights out by {start}. Blackout curtains on, phone face down. Sleep now, while your body clock is at its lowest."
+tl = "Lights out na by {start}. Sarado ang blackout curtains, nakataob ang phone. Matulog ka na habang pinakamababa ang body clock mo."
+
+[strings."nudge.sleep"]
+where = "nudge, when the body-clock low falls outside this sleep"
+en = "Lights out by {start}. Blackout curtains on, phone face down. A dark room helps you sleep through to {end}."
+tl = "Lights out na by {start}. Sarado ang blackout curtains, nakataob ang phone. Mas tuloy-tuloy ang tulog mo hanggang {end} kapag madilim ang kwarto."
+
+[strings."nudge.rest_sleep"]
+where = "nudge"
+en = "Rest day: sleep from {start} to {end}. A late night keeps your body clock close to your work nights."
+tl = "Rest day: tulog ka mula {start} hanggang {end}. Ang medyo late na tulog ang nagpapanatili sa body clock mo na malapit sa work nights mo."
+
+[strings."nudge.light_brake"]
+where = "nudge"
+en = "Go outside for {minutes} minutes at {start}. Daylight after you wake keeps your body clock from drifting too late."
+tl = "Lumabas ka nang {minutes} minuto sa {start}. Ang liwanag ng araw pagkagising ang pumipigil na masyadong ma-late ang body clock mo."
+
+[strings."nudge.nap"]
+where = "nudge"
+en = "Nap from {start} to {end} before work. Set an alarm and get up when it rings."
+tl = "Idlip muna mula {start} hanggang {end} bago pumasok. Mag-alarm ka at bumangon pagtunog nito."
+
+# Recommendations: the "what to change" list.
+
+[strings."rec.sunglasses.cat3"]
+where = "recommendation"
+en = "Wear dark sunglasses (category 3) on the commute home whenever the sun is up."
+tl = "Mag-shades (category 3) sa biyahe pauwi tuwing may araw."
+
+[strings."rec.sunglasses.dark"]
+where = "recommendation"
+en = "Wear very dark sunglasses on the commute home whenever the sun is up. Only if you are not the one driving."
+tl = "Mag-suot ng napakadilim na shades sa biyahe pauwi tuwing may araw. Para lang ito kung hindi ikaw ang nagmamaneho."
+
+[strings."rec.sleep"]
+where = "recommendation"
+en = "After each night shift, sleep from {start} to {end} in a dark room."
+tl = "Pagkatapos ng bawat night shift, matulog mula {start} hanggang {end} sa madilim na kwarto."
+
+[strings."rec.rest_day"]
+where = "recommendation"
+en = "On rest days, sleep from {start} to {end}."
+tl = "Sa rest days, matulog mula {start} hanggang {end}."
+
+[strings."rec.light_brake"]
+where = "recommendation"
+en = "After day sleep, go outside for {minutes} minutes at {start}."
+tl = "Pagkatapos ng tulog sa araw, lumabas nang {minutes} minuto sa {start}."
+
+[strings."rec.light_seek"]
+where = "recommendation"
+en = "During your shift, stay in the brightest spot you can from {start} to {end}."
+tl = "Habang naka-shift, pumwesto sa pinakamaliwanag na lugar mula {start} hanggang {end}."
+
+[strings."rec.nap"]
+where = "recommendation"
+en = "Nap from {start} to {end} before leaving for work."
+tl = "Umidlip mula {start} hanggang {end} bago umalis papasok."
+
+[strings."rec.caffeine"]
+where = "recommendation"
+en = "Have caffeine only from {start} to {end}, then switch to water."
+tl = "Kape lang mula {start} hanggang {end}, tapos tubig na."
+
+[strings."rec.keep"]
+where = "recommendation, when no change scores better"
+en = "Your current schedule scored as well as any plan we tried. Keep it as it is."
+tl = "Kasing-ayos na ng kahit anong plan na sinubukan namin ang schedule mo ngayon. Ituloy mo lang."
+
+# Explanations: why each change is in the plan.
+
+[strings."change.sunglasses"]
+where = "explanation, name of the change"
+en = "Sunglasses on the way home"
+tl = "Shades pauwi"
+
+[strings."change.sleep_start_offset_h"]
+where = "explanation, name of the change"
+en = "Day sleep start"
+tl = "Simula ng tulog sa araw"
+
+[strings."change.sleep_len_h"]
+where = "explanation, name of the change"
+en = "Day sleep length"
+tl = "Haba ng tulog sa araw"
+
+[strings."change.rest_day"]
+where = "explanation, name of the change"
+en = "Rest-day sleep"
+tl = "Tulog sa rest day"
+
+[strings."change.light_brake"]
+where = "explanation, name of the change"
+en = "Outdoors after waking"
+tl = "Labas pagkagising"
+
+[strings."change.light_seek_start_h"]
+where = "explanation, name of the change"
+en = "Bright light during the shift"
+tl = "Liwanag habang naka-shift"
+
+[strings."change.nap_len_min"]
+where = "explanation, name of the change"
+en = "Pre-shift nap"
+tl = "Idlip bago mag-shift"
+
+[strings."explain.score"]
+where = "explanation"
+en = "{change}: without it, the misalignment score goes from {with} h to {without} h."
+tl = "{change}: kung wala ito, ang misalignment score ay magiging {without} h mula {with} h."
+
+[strings."explain.needed"]
+where = "explanation, when the plan does not work without the change"
+en = "{change}: the rest of the plan does not fit without it."
+tl = "{change}: hindi kakasya ang natitirang plan kung wala ito."
+
+# Timeline: the plain-text daily view.
+
+[strings."timeline.title"]
+where = "timeline"
+en = "Your {days}-day plan from {date}"
+tl = "Ang {days}-day plan mo simula {date}"
+
+[strings."timeline.timezone"]
+where = "timeline"
+en = "All times are {tz} time."
+tl = "Lahat ng oras ay {tz} time."
+
+[strings."timeline.changes"]
+where = "timeline"
+en = "What to change"
+tl = "Mga babaguhin"
+
+[strings."timeline.why"]
+where = "timeline"
+en = "Why"
+tl = "Bakit"
+
+[strings."timeline.score"]
+where = "timeline"
+en = "Misalignment score: {before} h now, {after} h with the plan. Lower is better."
+tl = "Misalignment score: {before} h ngayon, {after} h sa plan. Mas mababa, mas maganda."
+
+[strings."timeline.cross_check"]
+where = "timeline"
+en = "A second body-clock model gives {before} h now and {after} h with the plan."
+tl = "Sa pangalawang body-clock model, {before} h ngayon at {after} h sa plan."
+
+[strings."timeline.days"]
+where = "timeline"
+en = "Day by day"
+tl = "Bawat araw"
+
+[strings."timeline.next_day"]
+where = "timeline, after an end time on the following day"
+en = "next day"
+tl = "kinabukasan"
+
+[strings."timeline.body_clock_low"]
+where = "timeline"
+en = "Body clock lowest around {time}"
+tl = "Pinakamababa ang body clock bandang {time}"
+
+[strings."timeline.changed"]
+where = "timeline, marks a row the plan adds or changes"
+en = "new"
+tl = "bago"
+
+# Calendar export.
+
+[strings."ics.calendar_name"]
+where = "calendar name"
+en = "Zeitgeber plan"
+tl = "Zeitgeber plan"
