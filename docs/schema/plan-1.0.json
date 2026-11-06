@@ -1,0 +1,522 @@
+{
+  "$defs": {
+    "Explanation": {
+      "additionalProperties": false,
+      "properties": {
+        "delta_cbt_day14_h": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Delta Cbt Day14 H"
+        },
+        "delta_cbt_day7_h": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Delta Cbt Day7 H"
+        },
+        "delta_score_h": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Delta Score H"
+        },
+        "intervention": {
+          "title": "Intervention",
+          "type": "string"
+        },
+        "rule_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Rule Ids",
+          "type": "array"
+        },
+        "score_with_h": {
+          "title": "Score With H",
+          "type": "number"
+        },
+        "score_without_h": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Score Without H"
+        },
+        "text": {
+          "$ref": "#/$defs/Text"
+        }
+      },
+      "required": [
+        "intervention",
+        "rule_ids",
+        "score_with_h",
+        "score_without_h",
+        "delta_score_h",
+        "delta_cbt_day7_h",
+        "delta_cbt_day14_h",
+        "text"
+      ],
+      "title": "Explanation",
+      "type": "object"
+    },
+    "Nudge": {
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        },
+        "source": {
+          "additionalProperties": {
+            "enum": [
+              "template",
+              "rewritten",
+              "fallback"
+            ],
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "en",
+              "tl"
+            ]
+          },
+          "title": "Source",
+          "type": "object"
+        },
+        "template": {
+          "title": "Template",
+          "type": "string"
+        },
+        "text": {
+          "$ref": "#/$defs/Text"
+        }
+      },
+      "required": [
+        "event_id",
+        "template",
+        "text",
+        "source"
+      ],
+      "title": "Nudge",
+      "type": "object"
+    },
+    "PlanDay": {
+      "additionalProperties": false,
+      "properties": {
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Category"
+        },
+        "cbt_min_local": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cbt Min Local"
+        },
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "events": {
+          "items": {
+            "$ref": "#/$defs/PlanEvent"
+          },
+          "title": "Events",
+          "type": "array"
+        },
+        "label": {
+          "$ref": "#/$defs/Text"
+        }
+      },
+      "required": [
+        "date",
+        "label",
+        "events",
+        "cbt_min_local",
+        "category"
+      ],
+      "title": "PlanDay",
+      "type": "object"
+    },
+    "PlanEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "end_local": {
+          "format": "date-time",
+          "title": "End Local",
+          "type": "string"
+        },
+        "end_utc": {
+          "format": "date-time",
+          "title": "End Utc",
+          "type": "string"
+        },
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "shift",
+            "commute_to_work",
+            "commute_home",
+            "sleep",
+            "rest_sleep",
+            "nap",
+            "light_seek",
+            "light_brake",
+            "sunglasses",
+            "caffeine"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "recommended": {
+          "title": "Recommended",
+          "type": "boolean"
+        },
+        "reminder": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Reminder"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rule_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Rule Ids",
+          "type": "array"
+        },
+        "start_local": {
+          "format": "date-time",
+          "title": "Start Local",
+          "type": "string"
+        },
+        "start_utc": {
+          "format": "date-time",
+          "title": "Start Utc",
+          "type": "string"
+        },
+        "title": {
+          "$ref": "#/$defs/Text"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "start_utc",
+        "end_utc",
+        "start_local",
+        "end_local",
+        "title",
+        "rule_ids",
+        "recommended",
+        "reminder"
+      ],
+      "title": "PlanEvent",
+      "type": "object"
+    },
+    "Recommendation": {
+      "additionalProperties": false,
+      "properties": {
+        "intervention": {
+          "title": "Intervention",
+          "type": "string"
+        },
+        "rule_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Rule Ids",
+          "type": "array"
+        },
+        "text": {
+          "$ref": "#/$defs/Text"
+        }
+      },
+      "required": [
+        "intervention",
+        "rule_ids",
+        "text"
+      ],
+      "title": "Recommendation",
+      "type": "object"
+    },
+    "Reminder": {
+      "additionalProperties": false,
+      "properties": {
+        "minutes_before": {
+          "title": "Minutes Before",
+          "type": "integer"
+        },
+        "related": {
+          "default": "start",
+          "enum": [
+            "start",
+            "end"
+          ],
+          "title": "Related",
+          "type": "string"
+        }
+      },
+      "required": [
+        "minutes_before"
+      ],
+      "title": "Reminder",
+      "type": "object"
+    },
+    "ScoreSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "flagged_days": {
+          "title": "Flagged Days",
+          "type": "integer"
+        },
+        "lam": {
+          "title": "Lam",
+          "type": "number"
+        },
+        "modal_category": {
+          "title": "Modal Category",
+          "type": "string"
+        },
+        "phase_angle_h": {
+          "title": "Phase Angle H",
+          "type": "number"
+        },
+        "sleep_in_night_frac": {
+          "title": "Sleep In Night Frac",
+          "type": "number"
+        },
+        "social_jetlag_h": {
+          "title": "Social Jetlag H",
+          "type": "number"
+        },
+        "total_h": {
+          "title": "Total H",
+          "type": "number"
+        },
+        "work_in_low_h": {
+          "title": "Work In Low H",
+          "type": "number"
+        }
+      },
+      "required": [
+        "total_h",
+        "phase_angle_h",
+        "work_in_low_h",
+        "sleep_in_night_frac",
+        "social_jetlag_h",
+        "modal_category",
+        "flagged_days",
+        "lam"
+      ],
+      "title": "ScoreSummary",
+      "type": "object"
+    },
+    "Scores": {
+      "additionalProperties": false,
+      "properties": {
+        "baseline": {
+          "$ref": "#/$defs/ScoreSummary"
+        },
+        "cross_check_baseline": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScoreSummary"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cross_check_model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cross Check Model"
+        },
+        "cross_check_plan": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScoreSummary"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "model": {
+          "title": "Model",
+          "type": "string"
+        },
+        "plan": {
+          "$ref": "#/$defs/ScoreSummary"
+        }
+      },
+      "required": [
+        "model",
+        "baseline",
+        "plan",
+        "cross_check_model",
+        "cross_check_baseline",
+        "cross_check_plan"
+      ],
+      "title": "Scores",
+      "type": "object"
+    },
+    "Text": {
+      "additionalProperties": false,
+      "properties": {
+        "en": {
+          "title": "En",
+          "type": "string"
+        },
+        "tl": {
+          "title": "Tl",
+          "type": "string"
+        }
+      },
+      "required": [
+        "en",
+        "tl"
+      ],
+      "title": "Text",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "days": {
+      "items": {
+        "$ref": "#/$defs/PlanDay"
+      },
+      "title": "Days",
+      "type": "array"
+    },
+    "days_count": {
+      "title": "Days Count",
+      "type": "integer"
+    },
+    "disclaimers": {
+      "items": {
+        "$ref": "#/$defs/Text"
+      },
+      "title": "Disclaimers",
+      "type": "array"
+    },
+    "explanations": {
+      "items": {
+        "$ref": "#/$defs/Explanation"
+      },
+      "title": "Explanations",
+      "type": "array"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "nudges": {
+      "items": {
+        "$ref": "#/$defs/Nudge"
+      },
+      "title": "Nudges",
+      "type": "array"
+    },
+    "plan_id": {
+      "title": "Plan Id",
+      "type": "string"
+    },
+    "recommendations": {
+      "items": {
+        "$ref": "#/$defs/Recommendation"
+      },
+      "title": "Recommendations",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "score": {
+      "$ref": "#/$defs/Scores"
+    },
+    "seed": {
+      "title": "Seed",
+      "type": "integer"
+    },
+    "start_date": {
+      "format": "date",
+      "title": "Start Date",
+      "type": "string"
+    },
+    "timezone": {
+      "title": "Timezone",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "plan_id",
+    "generated_at",
+    "timezone",
+    "start_date",
+    "days_count",
+    "seed",
+    "disclaimers",
+    "recommendations",
+    "explanations",
+    "score",
+    "days",
+    "nudges"
+  ],
+  "title": "PlanDocument",
+  "type": "object"
+}
