@@ -200,15 +200,17 @@ def _events(result: PlanResult) -> list[PlanEvent]:
     caffeine_rules = ["C1", "C2", "C3"] if result.config.slow_caffeine else ["C1", "C3"]
 
     found: list[tuple[str, datetime, datetime, list[str], bool]] = []
-    raw = schedule.materialize(schedule.anchor_date - timedelta(days=1), schedule.plan_days + 2)
-    for iv in raw:
-        if iv.kind == "sleep":
-            found.append(
-                ("sleep", iv.start, iv.end, ["R3"] if sleep_changed else [], sleep_changed)
-            )
-        elif iv.kind == "rest_sleep":
-            changed = c.rest_day != "current"
-            found.append(("rest_sleep", iv.start, iv.end, ["R4"] if changed else [], changed))
+    first, span = schedule.anchor_date - timedelta(days=1), schedule.plan_days + 2
+    current = {
+        (iv.kind, iv.start, iv.end) for iv in result.baseline.plan.schedule.materialize(first, span)
+    }
+    for iv in schedule.materialize(first, span):
+        if iv.kind in ("sleep", "rest_sleep"):
+            # A sleep is a recommendation only when the plan moved or resized it.
+            asked = sleep_changed if iv.kind == "sleep" else c.rest_day != "current"
+            changed = asked and (iv.kind, iv.start, iv.end) not in current
+            rule = "R3" if iv.kind == "sleep" else "R4"
+            found.append((iv.kind, iv.start, iv.end, [rule] if changed else [], changed))
         else:
             found.append((iv.kind, iv.start, iv.end, [], False))
         if iv.kind == "commute_home" and c.sunglasses != "none" and _sun_up_during(schedule, iv):
