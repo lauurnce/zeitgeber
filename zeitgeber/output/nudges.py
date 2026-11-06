@@ -39,6 +39,8 @@ def build_nudges(
     for event in doc.events():
         if event.kind not in NUDGE_KINDS:
             continue
+        if event.kind == "rest_sleep" and not event.recommended:
+            continue  # the rest-day nudge speaks for the late window (R4), not any rest sleep
         key, values = template_for(event, lows)
         drafts.append((event, key, {lang: text(key, lang, **values) for lang in LANGS}))
     worded = finalize_all(
