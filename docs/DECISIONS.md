@@ -188,3 +188,25 @@ Alternatives: apply sleep timing to every shift type; hard 7 h minimum; offer ke
 Decision: the "plan beats the current schedule" test is strict for the permanent nights worker and an expected failure, with the reason, for the rotating worker and the day worker. Separate tests pin what the planner does for those two: nothing for the day worker; for the rotating worker, 7 h sleep after nights at a cost under 0.05 h of score.
 Reason: an exhaustive check of 360 candidates found no plan with at least 7 h after night shifts that lowers the rotating worker's score; the modelled clock stays day-oriented through two nights a week. The day worker is a control. Loosening R3 or the score to pass the test would hide that.
 Alternatives: relax R3 for short runs of nights; score rotations against a day-oriented target.
+
+## Outputs
+
+### D35. Plan document and calendar as built
+Decision: the plan document (schema 1.0, docs/schema/plan-1.0.json) carries every text in English and Taglish and includes the nudges. An event is marked as a recommendation when the plan adds it (sunglasses, light blocks, nap, caffeine window) or moves a sleep compared with the worker's current schedule. Sunglasses events cover commutes home with the sun up at any point. Reminder lead times: 30 min before sleep and rest-day sleep, 10 min before a nap, at the start of light blocks and the commute home, and 30 min before the end of the caffeine window. The calendar uses `TZID=Asia/Manila` with a fixed-offset VTIMEZONE, falls back to UTC times for a zone whose offset changes during the plan, marks plan blocks as free time, and keeps UIDs stable for a given plan.
+Reason: one document serves the web, the API and the calendar without a second request per language. Marking sleeps by comparison avoids calling an unchanged sleep "new". Lead times are design values (UNVERIFIED as behavior aids). Stable UIDs let a re-import update events instead of duplicating them.
+Alternatives: one document per language; mark every sleep as new when any sleep parameter changes; reminders for shifts and commutes; a full VTIMEZONE built from the tz database.
+
+### D36. Grounding check for optional rewording
+Decision: a rewording is accepted only when (1) every time and number in it, written as digits, 12 h or 24 h clock, or as an English, Tagalog or Spanish-derived number word including the Tagalog linker form, also appears in the filled template it rewrites; (2) it contains no term from the blocklist (English medical terms and Tagalog equivalents, docs/COPY_REVIEW.md); (3) it is at most 1.6 times the template length plus 40 characters. Any failure or provider error keeps the template. Each distinct text is sent once, in parallel. The provider sees one filled template and the language, never the schedule. Rewording is off unless `ZEITGEBER_LLM_WORDING` is set; the default model is `claude-opus-5-5` at low effort, and a refusal keeps the template rather than retrying on a second model.
+Reason: comparing against the nudge's own template rejects a correct time from the wrong day; number words would otherwise let a rewording add a quantity ("dalawang tasa"). The length cap limits added claims, which a word list cannot catch.
+Alternatives: allow any time or number found anywhere in the plan; a second model call to judge claims; server-side fallback models for refusals.
+
+### D37. One string catalog with a generated review document
+Decision: every user-facing string in the outputs lives in `zeitgeber/output/copy.toml` with English and Taglish side by side and a note on where it appears. docs/COPY_REVIEW.md is generated from it, and tests fail when the two differ, when a pair uses different placeholders, when a string contains a blocked term or a non-ASCII character, or when a nudge template contains a number of its own. Nudge templates follow the voice examples given for Z10; the Taglish is a draft for review by a native speaker.
+Reason: the reviewer edits one file, and no number in a nudge can come from anywhere but the plan.
+Alternatives: gettext catalogs; strings inline in code; a hand-maintained review document.
+
+### D38. Nudges only for events that ask something of the worker
+Decision: nudges are written for sleep, rest-day sleep in a planned late window, nap, light blocks, sunglasses and the caffeine window. Shifts, commutes and unchanged rest-day sleep get none. Day sleep uses the "lowest body clock" wording only when the predicted CBTmin falls inside that sleep. Changes that raise the score on their own are explained as trade-offs (the 7 h sleep floor, or the plan as a whole).
+Reason: a nudge for an unchanged 22:00 rest-day sleep would claim a "late night" that is not there; the sleep wording should not state a body-clock fact the model does not show for that day.
+Alternatives: a nudge for every event; one sleep wording for all days.
