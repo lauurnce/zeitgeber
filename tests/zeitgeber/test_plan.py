@@ -5,6 +5,7 @@ from datetime import timedelta
 
 import numpy as np
 import pytest
+from fixture_plans import CONFIG, planned
 from fixture_schedules import load_fixture
 
 from zeitgeber.plan import (
@@ -15,21 +16,11 @@ from zeitgeber.plan import (
     InfeasibleError,
     Interventions,
     InterventionSpace,
-    PlanResult,
-    SearchConfig,
     apply,
     search,
 )
 
 FIXTURES = ["permanent_nights", "rotating", "day_worker"]
-CONFIG = SearchConfig(cross_check=None)
-_results: dict[str, PlanResult] = {}
-
-
-def planned(name: str) -> PlanResult:
-    if name not in _results:
-        _results[name] = search(load_fixture(name), CONFIG)
-    return _results[name]
 
 
 def random_candidates(name: str, n: int = 60) -> list[Interventions]:
