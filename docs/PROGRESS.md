@@ -11,7 +11,7 @@ Build plan for v0.1 as a checklist. Day numbers are planned build days, one per 
 - [x] Z7, Day 4: `sim` module: model adapters, batched integration, equilibration, markers; PRC reproduction (docs/figures/prc.png).
 - [ ] Z8, Day 5: science validation: F1 to F9, sensitivity harness.
 - [x] Z9, Day 6: `score` and `plan` modules: score, constraints, seeded search, explanations (golden plans pinned by tests; Z8 validation still open).
-- [ ] Z10, Day 7: `output` module: plan document, timeline, .ics, nudges, grounding check.
+- [x] Z10, Day 7: `output` module: plan document (schema 1.0), timeline, .ics, nudges in English and Taglish, grounding check with template fallback, docs/COPY_REVIEW.md (Taglish awaiting review).
 - [ ] Z11, Day 8: `api/`: FastAPI app, Vercel function, latency measurement.
 - [ ] Z12, Day 9: `web/`: planner UI, vitest, Playwright.
 - [ ] Z13, Day 10: landing page, pilot protocol, README, SCIENCE.md review, v0.1 tag.
