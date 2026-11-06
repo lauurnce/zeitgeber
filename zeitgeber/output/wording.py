@@ -105,6 +105,8 @@ def tokens(text: str) -> set[str]:
             found.add(f"t:{_NAMED_TIMES[word]}")
         elif word in NUMBER_WORDS:
             found.add(_num(NUMBER_WORDS[word]))
+        elif word.endswith("ng") and word[:-2] in NUMBER_WORDS:
+            found.add(_num(NUMBER_WORDS[word[:-2]]))  # Tagalog linker: "dalawang", "isang"
     return found
 
 
