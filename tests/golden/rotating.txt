@@ -1,0 +1,278 @@
+Your 14-day plan from Mon 16 Nov
+All times are Philippine time.
+Zeitgeber is a wellness planning tool, not medical advice.
+If you have a sleep condition, are pregnant or have a health condition, talk to a doctor before changing your sleep.
+The times come from a body-clock model. Your body may differ, so adjust a time if it does not suit you.
+
+What to change
+- After each night shift, sleep from 8 AM to 3 PM in a dark room.
+- After day sleep, go outside for 15 minutes at 3:30 PM.
+- Have caffeine only from 6 AM to 10:30 AM, then switch to water.
+
+Misalignment score: 4.5 h now, 4.5 h with the plan. Lower is better.
+
+Why
+- Day sleep start: without it, the misalignment score goes from 4.5 h to 4.8 h.
+- Day sleep length: a shorter sleep would score 4.2 h instead of 4.5 h, but the plan keeps at least 7 hours of sleep.
+- Outdoors after waking: without it, the misalignment score goes from 4.5 h to 4.6 h.
+
+Day by day
+
+Mon 16 Nov
+  5 AM to 6 AM                  Commute to work
+  6 AM to 3 PM                  Shift
+  6 AM to 10:30 AM              Caffeine OK  [new]
+  3 PM to 4 PM                  Commute home
+  9:30 PM to 5 AM (next day)    Sleep
+  Body clock lowest around 4:30 AM
+
+Tue 17 Nov
+  5 AM to 6 AM                  Commute to work
+  6 AM to 3 PM                  Shift
+  6 AM to 10:30 AM              Caffeine OK  [new]
+  3 PM to 4 PM                  Commute home
+  9:30 PM to 5 AM (next day)    Sleep
+  Body clock lowest around 4:30 AM
+
+Wed 18 Nov
+  1 PM to 2 PM                  Commute to work
+  2 PM to 11 PM                 Shift
+  2 PM to 6:30 PM               Caffeine OK  [new]
+  11 PM to 12 AM (next day)     Commute home
+  Body clock lowest around 3:45 AM
+
+Thu 19 Nov
+  12:30 AM to 8:30 AM           Sleep
+  1 PM to 2 PM                  Commute to work
+  2 PM to 11 PM                 Shift
+  2 PM to 6:30 PM               Caffeine OK  [new]
+  11 PM to 12 AM (next day)     Commute home
+  Body clock lowest around 4 AM
+
+Fri 20 Nov
+  12:30 AM to 8:30 AM           Sleep
+  9 PM to 10 PM                 Commute to work
+  10 PM to 7 AM (next day)      Shift
+  10 PM to 2 AM (next day)      Caffeine OK  [new]
+  Body clock lowest around 4:15 AM
+
+Sat 21 Nov
+  7 AM to 8 AM                  Commute home
+  8 AM to 3 PM                  Sleep  [new]
+  3:30 PM to 3:45 PM            Outdoors after waking  [new]
+  9 PM to 10 PM                 Commute to work
+  10 PM to 7 AM (next day)      Shift
+  10 PM to 2 AM (next day)      Caffeine OK  [new]
+  Body clock lowest around 4:15 AM
+
+Sun 22 Nov
+  7 AM to 8 AM                  Commute home
+  8 AM to 3 PM                  Sleep  [new]
+  3:30 PM to 3:45 PM            Outdoors after waking  [new]
+  10 PM to 4:30 AM (next day)   Rest-day sleep
+  Body clock lowest around 4:45 AM
+
+Mon 23 Nov
+  5 AM to 6 AM                  Commute to work
+  6 AM to 3 PM                  Shift
+  6 AM to 10:30 AM              Caffeine OK  [new]
+  3 PM to 4 PM                  Commute home
+  9:30 PM to 5 AM (next day)    Sleep
+  Body clock lowest around 4:30 AM
+
+Tue 24 Nov
+  5 AM to 6 AM                  Commute to work
+  6 AM to 3 PM                  Shift
+  6 AM to 10:30 AM              Caffeine OK  [new]
+  3 PM to 4 PM                  Commute home
+  9:30 PM to 5 AM (next day)    Sleep
+  Body clock lowest around 4:15 AM
+
+Wed 25 Nov
+  1 PM to 2 PM                  Commute to work
+  2 PM to 11 PM                 Shift
+  2 PM to 6:30 PM               Caffeine OK  [new]
+  11 PM to 12 AM (next day)     Commute home
+  Body clock lowest around 3:30 AM
+
+Thu 26 Nov
+  12:30 AM to 8:30 AM           Sleep
+  1 PM to 2 PM                  Commute to work
+  2 PM to 11 PM                 Shift
+  2 PM to 6:30 PM               Caffeine OK  [new]
+  11 PM to 12 AM (next day)     Commute home
+  Body clock lowest around 3:45 AM
+
+Fri 27 Nov
+  12:30 AM to 8:30 AM           Sleep
+  9 PM to 10 PM                 Commute to work
+  10 PM to 7 AM (next day)      Shift
+  10 PM to 2 AM (next day)      Caffeine OK  [new]
+  Body clock lowest around 4:15 AM
+
+Sat 28 Nov
+  7 AM to 8 AM                  Commute home
+  8 AM to 3 PM                  Sleep  [new]
+  3:30 PM to 3:45 PM            Outdoors after waking  [new]
+  9 PM to 10 PM                 Commute to work
+  10 PM to 7 AM (next day)      Shift
+  10 PM to 2 AM (next day)      Caffeine OK  [new]
+  Body clock lowest around 4:15 AM
+
+Sun 29 Nov
+  7 AM to 8 AM                  Commute home
+  8 AM to 3 PM                  Sleep  [new]
+  3:30 PM to 3:45 PM            Outdoors after waking  [new]
+  10 PM to 4:30 AM (next day)   Rest-day sleep
+  Body clock lowest around 4:45 AM
+
+Ang 14-day plan mo simula Lun 16 Nov
+Lahat ng oras ay Philippine time.
+Ang Zeitgeber ay wellness planning tool, hindi medical advice.
+Kung may problema ka sa tulog, buntis ka, o may health condition, kausapin muna ang doktor bago baguhin ang tulog mo.
+Galing sa body-clock model ang mga oras. Pwedeng iba ang katawan mo, kaya i-adjust ang oras kung hindi bagay sa iyo.
+
+Mga babaguhin
+- Pagkatapos ng bawat night shift, matulog mula 8 AM hanggang 3 PM sa madilim na kwarto.
+- Pagkatapos ng tulog sa araw, lumabas nang 15 minuto sa 3:30 PM.
+- Kape lang mula 6 AM hanggang 10:30 AM, tapos tubig na.
+
+Misalignment score: 4.5 h ngayon, 4.5 h sa plan. Mas mababa, mas maganda.
+
+Bakit
+- Simula ng tulog sa araw: kung wala ito, ang misalignment score ay magiging 4.8 h mula 4.5 h.
+- Haba ng tulog sa araw: mas mababa sana ang score sa mas maikling tulog (4.2 h imbes na 4.5 h), pero sinisigurado ng plan na may 7 oras ka man lang na tulog.
+- Labas pagkagising: kung wala ito, ang misalignment score ay magiging 4.6 h mula 4.5 h.
+
+Bawat araw
+
+Lun 16 Nov
+  5 AM to 6 AM                  Biyahe papasok
+  6 AM to 3 PM                  Shift
+  6 AM to 10:30 AM              Pwede ang kape  [bago]
+  3 PM to 4 PM                  Biyahe pauwi
+  9:30 PM to 5 AM (kinabukasan) Tulog
+  Pinakamababa ang body clock bandang 4:30 AM
+
+Mar 17 Nov
+  5 AM to 6 AM                  Biyahe papasok
+  6 AM to 3 PM                  Shift
+  6 AM to 10:30 AM              Pwede ang kape  [bago]
+  3 PM to 4 PM                  Biyahe pauwi
+  9:30 PM to 5 AM (kinabukasan) Tulog
+  Pinakamababa ang body clock bandang 4:30 AM
+
+Miy 18 Nov
+  1 PM to 2 PM                  Biyahe papasok
+  2 PM to 11 PM                 Shift
+  2 PM to 6:30 PM               Pwede ang kape  [bago]
+  11 PM to 12 AM (kinabukasan)  Biyahe pauwi
+  Pinakamababa ang body clock bandang 3:45 AM
+
+Huw 19 Nov
+  12:30 AM to 8:30 AM           Tulog
+  1 PM to 2 PM                  Biyahe papasok
+  2 PM to 11 PM                 Shift
+  2 PM to 6:30 PM               Pwede ang kape  [bago]
+  11 PM to 12 AM (kinabukasan)  Biyahe pauwi
+  Pinakamababa ang body clock bandang 4 AM
+
+Biy 20 Nov
+  12:30 AM to 8:30 AM           Tulog
+  9 PM to 10 PM                 Biyahe papasok
+  10 PM to 7 AM (kinabukasan)   Shift
+  10 PM to 2 AM (kinabukasan)   Pwede ang kape  [bago]
+  Pinakamababa ang body clock bandang 4:15 AM
+
+Sab 21 Nov
+  7 AM to 8 AM                  Biyahe pauwi
+  8 AM to 3 PM                  Tulog  [bago]
+  3:30 PM to 3:45 PM            Labas pagkagising  [bago]
+  9 PM to 10 PM                 Biyahe papasok
+  10 PM to 7 AM (kinabukasan)   Shift
+  10 PM to 2 AM (kinabukasan)   Pwede ang kape  [bago]
+  Pinakamababa ang body clock bandang 4:15 AM
+
+Lin 22 Nov
+  7 AM to 8 AM                  Biyahe pauwi
+  8 AM to 3 PM                  Tulog  [bago]
+  3:30 PM to 3:45 PM            Labas pagkagising  [bago]
+  10 PM to 4:30 AM (kinabukasan)Tulog sa rest day
+  Pinakamababa ang body clock bandang 4:45 AM
+
+Lun 23 Nov
+  5 AM to 6 AM                  Biyahe papasok
+  6 AM to 3 PM                  Shift
+  6 AM to 10:30 AM              Pwede ang kape  [bago]
+  3 PM to 4 PM                  Biyahe pauwi
+  9:30 PM to 5 AM (kinabukasan) Tulog
+  Pinakamababa ang body clock bandang 4:30 AM
+
+Mar 24 Nov
+  5 AM to 6 AM                  Biyahe papasok
+  6 AM to 3 PM                  Shift
+  6 AM to 10:30 AM              Pwede ang kape  [bago]
+  3 PM to 4 PM                  Biyahe pauwi
+  9:30 PM to 5 AM (kinabukasan) Tulog
+  Pinakamababa ang body clock bandang 4:15 AM
+
+Miy 25 Nov
+  1 PM to 2 PM                  Biyahe papasok
+  2 PM to 11 PM                 Shift
+  2 PM to 6:30 PM               Pwede ang kape  [bago]
+  11 PM to 12 AM (kinabukasan)  Biyahe pauwi
+  Pinakamababa ang body clock bandang 3:30 AM
+
+Huw 26 Nov
+  12:30 AM to 8:30 AM           Tulog
+  1 PM to 2 PM                  Biyahe papasok
+  2 PM to 11 PM                 Shift
+  2 PM to 6:30 PM               Pwede ang kape  [bago]
+  11 PM to 12 AM (kinabukasan)  Biyahe pauwi
+  Pinakamababa ang body clock bandang 3:45 AM
+
+Biy 27 Nov
+  12:30 AM to 8:30 AM           Tulog
+  9 PM to 10 PM                 Biyahe papasok
+  10 PM to 7 AM (kinabukasan)   Shift
+  10 PM to 2 AM (kinabukasan)   Pwede ang kape  [bago]
+  Pinakamababa ang body clock bandang 4:15 AM
+
+Sab 28 Nov
+  7 AM to 8 AM                  Biyahe pauwi
+  8 AM to 3 PM                  Tulog  [bago]
+  3:30 PM to 3:45 PM            Labas pagkagising  [bago]
+  9 PM to 10 PM                 Biyahe papasok
+  10 PM to 7 AM (kinabukasan)   Shift
+  10 PM to 2 AM (kinabukasan)   Pwede ang kape  [bago]
+  Pinakamababa ang body clock bandang 4:15 AM
+
+Lin 29 Nov
+  7 AM to 8 AM                  Biyahe pauwi
+  8 AM to 3 PM                  Tulog  [bago]
+  3:30 PM to 3:45 PM            Labas pagkagising  [bago]
+  10 PM to 4:30 AM (kinabukasan)Tulog sa rest day
+  Pinakamababa ang body clock bandang 4:45 AM
+
+Nudges
+- nudge.caffeine
+  en: 10:30 AM is your last coffee. Water after that, so you fall asleep more easily when you get home.
+  tl: 10:30 AM ang huling kape mo. Tubig na lang pagkatapos, para madali kang makatulog pag-uwi.
+- nudge.sleep_low
+  en: Lights out by 9:30 PM. Blackout curtains on, phone face down. Sleep now, while your body clock is at its lowest.
+  tl: Lights out na by 9:30 PM. Sarado ang blackout curtains, nakataob ang phone. Matulog ka na habang pinakamababa ang body clock mo.
+- nudge.caffeine
+  en: 6:30 PM is your last coffee. Water after that, so you fall asleep more easily when you get home.
+  tl: 6:30 PM ang huling kape mo. Tubig na lang pagkatapos, para madali kang makatulog pag-uwi.
+- nudge.sleep_low
+  en: Lights out by 12:30 AM. Blackout curtains on, phone face down. Sleep now, while your body clock is at its lowest.
+  tl: Lights out na by 12:30 AM. Sarado ang blackout curtains, nakataob ang phone. Matulog ka na habang pinakamababa ang body clock mo.
+- nudge.caffeine
+  en: 2 AM is your last coffee. Water after that, so you fall asleep more easily when you get home.
+  tl: 2 AM ang huling kape mo. Tubig na lang pagkatapos, para madali kang makatulog pag-uwi.
+- nudge.sleep
+  en: Lights out by 8 AM. Blackout curtains on, phone face down. A dark room helps you sleep through to 3 PM.
+  tl: Lights out na by 8 AM. Sarado ang blackout curtains, nakataob ang phone. Mas tuloy-tuloy ang tulog mo hanggang 3 PM kapag madilim ang kwarto.
+- nudge.light_brake
+  en: Go outside for 15 minutes at 3:30 PM. Daylight after you wake keeps your body clock from drifting too late.
+  tl: Lumabas ka nang 15 minuto sa 3:30 PM. Ang liwanag ng araw pagkagising ang pumipigil na masyadong ma-late ang body clock mo.
