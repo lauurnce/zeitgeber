@@ -3,8 +3,9 @@
 from datetime import date, time
 
 import pytest
+from golden import ROOT
 
-from zeitgeber.output.copy import LANGS, clock, day_label, entries, text
+from zeitgeber.output.copy import LANGS, clock, day_label, entries, review_markdown, text
 
 ENTRIES = list(entries().values())
 
@@ -35,3 +36,13 @@ def test_labels_and_filled_templates() -> None:
     assert day_label(date(2026, 11, 16), "en") == "Mon 16 Nov"
     assert day_label(date(2026, 11, 22), "tl") == "Lin 22 Nov"
     assert text("nudge.caffeine", "tl", end="2 AM").startswith("2 AM ang huling kape mo.")
+
+
+def test_copy_review_doc_matches_the_catalog() -> None:
+    committed = (ROOT / "docs" / "COPY_REVIEW.md").read_text(encoding="utf-8")
+    assert committed == review_markdown(), "run: uv run python scripts/copy_review.py"
+
+
+def test_copy_review_lists_every_string() -> None:
+    doc = review_markdown()
+    assert all(f"`{key}`" in doc for key in entries())
