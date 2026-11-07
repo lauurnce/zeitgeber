@@ -166,3 +166,25 @@ Alternatives: call the package's `integrate` and `equilibrate` directly; markers
 Decision: keep the model's result as the reference for the Z3 worker (CBTmin near 15:00, inside the end of the workday day sleep and outside rest-day sleep) and record the difference from the Z3 prediction in docs/SCIENCE.md 5.7. Treat rest-day light and office lux as first-order inputs in the Z8 sensitivity harness, and ask for rest-day light in the pilot.
 Reason: the model shows the clock moving about 3 h later in the first week and settling on the night schedule, because the v0.1 profile gives rest days no daylight and gives shifts nine hours at 500 lux. Field studies found less adaptation. The inputs are UNVERIFIED, so the gap is a question for the light constants, not grounds to change the equations.
 Alternatives: change rest-day defaults now to add outdoor time; tune lux constants until the model matches the field studies (rejected: fitting constants to one expectation without measurements).
+
+## Score and planner
+
+### D31. Morning rest-day sleep belongs to the night after the rest day
+Decision: a rest-day window that starts before 12:00 is placed on the calendar day after the rest day.
+Reason: rule R4's late window (03:00 to 11:00) started on the first rest day collides with the last night shift and was silently dropped, and `keep_nights` left the worker awake from Sunday afternoon to Tuesday morning. Evening windows are unchanged, so the Z7 results do not move.
+Alternatives: a separate "night of" field on each window; reject windows that collide instead of skipping them.
+
+### D32. Score as built
+Decision: each main sleep episode of 4 h or more wholly inside the plan window is a scored day. `S` follows SCIENCE 7.3 exactly. Reported beside it and not part of it: mean phase angle term, mean work in the circadian low, the share of sleep inside the biological night (CBTmin - 6 h to CBTmin + 2 h), the social-jetlag analogue, and the Crowley category per day with an added "past" category when CBTmin falls after wake.
+Reason: scoring per episode keeps both sleeps of a day such as Saturday after a Friday night shift; clipped episodes at the window edges would score against partial sleeps.
+Alternatives: one scored day per calendar date; add the biological-night share into `S`.
+
+### D33. Planner as built
+Decision: sleep timing (R3), the light brake (R5) and the pre-shift nap (N1) act around night shifts only (shifts that cross midnight); bright light in the shift (R1) and sunglasses (R2) apply to every shift; rest-day options are "as now" or the late R4 windows from 01:00 to 04:00, never a switch to night hours; R3's 7 h minimum and R1's 2 h margin are soft penalties (1.0 h and 0.5 h); search uses 4 passes and 4 seeded restarts; the light brake sits 30 min after waking.
+Reason: R3, R5 and N1 come from permanent-night protocols. With `keep_nights` on offer the planner chose full adaptation (score 0.09 h), which D1 ruled out. A brake placed 1 h after a 17:00 wake would fall after sunset in November.
+Alternatives: apply sleep timing to every shift type; hard 7 h minimum; offer keep_nights.
+
+### D34. Plans that cannot beat the current schedule are reported, not forced
+Decision: the "plan beats the current schedule" test is strict for the permanent nights worker and an expected failure, with the reason, for the rotating worker and the day worker. Separate tests pin what the planner does for those two: nothing for the day worker; for the rotating worker, 7 h sleep after nights at a cost under 0.05 h of score.
+Reason: an exhaustive check of 360 candidates found no plan with at least 7 h after night shifts that lowers the rotating worker's score; the modelled clock stays day-oriented through two nights a week. The day worker is a control. Loosening R3 or the score to pass the test would hide that.
+Alternatives: relax R3 for short runs of nights; score rotations against a day-oriented target.
