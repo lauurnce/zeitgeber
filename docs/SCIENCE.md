@@ -614,6 +614,10 @@ Lower is better. $S = 0$ means CBTmin sits 2 h before wake on every day and neve
 | $\lambda = 0.5$ (4 h of overlap costs as much as 2 h of misalignment) | design |
 | Crowley categories | cited [3.5] |
 | Social-jetlag analogue | adapted from [7.2]; mid-sleep definition theirs, application to shift days ours |
+| Sleep inside the biological night: share of each sleep inside CBTmin - 6 h to CBTmin + 2 h, reported beside $S$ and not part of it | design; the 8 h window an ideal 8 h sleep fills under the 2 h target |
+| A scored day is each main sleep episode of 4 h or more wholly inside the plan window; a CBTmin after wake is reported as category "past" | design |
+
+As built (`zeitgeber/score.py`, Z9), the plan reports $S$ and its parts separately: the phase angle term (mean $M_d$), work in the circadian low (mean $P_d$), the sleep share inside the biological night, the social-jetlag analogue and the category per day.
 
 ### 7.4 Valid ranges and edge cases
 
@@ -632,6 +636,34 @@ Lower is better. $S = 0$ means CBTmin sits 2 h before wake on every day and neve
 
 - [7.1] Duffy JF, Dijk DJ, Klerman EB, Czeisler CA (1998). Later endogenous circadian temperature nadir relative to an earlier wake time in older people. American Journal of Physiology 275(5): R1478-R1487. https://doi.org/10.1152/ajpregu.1998.275.5.R1478 (abstract checked)
 - [7.2] Wittmann M, Dinich J, Merrow M, Roenneberg T (2006). Social jetlag: misalignment of biological and social time. Chronobiology International 23(1-2): 497-509. https://doi.org/10.1080/07420520500545979 (abstract checked)
+
+### 7.7 Planner results for the example worker (Z9)
+
+`scripts/show_plan.py permanent_nights` (seed 0, Forger99, 0.1 h step, 320 simulations, converged). The planner offers only the rules of 5.4 and 6.3; rest-day options are "as now" or the late R4 windows, never a full switch to night hours (decision D1).
+
+Plan: category 3 sunglasses on the commute home (R2); day sleep 09:00 to 16:00 (R3); rest-day sleep 04:00 to 12:00 (R4); 15 min outdoors at 16:30 after waking (R5); caffeine only 22:00 to 02:30, none after 03:00 (C1, C3).
+
+| Component | Now | Plan |
+|---|---|---|
+| $S$ (h) | 3.69 | 1.04 |
+| Phase angle, mean $M_d$ (h) | 3.69 | 1.04 |
+| Work in the circadian low, mean $P_d$ (h) | 0.00 | 0.00 |
+| Sleep inside the biological night (share) | 0.77 | 0.87 |
+| Social-jetlag analogue (h) | 9.00 | 4.50 |
+| $S$ under Hannay19 (cross-check) | 4.89 | 1.48 |
+
+Ablation (each change removed on its own and the plan re-simulated):
+
+| Change | Rules | $S$ without | Cut in $S$ (h) | CBTmin without it, day 7 / day 14 |
+|---|---|---|---|---|
+| Sunglasses, category 3 | R2, R7 | 1.18 | 0.14 | 0.48 h / 0.59 h later |
+| Day sleep 7 h instead of 6 h | R3 | 1.21 | 0.17 | 0.36 h / 0.42 h earlier |
+| Rest-day sleep 04:00 to 12:00 | R4 | 2.34 | 1.30 | 1.11 h / 1.26 h later |
+| Light brake | R5 | 1.11 | 0.08 | 0.48 h / 0.54 h later |
+
+The rest-day window carries most of the gain. The sunglasses and the light brake both hold the clock earlier; in this model the worker's clock already sits later than the target, so the plan pulls it back toward a compromise rather than pushing it further toward nights. Under the field-study expectation of 5.7 the direction would be the opposite, which is why the light constants remain the main risk.
+
+Fixtures the planner cannot improve on $S$: the day worker (no change in the space lowers $S$, as the fixture intends) and the rotating worker (two nights a week leave the modelled clock day-oriented; every plan that gives at least 7 h of sleep after night shifts, rule R3, scores 4.49 h or more against 4.48 h now). Both are recorded as expected failures in `tests/zeitgeber/test_plan.py`.
 
 ## 8. Pilot measures
 
