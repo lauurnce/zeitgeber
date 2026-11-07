@@ -15,3 +15,18 @@ What it shows:
 This is the pattern docs/SCIENCE.md section 5 identifies as the main obstacle for night workers: bright light comes right after the shift, which falls after the body clock's low point and pushes the clock earlier. Dark sunglasses (rule R2) scale both commute-home blocks by 0.15 or 0.02.
 
 All constants come from docs/SCIENCE.md 3.5. The placement of outdoor minutes at both ends of the commute and twilight counted as dark are design choices recorded in docs/DECISIONS.md D28.
+
+## prc.png
+
+Simulated phase response curves to bright light for Forger99 (the default model), Hannay19 (the cross-check) and Jewett99. Regenerate with `MPLBACKEND=Agg uv run python scripts/reproduce_prc.py`, which also prints the numbers as a table.
+
+Protocol (`zeitgeber/prc.py`, docs/SCIENCE.md 4.3): each model is entrained on 16 h at 150 lux and 8 h dark, then runs the Khalsa 2003 sequence as the circadian package encodes it: a constant routine in 15 lux, 8 h dark, 16 h awake in 15 lux with the pulse centered in the middle, 8 h dark, then 15 lux. The length of the first constant routine moves the pulse through 48 phases. Each pulsed run has a control run without the pulse, and the shift is the difference between their final CBTmin times, so drift in dim light cancels. The x axis is the pulse center minus the control run's nearest CBTmin; advances are positive.
+
+What it shows:
+
+- Left, 6.7 h at 9,985 lux (Khalsa 2003): every model delays when the pulse is centered before CBTmin and advances after it, crossing zero within 0.5 h of CBTmin (Forger99 +0.22 h, Hannay19 -0.36 h, Jewett99 -0.48 h). The shaded band is the 1.5 h tolerance of feature F2.
+- The curves are smaller than the published curve: peak to trough is 3.60 h (Forger99), 4.42 h (Hannay19) and 3.41 h (Jewett99) against 5.02 h published. Jewett99 sits just outside the 1.5 h tolerance of F3.
+- Right, 1 h at 7,997 lux (St Hilaire 2012): the same shape at about a third of the size, 1.11 to 1.66 h peak to trough against 2.20 h published. Forger99 and Jewett99 fall just under the 1.0 h tolerance of F4.
+- Hannay19 keeps advancing for longer after CBTmin than the other two models.
+
+F3 and F4 are reported, not blocking (docs/SCIENCE.md 4.3); step Z8 runs the full feature set.
