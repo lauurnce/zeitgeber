@@ -16,7 +16,9 @@ Conventions (docs/SCIENCE.md 1.6):
 from __future__ import annotations
 
 import math
+from collections.abc import Sequence
 from dataclasses import dataclass
+from datetime import date, datetime, timedelta, tzinfo
 from typing import Any, Literal, get_args
 
 import numpy as np
@@ -24,6 +26,7 @@ from circadian.models import Forger99, Hannay19, Jewett99
 from numpy.typing import NDArray
 
 from zeitgeber.grid import TimeGrid
+from zeitgeber.light import LightProfile
 
 ModelName = Literal["forger99", "jewett99", "hannay19"]
 MODEL_NAMES: tuple[ModelName, ...] = get_args(ModelName)
@@ -243,3 +246,163 @@ def integrate(
             f"hannay19 amplitude R fell below {MIN_HANNAY_R}; its phase is undefined there"
         )
     return Trajectory(m, grid, out)
+
+
+DAY_H = 24.0
+WARMUP_TOL_H = 0.05  # every CBTmin moves less than this between the last two loops (SCIENCE 2.6)
+WARMUP_MAX_LOOPS = 40
+
+
+@dataclass(frozen=True)
+class Warmup:
+    """Result of looping a baseline light profile until the clock repeats itself."""
+
+    state: NDArray[np.float64]  # (n_states, batch), the state at the end of the last loop
+    loops: int
+    converged: bool
+    last_change_h: float  # largest CBTmin change between the last two loops
+    baseline_days: float
+
+
+def _whole_days(grid: TimeGrid) -> float:
+    days = grid.n * grid.step_h / DAY_H
+    if not math.isclose(days, round(days), abs_tol=1e-9) or round(days) < 1:
+        raise ValueError(
+            f"a warm-up baseline must cover whole days so it can repeat, got {days:.3f} days"
+        )
+    return float(round(days))
+
+
+def _marker_change(a: list[NDArray[np.float64]], b: list[NDArray[np.float64]]) -> float:
+    worst = 0.0
+    for x, y in zip(a, b, strict=True):
+        if x.shape != y.shape:
+            return math.inf
+        if x.size:
+            worst = max(worst, float(np.abs(x - y).max()))
+    return worst
+
+
+def equilibrate(
+    model: ModelName | ClockModel,
+    grid: TimeGrid,
+    lux: NDArray[np.float64],
+    state0: NDArray[np.float64] | None = None,
+    tol_h: float = WARMUP_TOL_H,
+    max_loops: int = WARMUP_MAX_LOOPS,
+) -> Warmup:
+    """Repeat a whole-day light profile until every CBTmin in it moves less than ``tol_h``.
+
+    This is the explicit warm-up: the clock starts from the package's default state (a
+    16 h light, 8 h dark day) and is entrained to the baseline before anything is reported.
+    The package's own ``equilibrate`` checks only the last DLMO; this checks all markers
+    (docs/ARCHITECTURE.md 2.4). A run that does not converge is returned with
+    ``converged=False`` so the caller can flag it.
+    """
+    m = get_model(model)
+    days = _whole_days(grid)
+    state = state0
+    previous: list[NDArray[np.float64]] | None = None
+    change = math.inf
+    for loop in range(1, max_loops + 1):
+        traj = integrate(m, grid, lux, state)
+        markers = traj.cbt_min_hours()
+        state = traj.final
+        if previous is not None:
+            change = _marker_change(previous, markers)
+            if change < tol_h:
+                return Warmup(state, loop, True, change, days)
+        previous = markers
+    assert state is not None
+    return Warmup(state, max_loops, False, change, days)
+
+
+@dataclass(frozen=True)
+class DailyMarkers:
+    """Phase markers that fall on one local calendar day."""
+
+    day: date
+    cbt_min: datetime | None  # local time
+    dlmo: datetime | None  # local time, CBTmin minus the model's DLMO offset
+
+
+@dataclass(frozen=True)
+class Simulation:
+    """One model run on one light profile after warm-up on a baseline."""
+
+    model: ClockModel
+    trajectory: Trajectory
+    warmup: Warmup
+    cbt_min: tuple[datetime, ...]  # UTC
+    dlmo: tuple[datetime, ...]  # UTC
+
+    @property
+    def grid(self) -> TimeGrid:
+        return self.trajectory.grid
+
+    def phase(self) -> NDArray[np.float64]:
+        """Phase in radians at every grid time plus the end, shape (n + 1,)."""
+        return np.asarray(self.trajectory.phase()[:, 0], dtype=np.float64)
+
+    def times(self) -> list[datetime]:
+        """UTC time of every row of :meth:`phase`."""
+        return [self.grid.at(i) for i in range(self.grid.n + 1)]
+
+    def daily(self, tz: tzinfo) -> list[DailyMarkers]:
+        """CBTmin and DLMO per local day of the profile, first CBTmin of the day if two."""
+        first = self.grid.start.astimezone(tz).date()
+        last = (self.grid.end - timedelta(microseconds=1)).astimezone(tz).date()
+        lag = timedelta(hours=self.model.convention.dlmo_before_cbt_h)
+        by_day: dict[date, datetime] = {}
+        for t in self.cbt_min:
+            local = t.astimezone(tz)
+            by_day.setdefault(local.date(), local)
+        out: list[DailyMarkers] = []
+        for k in range((last - first).days + 1):
+            d = first + timedelta(days=k)
+            c = by_day.get(d)
+            out.append(DailyMarkers(d, c, None if c is None else c - lag))
+        return out
+
+
+def simulate(
+    profile: LightProfile,
+    model: ModelName | ClockModel = DEFAULT_MODEL,
+    baseline: LightProfile | None = None,
+    tol_h: float = WARMUP_TOL_H,
+    max_loops: int = WARMUP_MAX_LOOPS,
+) -> Simulation:
+    """Warm up on ``baseline`` (default: the profile itself), then run ``profile`` once.
+
+    The baseline is the light the worker lives under now, repeated until the clock is
+    entrained to it. It must cover whole days, use the same step and line up with the
+    profile's clock time, so that looping it hands over to the profile at the right hour.
+    """
+    m = get_model(model)
+    if profile.lux.ndim != 1:
+        raise ValueError("simulate takes one light profile; use integrate for a batch")
+    base = baseline or profile
+    if not math.isclose(base.grid.step_h, profile.grid.step_h):
+        raise ValueError(
+            f"baseline step {base.grid.step_h} h differs from profile step {profile.grid.step_h} h"
+        )
+    gap_h = (profile.grid.start - base.grid.start).total_seconds() / 3600.0
+    if not math.isclose(gap_h % DAY_H, 0.0, abs_tol=1e-6) and not math.isclose(
+        gap_h % DAY_H, DAY_H, abs_tol=1e-6
+    ):
+        raise ValueError("baseline and profile must start at the same clock time of day")
+    warm = equilibrate(m, base.grid, base.lux, tol_h=tol_h, max_loops=max_loops)
+    traj = integrate(m, profile.grid, profile.lux, warm.state)
+    hours = traj.cbt_min_hours()[0]
+    cbt = tuple(profile.grid.start + timedelta(hours=float(h)) for h in hours)
+    lag = timedelta(hours=m.convention.dlmo_before_cbt_h)
+    return Simulation(m, traj, warm, cbt, tuple(t - lag for t in cbt))
+
+
+def compare_models(
+    profile: LightProfile,
+    baseline: LightProfile | None = None,
+    models: Sequence[ModelName] = MODEL_NAMES,
+) -> dict[ModelName, Simulation]:
+    """Run the same profile and warm-up through several models (docs/SCIENCE.md 1.9)."""
+    return {name: simulate(profile, name, baseline) for name in models}
