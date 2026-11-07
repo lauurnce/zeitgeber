@@ -309,6 +309,7 @@ The models in section 1 accept photopic lux. The circadian system is most sensit
 | Home, awake, lights low, phone in hand | 30 lux | Chang et al. 2015 eReader at the eye [3.7] |
 | Sleep in a dark room | 1 lux | design; Burgess and Molina minimized to about 3 lux [3.6] |
 | Outdoors at night, street | 10 lux | UNVERIFIED |
+| Light-seeking window in the shift | 1,000 lux | target of rule R1 (5.4); a light box or a brightly lit break area gives this or more |
 
 How the constants are applied (design, implemented in `zeitgeber/light.py`):
 
@@ -316,6 +317,7 @@ How the constants are applied (design, implemented in `zeitgeber/light.py`):
 - Outdoors uses 10,000 lux and transit 1,000 lux only between sunrise and sunset; before sunrise and after sunset both use the 10 lux night value. Civil twilight counts as dark.
 - Sunglasses apply to the whole commute home while the sun is up (rule R2).
 - Minutes of phone use before a sleep window replace home light only, never a shift or a commute.
+- Planner blocks (Z9): a light-seeking window raises office light to at least 1,000 lux inside the shift only (R1); a nap is 1 lux (N3); the light brake is 10,000 lux and only while the sun is up (R5).
 
 Every constant is a named parameter. The sensitivity test in Z8 scales each by 0.3 and 3 and reports whether the plan changes.
 
