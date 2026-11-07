@@ -161,6 +161,8 @@ class RestDayPolicy(_Model):
     mode: RestDayMode = "flip_to_days"
 
 
+NOON = time(12)
+
 IntervalKind = Literal["shift", "commute_to_work", "commute_home", "sleep", "rest_sleep"]
 
 
@@ -324,7 +326,9 @@ class Schedule(_Model):
             if d.weekday() in by_day:
                 continue
             for window in rest:
-                s = _local(d, window.start, tz)
+                # A window that starts before noon is the sleep of the night after the rest day.
+                night = d + timedelta(days=1) if window.start < NOON else d
+                s = _local(night, window.start, tz)
                 e = s + timedelta(minutes=window.duration_min)
                 candidate = Interval(
                     s.astimezone(UTC),

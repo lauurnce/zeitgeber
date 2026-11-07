@@ -92,7 +92,8 @@ def test_rest_day_policies_change_weekend_sleep() -> None:
         ]
 
     assert weekend_sleeps(nights()) == ["Mon 00:00", "Sat 23:00", "Sun 23:00"]
-    assert weekend_sleeps(nights(rest_days=RestDayPolicy(mode="keep_nights"))) == ["Sun 09:00"]
+    keep = nights(rest_days=RestDayPolicy(mode="keep_nights"))
+    assert weekend_sleeps(keep) == ["Mon 09:00", "Sun 09:00"]
     split = nights(
         rest_days=RestDayPolicy(mode="split"),
         sleep=SleepWindows(
@@ -101,8 +102,9 @@ def test_rest_day_policies_change_weekend_sleep() -> None:
             rest_day_second=SleepWindow(start=time(14), end=time(17)),
         ),
     )
-    # Saturday 02:00 falls inside the Friday shift and 14:00 inside the after-shift sleep.
-    assert weekend_sleeps(split) == ["Sun 02:00", "Sun 14:00"]
+    # Windows before noon belong to the night after each rest day; Saturday 14:00 falls inside
+    # the after-shift sleep and is skipped.
+    assert weekend_sleeps(split) == ["Mon 02:00", "Sun 02:00", "Sun 14:00"]
 
 
 def test_materialize_uses_utc_and_clips_to_the_window() -> None:
