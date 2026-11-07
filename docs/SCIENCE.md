@@ -400,6 +400,25 @@ Each feature is one pytest case. F1 and F2 are blocking: a model that fails them
 - [4.4] Dijk DJ, Czeisler CA (1995). Contribution of the circadian pacemaker and the sleep homeostat to sleep propensity, sleep structure, electroencephalographic slow waves, and sleep spindle activity in humans. Journal of Neuroscience 15(5): 3526-3538. https://doi.org/10.1523/JNEUROSCI.15-05-03526.1995 (PMC6578184)
 - [4.5] Czeisler CA, Duffy JF, Shanahan TL, et al. (1999). Stability, precision, and near-24-hour period of the human circadian pacemaker. Science 284(5423): 2177-2181. https://doi.org/10.1126/science.284.5423.2177 (abstract checked)
 
+### 4.6 Simulated results (Z7)
+
+Measured with `zeitgeber/prc.py` at the 0.1 h step, 48 pulse phases per curve; figure in docs/figures/prc.png. Shifts are the difference between the final CBTmin of a pulsed run and of a paired control run without the pulse, so drift in dim light cancels. The phase of a pulse is its center minus the control run's nearest CBTmin.
+
+| Model | Pulse | Peak to trough (h) | Max advance (h) | Max delay (h) | Crossover (h) |
+|---|---|---|---|---|---|
+| Forger99 | 6.7 h, 9,985 lux | 3.60 | 1.60 | 2.00 | +0.22 |
+| Hannay19 | 6.7 h, 9,985 lux | 4.42 | 1.88 | 2.54 | -0.36 |
+| Jewett99 | 6.7 h, 9,985 lux | 3.41 | 1.65 | 1.76 | -0.48 |
+| Forger99 | 1 h, 7,997 lux | 1.19 | 0.49 | 0.71 | -1.12 |
+| Hannay19 | 1 h, 7,997 lux | 1.66 | 0.75 | 0.91 | -1.58 |
+| Jewett99 | 1 h, 7,997 lux | 1.11 | 0.52 | 0.60 | -1.44 |
+
+- F1 passes for all three models. The test reads "before CBTmin" and "after CBTmin" as pulse centers 2 to 8 h either side. At 10 to 12 h from CBTmin the curve crosses back through zero, because a pulse 12 h before CBTmin is also 12 h after the previous one; the literal wording of F1 cannot hold there for any Type 1 curve (design reading).
+- F2 passes for all three models: crossovers within 0.5 h of CBTmin.
+- F9 passes for all three models on the 16:8 day at 150 lux: CBTmin 2.3 h (Forger99), 2.7 h (Hannay19) and 2.7 h (Jewett99) before lights on.
+- F3 and F4 are short of the published amplitudes. Forger99 passes F3 at the edge (3.60 h, limit 3.52 h) and misses F4 by 0.01 h; Jewett99 misses both; Hannay19 passes both. F5, the ratio of the two amplitudes, is 0.33 (Forger99), 0.38 (Hannay19) and 0.33 (Jewett99), inside 0.25 to 0.60.
+- Possible reasons for the smaller amplitudes: the published values are for the melatonin midpoint and the simulated ones for CBTmin; the package's encoding of the protocol uses 15 lux for the dim periods; the shift is read about two days after the pulse. Which of these matters is not established. Step Z8 runs the full feature set and decides how to report it.
+
 ## 5. Shift-work strategies and planner rules
 
 ### 5.1 Purpose
