@@ -163,7 +163,16 @@ class RestDayPolicy(_Model):
 
 NOON = time(12)
 
-IntervalKind = Literal["shift", "commute_to_work", "commute_home", "sleep", "rest_sleep"]
+IntervalKind = Literal[
+    "shift",
+    "commute_to_work",
+    "commute_home",
+    "sleep",
+    "rest_sleep",
+    "nap",  # planner additions below; materialize never returns them
+    "light_seek",
+    "light_brake",
+]
 
 
 @dataclass(frozen=True)
