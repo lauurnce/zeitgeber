@@ -63,7 +63,8 @@ zeitgeber/
   schedule.py   # input models and validation
   grid.py       # TimeGrid shared by light and sim
   light.py      # solar times, lux constants, LightProfile builder
-  sim.py        # ClockModel protocol, package adapters, batched integration, markers
+  sim.py        # ClockModel adapters, batched integration, warm-up, markers
+  prc.py        # phase response protocol for the science tests (SCIENCE 4)
   score.py      # misalignment score (SCIENCE 7)
   plan.py       # intervention space, constraints, search, explanations (SCIENCE 5, 6, 7)
   output.py     # PlanDocument, timeline, .ics, nudges, grounding check, rewriter protocol
@@ -180,38 +181,52 @@ Change: interventions are applied inside the light builder. Sunglasses scale out
 
 ### 2.4 zeitgeber/sim
 
-```python
-class ClockModel(Protocol):
-    name: str                                   # "forger99", "jewett99", "hannay19"
-    n_states: int
-    def derivative(self, t_h: float, state: np.ndarray, lux: np.ndarray) -> np.ndarray   # state (n_states, batch)
-    def default_state(self) -> np.ndarray
-    def cbt_min_hours(self, hours: np.ndarray, states: np.ndarray) -> np.ndarray          # per batch column
-    def dlmo_hours(self, hours: np.ndarray, states: np.ndarray) -> np.ndarray             # cbt minus 7 h (SCIENCE 1.6)
+Implemented in Z7; see docs/DECISIONS.md D29.
 
-class ForgerAdapter: ...    # wraps circadian.models.Forger99; the only module that imports the package
-class JewettAdapter: ...
-class HannayAdapter: ...
+```python
+ModelName = Literal["forger99", "jewett99", "hannay19"]
+DEFAULT_MODEL = "forger99"; CROSS_CHECK_MODEL = "hannay19"
+
+@dataclass(frozen=True)
+class MarkerConvention:                         # per model, with its SCIENCE citation
+    cbt_rule: str; cbt_offset_h: float; dlmo_before_cbt_h: float; source: str
+
+class ClockModel:                               # wraps circadian.models.<Model>(); the only importer
+    name: ModelName; n_states: int; convention: MarkerConvention
+    def default_state(self) -> np.ndarray                                   # package default (16:8 midnight)
+    def derivative(self, state: np.ndarray, lux: np.ndarray) -> np.ndarray  # package derv, state (n_states, batch)
+    def phase(self, states) -> np.ndarray; def amplitude(self, states) -> np.ndarray
+    def cbt_min_hours(self, hours, states) -> list[np.ndarray]              # per batch column, offset applied
 
 @dataclass(frozen=True)
 class Trajectory:
-    grid: TimeGrid
-    states: np.ndarray                          # (n, n_states, batch)
+    model: ClockModel; grid: TimeGrid
+    states: np.ndarray                          # (n + 1, n_states, batch); row i at grid.at(i), row n at grid.end
+
+def integrate(model, grid: TimeGrid, lux: np.ndarray, state0: np.ndarray | None = None) -> Trajectory
+    # lux (n,) or (n, batch), held over [t_i, t_i + step); capped at 10,000; NaN or negative rejected
 
 @dataclass(frozen=True)
-class Markers:
-    cbt_min: list[np.ndarray]                   # one array of UTC hours-since-grid-start per batch column
-    dlmo: list[np.ndarray]
+class Warmup:
+    state: np.ndarray; loops: int; converged: bool; last_change_h: float; baseline_days: float
 
-def integrate(model: ClockModel, grid: TimeGrid, lux: np.ndarray, state0: np.ndarray) -> Trajectory
-def equilibrate(model: ClockModel, grid: TimeGrid, lux: np.ndarray,
-                loops: int = 6, tol_h: float = 0.05) -> np.ndarray      # returns state (n_states,)
-def markers(model: ClockModel, trajectory: Trajectory) -> Markers
+def equilibrate(model, grid, lux, state0=None, tol_h=0.05, max_loops=40) -> Warmup   # whole days only
+
+@dataclass(frozen=True)
+class Simulation:
+    model: ClockModel; trajectory: Trajectory; warmup: Warmup
+    cbt_min: tuple[datetime, ...]; dlmo: tuple[datetime, ...]               # UTC
+    def phase(self) -> np.ndarray; def daily(self, tz) -> list[DailyMarkers]
+
+def simulate(profile: LightProfile, model="forger99", baseline: LightProfile | None = None) -> Simulation
+def compare_models(profile, baseline=None, models=MODEL_NAMES) -> dict[ModelName, Simulation]
 ```
 
-Change: `integrate` is a batched fixed-step RK4 loop that calls the package's `derv` through the adapter, instead of the package's own `integrate`. The package loop handles one light array at a time and takes 76 ms per 14-day candidate on the development Mac; the batched loop takes 0.9 ms per candidate with bit-identical states (section 3). The package's `integrate` remains the reference in parity tests.
+`zeitgeber/prc.py` (change: added) holds the phase response protocol of docs/SCIENCE.md 4.3, used by the science tests and `scripts/reproduce_prc.py`. It builds its light arrays itself and runs them through `integrate`, so the package import stays in `sim`.
 
-Change: `equilibrate` declares convergence when every daily CBTmin moved by less than `tol_h` between the last two loops, not when the last DLMO moved by less than 0.001 h. The package's check warned after 3 loops in the benchmark; the weekly schedule needs about 6 loops of 14 days.
+Change: `integrate` is a batched fixed-step RK4 loop that calls the package's `derv` through the adapter, instead of the package's own `integrate`. The package loop handles one light array at a time and takes 76 ms per 14-day candidate on the development Mac; the batched loop takes 0.9 ms per candidate and matches the package's states to within 1e-13 (section 3; parity test in tests/zeitgeber/test_sim.py). The package's `integrate` remains the reference in parity tests.
+
+Change: `equilibrate` declares convergence when every daily CBTmin moved by less than `tol_h` between the last two loops, not when the last DLMO moved by less than 0.001 h. The package's check warned after 3 loops in the benchmark. In Z7 the fixtures converged in 3 to 4 loops of 14 days; the cap is 40 and a run that does not converge is flagged, not hidden.
 
 ### 2.5 zeitgeber/score
 
