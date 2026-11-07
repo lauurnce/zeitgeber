@@ -1,7 +1,7 @@
 """Lux profile builder (docs/SCIENCE.md 3.5, docs/ARCHITECTURE.md 2.3)."""
 
 import re
-from datetime import date, time
+from datetime import date, datetime, time
 from pathlib import Path
 
 import numpy as np
@@ -15,7 +15,7 @@ from zeitgeber.light import (
     LuxConstants,
     build_light_profile,
 )
-from zeitgeber.schedule import Schedule, Shift
+from zeitgeber.schedule import Interval, Schedule, Shift
 
 SCIENCE = Path(__file__).parents[2] / "docs" / "SCIENCE.md"
 K = LuxConstants()
@@ -97,5 +97,45 @@ def test_constants_match_science_table() -> None:
     assert K.home_dim_phone == lux("Home, awake, lights low, phone in hand")
     assert K.sleep == lux("Sleep in a dark room")
     assert K.night_street == lux("Outdoors at night, street")
+    assert K.light_seek == lux("Light-seeking window in the shift")
     assert "times 0.15 (category 3) or 0.02 (very dark)" in table
     assert (K.sunglasses["cat3"], K.sunglasses["dark"]) == (0.15, 0.02)
+
+
+def test_planner_blocks_change_only_their_samples() -> None:
+    schedule = load_fixture("permanent_nights")
+    day = date(2026, 11, 17)
+    tz = schedule.location.tz
+    at = lambda h, m=0: datetime.combine(day, time(h, m), tzinfo=tz)  # noqa: E731
+    blocks = [
+        Interval(at(17), at(18), "nap", "nap"),
+        Interval(at(23), at(23, 59), "light_seek", "light box"),
+        Interval(at(16), at(16, 15), "light_brake", "walk outside"),
+        Interval(at(21), at(21, 30), "light_brake", "after sunset"),
+    ]
+    plain = build_light_profile(schedule, start=day, days=1)
+    with_blocks = build_light_profile(schedule, start=day, days=1, extras=blocks)
+    g = plain.grid
+    nap, seek = g.mask(at(17), at(18)), g.mask(at(23), at(23, 59))
+    brake, dark = g.mask(at(16), at(16, 15)), g.mask(at(21), at(21, 30))
+    assert np.all(with_blocks.lux[nap] == K.sleep)
+    assert np.all(with_blocks.lux[seek] == K.light_seek)
+    assert np.all(with_blocks.lux[brake] == K.outdoor_sun)
+    np.testing.assert_array_equal(with_blocks.lux[dark], plain.lux[dark])  # sun down
+    rest = ~(nap | seek | brake)
+    np.testing.assert_array_equal(with_blocks.lux[rest], plain.lux[rest])
+
+
+def test_light_seek_outside_a_shift_does_nothing() -> None:
+    schedule = load_fixture("permanent_nights")
+    day = date(2026, 11, 17)
+    tz = schedule.location.tz
+    block = Interval(
+        datetime.combine(day, time(12), tzinfo=tz),
+        datetime.combine(day, time(13), tzinfo=tz),
+        "light_seek",
+        "at home",
+    )
+    plain = build_light_profile(schedule, start=day, days=1)
+    moved = build_light_profile(schedule, start=day, days=1, extras=[block])
+    np.testing.assert_array_equal(plain.lux, moved.lux)

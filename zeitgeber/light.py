@@ -6,6 +6,7 @@ can scale it. Sun times use the NOAA method as implemented by astral 3.2 (docs/S
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 
@@ -16,7 +17,7 @@ from numpy.typing import NDArray
 from pydantic import BaseModel, ConfigDict, Field
 
 from zeitgeber.grid import REQUEST_STEP_H, TimeGrid
-from zeitgeber.schedule import Location, Schedule
+from zeitgeber.schedule import Interval, Location, Schedule
 
 
 class LuxConstants(BaseModel):
@@ -31,6 +32,7 @@ class LuxConstants(BaseModel):
     home_dim_phone: float = Field(30.0, description="home, lights low, phone in hand")
     sleep: float = Field(1.0, description="sleep in a dark room")
     night_street: float = Field(10.0, description="outdoors or in transit after dark")
+    light_seek: float = Field(1_000.0, description="light-seeking window in the shift (rule R1)")
     sunglasses: dict[str, float] = Field(
         default_factory=lambda: {"none": 1.0, "cat3": 0.15, "dark": 0.02},
         description="transmission factor while the sun is up",
@@ -73,6 +75,7 @@ def sun_up(location: Location, grid: TimeGrid) -> NDArray[np.bool_]:
 
 # Environment codes stored with every sample, used by the timeline and the explanations.
 HOME, OFFICE, COMMUTE_OUTDOOR, COMMUTE_TRANSIT, SLEEP, PRE_SLEEP_DIM = range(6)
+LIGHT_SEEK, NAP, LIGHT_BRAKE = range(6, 9)
 LABELS = {
     HOME: "home",
     OFFICE: "office",
@@ -80,6 +83,9 @@ LABELS = {
     COMMUTE_TRANSIT: "commute, in transit",
     SLEEP: "sleep",
     PRE_SLEEP_DIM: "phone in bed",
+    LIGHT_SEEK: "bright light in the shift",
+    NAP: "pre-shift nap",
+    LIGHT_BRAKE: "outdoor light brake",
 }
 
 
@@ -107,6 +113,7 @@ def build_light_profile(
     step_h: float = REQUEST_STEP_H,
     interventions: LightInterventions | None = None,
     constants: LuxConstants | None = None,
+    extras: Sequence[Interval] = (),
 ) -> LightProfile:
     """Lux over ``days`` local days from ``start`` (defaults: the schedule's plan window).
 
@@ -116,6 +123,10 @@ def build_light_profile(
     ``outdoor_sun`` and transit means ``shade_or_vehicle`` while the sun is up, and
     ``night_street`` for both after sunset. Sunglasses scale the commute home while the sun is up
     (rule R2, docs/SCIENCE.md 5.4).
+
+    ``extras`` are planner blocks laid over the result: a ``light_seek`` block raises office light
+    to at least ``light_seek`` (R1) and only inside a shift; a ``nap`` block is dark (N3); a
+    ``light_brake`` block is outdoors in the sun (R5) and has no effect after sunset.
     """
     k = constants or LuxConstants()
     chosen = interventions or LightInterventions()
@@ -151,5 +162,17 @@ def build_light_profile(
             if iv.kind == "commute_home":
                 shaded = m & daylight
                 lux[shaded] *= k.sunglasses[chosen.sunglasses]
+    for iv in extras:
+        m = grid.mask(iv.start, iv.end)
+        if iv.kind == "light_seek":
+            m &= labels == OFFICE
+            lux[m], labels[m] = np.maximum(lux[m], k.light_seek), LIGHT_SEEK
+        elif iv.kind == "nap":
+            lux[m], labels[m] = k.sleep, NAP
+        elif iv.kind == "light_brake":
+            m &= daylight
+            lux[m], labels[m] = k.outdoor_sun, LIGHT_BRAKE
+        else:
+            raise ValueError(f"extras take nap, light_seek or light_brake blocks, not {iv.kind}")
     np.minimum(lux, k.max_lux, out=lux)
     return LightProfile(grid, lux, labels)
