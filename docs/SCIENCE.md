@@ -467,6 +467,33 @@ Compromise phase position (decision D1): the predicted Tmin must fall inside the
 - [5.3] Crowley SJ et al. (2003). See [3.5].
 - [5.4] Smith MR, Eastman CI (2012). See [3.3].
 
+### 5.7 Simulated example worker (Z7)
+
+The Z3 worked example (`tests/fixtures/schedules/permanent_nights.json`: 22:00 to 07:00 Monday to Friday, 90 min commute home with 40 min outdoors, day sleep 09:00 to 15:00, rest-day sleep 23:00 to 07:00) run through all three models with `scripts/worker_cbtmin.py`, at the 0.1 h step, with the v0.1 constants of 3.5.
+
+Warm-up on the worker's own schedule (four 14-day loops, every CBTmin moving less than 0.05 h). The pattern repeats each week; Manila time:
+
+| Day | Forger99 | Jewett99 | Hannay19 | Forger99 CBTmin inside sleep |
+|---|---|---|---|---|
+| Mon | 14:50 | 15:37 | 15:46 | no (awake; no day sleep before the first shift) |
+| Tue to Sat | 14:49 to 14:58 | 14:12 to 14:35 | 15:10 to 15:21 | yes, second half of 09:00 to 15:00 |
+| Sun | 14:34 | 15:19 | 15:26 | no (awake; slept 23:00 to 07:00) |
+
+Warm-up on the day worker fixture instead, which shows the first two weeks after a day worker starts this schedule:
+
+| Week | Forger99 | Hannay19 |
+|---|---|---|
+| Mon to Sun, week 1 | 03:51, 03:37, 04:02, 04:39, 05:31, 06:35, 06:59 | 02:45 to 11:03 |
+| Mon to Sun, week 2 | 06:37, 06:18, 06:57, 06:58, 10:39, 11:43, 10:58 | 08:31 to 14:29 |
+
+Comparison with the Z3 prediction. Z3 expected CBTmin near 04:00 to 05:00 on Monday, a drift of about 1 h later by Friday, and a full reset over each weekend, so that every workday would score as not re-entrained. The model disagrees in three ways:
+
+1. The drift is faster: about 3 h in the first week (Forger99), not 1 h.
+2. The weekend does not reset the clock. In the v0.1 light profile a rest day is 100 lux at home all day with no outdoor time, so it carries almost no advancing signal. Adding 2 h at 10,000 lux on Saturday and Sunday morning moved CBTmin later, not earlier: with CBTmin near 15:00, late-morning light falls before CBTmin and delays.
+3. At steady state the clock is fully on the night schedule. CBTmin sits near the end of the day sleep on workdays (complete re-entrainment in the categories of Crowley 2003 [3.5]) and in the afternoon on rest days, outside the 23:00 to 07:00 sleep.
+
+The studies in 5.2 found that most night workers do not adapt this far; Smith and Eastman 2008 controls ended near DLMO 00:30 [5.1]. The likely reasons the model goes further are inputs, not the equations: nine hours at 500 lux of office light every night, a rest day with no daylight, and a commute home whose bright light lands about 7 h before CBTmin, where the curve in 4.6 is small. All of these lux values are UNVERIFIED for Manila (3.6). The 0.1 h and 1 min steps agree within 0.03 h, so this is not a numerical effect. The planner and the sensitivity harness (step Z8) must treat rest-day light as a first-order input, and the pilot should record it.
+
 ## 6. Caffeine and naps
 
 ### 6.1 Purpose
