@@ -9,13 +9,18 @@ outdoor light brake) that the light builder lays over the profile.
 
 from __future__ import annotations
 
+import math
 from collections.abc import Sequence
 from dataclasses import dataclass, fields, replace
 from datetime import datetime, time, timedelta
 from typing import Literal
 
+import numpy as np
+from numpy.typing import NDArray
 from pydantic import ValidationError
 
+from zeitgeber.grid import REQUEST_STEP_H
+from zeitgeber.light import LightInterventions, build_light_profile
 from zeitgeber.schedule import (
     Interval,
     RestDayPolicy,
@@ -23,14 +28,17 @@ from zeitgeber.schedule import (
     SleepWindow,
     SleepWindows,
 )
+from zeitgeber.score import LAMBDA, ScoreBreakdown, score
+from zeitgeber.sim import ModelName, Warmup, equilibrate, get_model, integrate
 
 Sunglasses = Literal["none", "cat3", "dark"]
-RestChoice = Literal["current", "keep_nights", "01:00", "02:00", "03:00", "04:00"]
+RestChoice = Literal["current", "01:00", "02:00", "03:00", "04:00"]
 
 # Rule parameters. Values marked design are Zeitgeber's choices (docs/SCIENCE.md 5.4, 6.3).
 SLEEP_OFFSETS_H = (0.0, 0.5, 1.0, 1.5)  # R3: start within 1.5 h of getting home
 SLEEP_LENGTHS_H = (7.0, 8.0, 9.0)  # R3: at least 7 h
 REST_SLEEP_H = 8.0  # R4: late rest-day window, 8 h
+LATE_REST_STARTS = ("01:00", "02:00", "03:00", "04:00")  # R4, default 03:00
 LIGHT_SEEK_LENGTHS_H = (0.5, 1.0)  # R1
 LIGHT_SEEK_MARGIN_H = 2.0  # R1: end at least 2 h before CBTmin
 BRAKE_AFTER_WAKE_H = 0.5  # R5: 15 min outdoors within 2 h of waking (placed 30 min after, design)
@@ -49,7 +57,7 @@ class Interventions:
     sunglasses: Sunglasses = "none"  # R2 on the commute home; dark only for non-drivers (R7)
     sleep_start_offset_h: float | None = None  # R3, after-night-shift sleep, from getting home
     sleep_len_h: float | None = None  # R3
-    rest_day: RestChoice = "current"  # R4 late window, or keep night hours
+    rest_day: RestChoice = "current"  # R4 late window
     light_brake: bool = False  # R5
     light_seek_start_h: float | None = None  # R1, hours after shift start
     light_seek_len_h: float = 1.0
@@ -141,9 +149,9 @@ class InterventionSpace:
         if name == "rest_day":
             if not self.schedule.rest_weekdays:
                 return [{name: "current"}]
-            return [
-                {name: v} for v in ("current", "keep_nights", "01:00", "02:00", "03:00", "04:00")
-            ]
+            # D1 and R4: a late rest-day window, never a full switch to night hours. Keeping
+            # nights stays possible only as "current" for someone who already does it.
+            return _each(name, ["current", *LATE_REST_STARTS])
         if name == "light_brake":
             return _each(name, [False, True] if self.has_nights else [False])
         if name == "light_seek":
@@ -216,8 +224,6 @@ def _rest(
 ) -> tuple[SleepWindows, RestDayPolicy]:
     if c.rest_day == "current":
         return sleep, base.rest_days
-    if c.rest_day == "keep_nights":
-        return sleep, RestDayPolicy(mode="keep_nights")
     start = time.fromisoformat(c.rest_day)
     window = SleepWindow(start=start, end=_clock(start, REST_SLEEP_H))
     return sleep.model_copy(update={"rest_day": window}), RestDayPolicy(mode="flip_to_days")
@@ -286,3 +292,241 @@ def apply(base: Schedule, c: Interventions, slow_caffeine: bool = False) -> Appl
             CaffeineWindow(sh, nxt, cutoff, (sh.start, end) if end > sh.start else None)
         )
     return AppliedPlan(c, schedule, tuple(blocks), tuple(caffeine))
+
+
+# Objective (docs/ARCHITECTURE.md 4.3): J = S + soft penalties + burden_h * burden.
+PENALTY_LIGHT_SEEK_H = 0.5  # R1: a light block ending less than 2 h before CBTmin (design)
+PENALTY_SHORT_SLEEP_H = 1.0  # R3: an after-night-shift sleep shorter than 7 h (design)
+
+
+@dataclass(frozen=True)
+class SearchConfig:
+    seed: int = 0
+    passes: int = 4
+    restarts: int = 4
+    step_h: float = REQUEST_STEP_H
+    lam: float = LAMBDA
+    burden_h: float = 0.05
+    model: ModelName = "forger99"
+    cross_check: ModelName | None = "hannay19"
+    slow_caffeine: bool = False  # C2
+
+
+@dataclass(frozen=True)
+class Evaluation:
+    plan: AppliedPlan
+    score: ScoreBreakdown
+    penalty_h: float
+    penalties: tuple[str, ...]  # rule ids with a soft violation
+    objective_h: float
+    cbt_min: tuple[datetime, ...]  # UTC
+
+    @property
+    def interventions(self) -> Interventions:
+        return self.plan.interventions
+
+
+class Evaluator:
+    """Simulates and scores candidates, all from one warm-up on the worker's current schedule."""
+
+    def __init__(self, schedule: Schedule, config: SearchConfig | None = None) -> None:
+        self.schedule = schedule
+        self.config = config = config or SearchConfig()
+        self.model = get_model(config.model)
+        base = build_light_profile(schedule, step_h=config.step_h)
+        self.grid = base.grid
+        self.warmup: Warmup = equilibrate(self.model, base.grid, base.lux)
+        self._cache: dict[Interventions, Evaluation | None] = {}
+        self.simulations = 0
+
+    def evaluate(self, candidates: Sequence[Interventions]) -> list[Evaluation | None]:
+        """Evaluations in input order; None for a candidate that breaks a hard constraint."""
+        todo: list[AppliedPlan] = []
+        for c in dict.fromkeys(candidates):
+            if c in self._cache:
+                continue
+            try:
+                todo.append(apply(self.schedule, c, self.config.slow_caffeine))
+            except InfeasibleError:
+                self._cache[c] = None
+        if todo:
+            lux = np.stack([self._lux(a) for a in todo], axis=1)
+            traj = integrate(self.model, self.grid, lux, self.warmup.state)
+            self.simulations += len(todo)
+            for a, hours in zip(todo, traj.cbt_min_hours(), strict=True):
+                cbt = tuple(self.grid.start + timedelta(hours=float(h)) for h in hours)
+                self._cache[a.interventions] = self._score(a, cbt)
+        return [self._cache[c] for c in candidates]
+
+    def _lux(self, a: AppliedPlan) -> NDArray[np.float64]:
+        profile = build_light_profile(
+            a.schedule,
+            step_h=self.config.step_h,
+            interventions=LightInterventions(sunglasses=a.interventions.sunglasses),
+            extras=a.blocks,
+        )
+        return profile.lux
+
+    def _score(self, a: AppliedPlan, cbt: tuple[datetime, ...]) -> Evaluation:
+        begin, end = self.grid.start, self.grid.end
+        intervals = a.schedule.materialize()
+        # Only sleeps wholly inside the window are scored; the edges are clipped.
+        sleeps = [iv for iv in intervals if iv.start > begin and iv.end < end]
+        shifts = [iv for iv in intervals if iv.kind == "shift"]
+        result = score(cbt, sleeps, shifts, a.schedule.location.tz, self.config.lam)
+        penalty, rules = 0.0, []
+        seeks = [b for b in a.blocks if b.kind == "light_seek" and begin <= b.start < end]
+        if seeks:
+            margin = timedelta(hours=LIGHT_SEEK_MARGIN_H)
+            late = sum(any(b.start <= c < b.end + margin for c in cbt) for b in seeks)
+            if late:
+                penalty += PENALTY_LIGHT_SEEK_H * late / len(seeks)
+                rules.append("R1")
+        night = {s.weekday for s in a.schedule.shifts if s.crosses_midnight}
+        short = any(
+            a.schedule.sleep.for_shift(w).duration_min < MIN_WORKDAY_SLEEP_H * 60 for w in night
+        )
+        if short:
+            penalty += PENALTY_SHORT_SLEEP_H
+            rules.append("R3")
+        objective = result.total_h + penalty + self.config.burden_h * a.interventions.burden
+        return Evaluation(a, result, penalty, tuple(rules), objective, cbt)
+
+
+def _better(a: Evaluation, b: Evaluation) -> bool:
+    """Strictly better objective; ties go to the smaller burden."""
+    if not math.isclose(a.objective_h, b.objective_h, abs_tol=1e-9):
+        return a.objective_h < b.objective_h
+    return a.interventions.burden < b.interventions.burden
+
+
+def _descend(
+    ev: Evaluator, space: InterventionSpace, start: Interventions, passes: int
+) -> tuple[Evaluation, bool]:
+    first = ev.evaluate([start])[0]
+    if first is None:
+        raise InfeasibleError("the starting point breaks a hard constraint")
+    best = first
+    for _ in range(passes):
+        changed = False
+        for name in PARAM_ORDER:
+            options = [replace(best.interventions, **v) for v in space.values(name)]  # type: ignore[arg-type]
+            for e in ev.evaluate(options):
+                if e is not None and _better(e, best):
+                    best, changed = e, True
+        if not changed:
+            return best, True
+    return best, False
+
+
+def _random_start(space: InterventionSpace, rng: np.random.Generator) -> Interventions:
+    c = Interventions()
+    for name in PARAM_ORDER:
+        values = space.values(name)
+        c = replace(c, **values[int(rng.integers(len(values)))])  # type: ignore[arg-type]
+    return c
+
+
+@dataclass(frozen=True)
+class Explanation:
+    """What one recommended change is worth: the plan scored with and without it."""
+
+    intervention: str
+    rule_ids: tuple[str, ...]
+    score_with_h: float
+    score_without_h: float | None  # None when removing it alone breaks a hard constraint
+    objective_without_h: float | None
+    delta_cbt_day7_h: float | None  # CBTmin without minus with, hours (positive: later)
+    delta_cbt_day14_h: float | None
+
+    @property
+    def delta_score_h(self) -> float | None:
+        """Score without minus score with; positive means the change lowers misalignment."""
+        if self.score_without_h is None:
+            return None
+        return self.score_without_h - self.score_with_h
+
+
+@dataclass(frozen=True)
+class PlanResult:
+    schedule: Schedule
+    config: SearchConfig
+    baseline: Evaluation
+    plan: Evaluation
+    explanations: tuple[Explanation, ...]
+    converged: bool
+    simulations: int
+    cross_check: dict[str, ScoreBreakdown] | None  # "baseline" and "plan" under the second model
+
+
+def _cbt_on_day(ev: Evaluation, schedule: Schedule, day_index: int) -> datetime | None:
+    tz = schedule.location.tz
+    day = schedule.anchor_date + timedelta(days=day_index)
+    return next((c for c in ev.cbt_min if c.astimezone(tz).date() == day), None)
+
+
+def explain(ev: Evaluator, plan: Evaluation) -> tuple[Explanation, ...]:
+    """Ablation: revert each active change on its own and re-simulate (ARCHITECTURE 4.5)."""
+    names = plan.interventions.active()
+    ablated = ev.evaluate([plan.interventions.without(n) for n in names])
+    out = []
+    for name, other in zip(names, ablated, strict=True):
+        deltas: list[float | None] = []
+        for day in (6, 13):
+            a = _cbt_on_day(plan, ev.schedule, day)
+            b = None if other is None else _cbt_on_day(other, ev.schedule, day)
+            deltas.append(None if a is None or b is None else _hours(b - a))
+        out.append(
+            Explanation(
+                intervention=name,
+                rule_ids=RULES[name],
+                score_with_h=plan.score.total_h,
+                score_without_h=None if other is None else other.score.total_h,
+                objective_without_h=None if other is None else other.objective_h,
+                delta_cbt_day7_h=deltas[0],
+                delta_cbt_day14_h=deltas[1],
+            )
+        )
+    return tuple(out)
+
+
+def search(schedule: Schedule, config: SearchConfig | None = None) -> PlanResult:
+    """Seeded coordinate descent from "as now" plus random restarts (ARCHITECTURE 4.4).
+
+    The same schedule and seed always give the same plan. Ties in the objective go to the
+    smaller burden, then to the earlier start.
+    """
+    config = config or SearchConfig()
+    ev = Evaluator(schedule, config)
+    space = InterventionSpace(schedule)
+    baseline = ev.evaluate([Interventions()])[0]
+    if baseline is None:
+        raise InfeasibleError("the current schedule itself breaks a hard constraint")
+    rng = np.random.default_rng(config.seed)
+    starts = [Interventions()]
+    for _ in range(config.restarts):
+        for _attempt in range(50):
+            c = _random_start(space, rng)
+            if ev.evaluate([c])[0] is not None:
+                starts.append(c)
+                break
+    best, converged = baseline, True
+    for start in starts:
+        found, done = _descend(ev, space, start, config.passes)
+        if _better(found, best):
+            best, converged = found, done
+    cross: dict[str, ScoreBreakdown] | None = None
+    if config.cross_check is not None:
+        other = Evaluator(schedule, replace(config, model=config.cross_check))
+        pair = other.evaluate([baseline.interventions, best.interventions])
+        cross = {k: e.score for k, e in zip(("baseline", "plan"), pair, strict=True) if e}
+    return PlanResult(
+        schedule=schedule,
+        config=config,
+        baseline=baseline,
+        plan=best,
+        explanations=explain(ev, best),
+        converged=converged,
+        simulations=ev.simulations,
+        cross_check=cross,
+    )
