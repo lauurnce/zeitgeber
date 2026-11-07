@@ -121,7 +121,7 @@ class Interval:
     label: str                                  # readable, used in validation errors
 ```
 
-Placement rules: the after-shift sleep is the first occurrence of its window that starts after the shift ends; it must start after the commute home ends and within 12 h of getting home. Rest-day sleep is added on each rest day for every window of the rest-day mode that overlaps nothing already placed. Validation rejects two shifts on one weekday, any overlap among shifts, commutes and after-shift sleeps, sleep that starts before getting home, and a split mode without a second window. Errors name the weekday and local times, for example "the sleep after the Monday shift starts at Tuesday 08:00, before you get home at Tuesday 08:30".
+Placement rules: the after-shift sleep is the first occurrence of its window that starts after the shift ends; it must start after the commute home ends and within 12 h of getting home. Rest-day sleep is added on each rest day for every window of the rest-day mode that overlaps nothing already placed; a window that starts before noon is the sleep of the night after the rest day, so it starts on the next calendar day (D31). Validation rejects two shifts on one weekday, any overlap among shifts, commutes and after-shift sleeps, sleep that starts before getting home, and a split mode without a second window. Errors name the weekday and local times, for example "the sleep after the Monday shift starts at Tuesday 08:00, before you get home at Tuesday 08:30".
 
 ### 2.2 zeitgeber/grid (change: added)
 
@@ -230,82 +230,81 @@ Change: `equilibrate` declares convergence when every daily CBTmin moved by less
 
 ### 2.5 zeitgeber/score
 
+Implemented in Z9; see D32.
+
 ```python
 @dataclass(frozen=True)
-class DayScore:
-    day_index: int
-    mid_sleep_h: float; cbt_min_h: float | None
-    delta_h: float; target_h: float; misalignment_h: float      # Delta_d, t_d, M_d (SCIENCE 7.3)
-    shift_overlap_h: float                                       # P_d
-    category: Literal["not", "partial", "complete", "no_marker"]
+class DayScore:                                 # one main sleep episode (4 h or more)
+    sleep: Interval; cbt_min: datetime | None
+    delta_h: float; target_h: float             # Delta_d, t_d (SCIENCE 7.3)
+    phase_angle_h: float                        # M_d
+    work_in_low_h: float                        # P_d
+    sleep_in_night_frac: float                  # share inside CBTmin - 6 h to CBTmin + 2 h
+    category: Literal["not", "partial", "complete", "past", "no_marker"]
 
 @dataclass(frozen=True)
 class ScoreBreakdown:
     total_h: float                              # S
-    days: list[DayScore]
-    social_jetlag_h: float
-    lam: float
+    phase_angle_h: float; work_in_low_h: float; sleep_in_night_frac: float
+    social_jetlag_h: float; modal_category: str
+    days: tuple[DayScore, ...]; lam: float
 
-def score(markers: Markers, sleep: list[Interval], shifts: list[Interval],
-          lam: float = 0.5, target_before_wake_h: float = 2.0) -> ScoreBreakdown
-def wrap_hours(delta_h: float) -> float          # into (-12, 12]
+def score(cbt_min, sleeps, shifts, tz, lam=0.5) -> ScoreBreakdown
+def wrap_hours(delta_h: float) -> float         # into (-12, 12]
 ```
 
 ### 2.6 zeitgeber/plan
 
+Implemented in Z9; see D33 and D34.
+
 ```python
-class Interventions(BaseModel):                 # one candidate plan; defaults are "do nothing"
-    sleep_start_offset_h: float = 0.0           # after arriving home, 0 to 1.5 step 0.5 (R3)
-    sleep_len_h: float = 7.0                    # 7 to 9 step 1 (R3)
-    sunglasses: Literal["none", "cat3", "dark"] = "none"    # R2; "dark" only when not driving
-    light_seek_start_h: float | None = None     # hours after shift start, step 1 (R1)
-    light_seek_len_h: float = 0.0               # 0, 0.5, 1.0 (R1)
-    light_brake: bool = False                   # R5
-    rest_sleep_start: time = time(1, 0)         # 01:00 to 04:00 step 1 h, 8 h long (R4)
-    nap_len_min: int = 0                        # 0, 30, 60, 90, ending 30 min before leaving (N1)
-    nap_before_shift_h: float = 3.0             # fixed in v0.1
-    @property
-    def caffeine_cutoff_before_sleep_h(self) -> float   # 6, or 8 when slow clearance is reported (C1, C2)
+@dataclass(frozen=True)
+class Interventions:                            # hashable; every default means "as now"
+    sunglasses: Literal["none", "cat3", "dark"] = "none"       # R2; dark only for non-drivers (R7)
+    sleep_start_offset_h: float | None = None   # R3, sleep after night shifts, from getting home
+    sleep_len_h: float | None = None            # R3, 7 to 9 h
+    rest_day: Literal["current", "01:00", "02:00", "03:00", "04:00"] = "current"   # R4, 8 h
+    light_brake: bool = False                   # R5, 15 min outdoors 30 min after day sleep
+    light_seek_start_h: float | None = None     # R1, hours after shift start, any shift
+    light_seek_len_h: float = 1.0               # 0.5 or 1.0
+    nap_len_min: int = 0                        # N1, before night shifts, ends 30 min before leaving
+    def active(self) -> list[str]; def without(self, name) -> Interventions; burden: float
 
 class InterventionSpace:
-    def __init__(self, schedule: Schedule) -> None
-    def options(self, name: str) -> list[Any]           # allowed values per parameter for this schedule
-    def feasible(self, c: Interventions) -> bool         # static constraints (driving, nap fits the gap)
+    def values(self, name: str) -> list[dict[str, object]]     # "as now" first
 
+def apply(schedule, c, slow_caffeine=False) -> AppliedPlan     # raises InfeasibleError
 @dataclass(frozen=True)
-class Violation:
-    rule_id: str; detail: str; hard: bool
-
-class Constraints:
-    def check(self, c: Interventions, markers: Markers, schedule: Schedule) -> list[Violation]   # SCIENCE 5.4 and 6.3
+class AppliedPlan:
+    interventions: Interventions; schedule: Schedule            # validated, so no sleep in a shift
+    blocks: tuple[Interval, ...]                                # nap, light_seek, light_brake
+    caffeine: tuple[CaffeineWindow, ...]                        # first half of shift, before cutoff
 
 @dataclass(frozen=True)
 class SearchConfig:
-    seed: int = 0
-    passes: int = 4
-    restarts: int = 8
-    step_h: float = 0.1                         # request path; 1/60 only in tests (section 3.4)
-    lam: float = 0.5
-    burden_h: float = 0.05
-    model: str = "forger99"
-    cross_check: str | None = "hannay19"
+    seed: int = 0; passes: int = 4; restarts: int = 4; step_h: float = 0.1
+    lam: float = 0.5; burden_h: float = 0.05
+    model: ModelName = "forger99"; cross_check: ModelName | None = "hannay19"
+    slow_caffeine: bool = False
+
+class Evaluator:                                # one warm-up, batched candidates, cached by plan
+    def evaluate(self, candidates) -> list[Evaluation | None]
 
 @dataclass(frozen=True)
 class Explanation:
-    intervention: str; rule_ids: list[str]
-    delta_score_h: float                        # score without it minus score with it
-    delta_cbt_day7_h: float; delta_cbt_day14_h: float
+    intervention: str; rule_ids: tuple[str, ...]
+    score_with_h: float; score_without_h: float | None; objective_without_h: float | None
+    delta_cbt_day7_h: float | None; delta_cbt_day14_h: float | None
+    delta_score_h: float | None                 # property: without minus with
 
 @dataclass(frozen=True)
 class PlanResult:
-    baseline: ScoreBreakdown; chosen: Interventions; score: ScoreBreakdown
-    markers_baseline: Markers; markers_plan: Markers
-    cross_check: Markers | None                 # Hannay19 on the final plan only
-    explanations: list[Explanation]
-    evaluations: int; seed: int
+    schedule; config; baseline: Evaluation; plan: Evaluation
+    explanations: tuple[Explanation, ...]; converged: bool; simulations: int
+    cross_check: dict[str, ScoreBreakdown] | None   # second model on baseline and plan
 
-def search(schedule: Schedule, config: SearchConfig = SearchConfig()) -> PlanResult
-def explain(schedule: Schedule, chosen: Interventions, config: SearchConfig) -> list[Explanation]
+def search(schedule, config=None) -> PlanResult
+def explain(evaluator, plan: Evaluation) -> tuple[Explanation, ...]
 ```
 
 Change: the request path runs at the 0.1 h step throughout; the 1 min step is used only in tests that bound the difference (section 3.4).
@@ -500,7 +499,7 @@ Settings that follow: `MPLBACKEND=Agg` and `MPLCONFIGDIR=/tmp/matplotlib` in the
 | `sunglasses` | none; cat3 (transmission 0.15); dark (0.02), offered only when the worker does not drive or ride a motorcycle | R2, R7 |
 | `light_seek_start_h`, `light_seek_len_h` | none; or start at 0 to shift length minus 2 h in 1 h steps, length 0.5 or 1.0 h, target 1,000 lux | R1 |
 | `light_brake` | off; on (15 min outdoors within 2 h of waking from day sleep) | R5 |
-| `rest_sleep_start` | 01:00, 02:00, 03:00, 04:00 local, 8 h long | R4 |
+| `rest_day` | as now, or 01:00, 02:00, 03:00, 04:00 local, 8 h long; never a full switch to night hours (D1, D33) | R4 |
 | `nap_len_min` | 0, 30, 60, 90 min, placed about 3 h before the shift and ending 30 min before leaving home | N1 |
 | caffeine cutoff | derived, not searched: sleep start minus 6 h, or minus 8 h when slow clearance is reported | C1, C2 |
 
