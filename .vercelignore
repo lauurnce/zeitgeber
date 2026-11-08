@@ -1,0 +1,9 @@
+# Deploy only what the API function needs: an allowlist.
+/*
+!/api
+!/zeitgeber
+!/requirements.txt
+!/vercel.json
+!/LICENSE
+!/THIRD_PARTY_NOTICES.md
+**/__pycache__
