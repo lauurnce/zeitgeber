@@ -33,3 +33,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
+
+## astral 3.2
+
+https://github.com/sffjunkie/astral. Apache License 2.0. Used for sunrise, sunset and civil twilight (docs/SCIENCE.md 9).
+
+## pydantic
+
+https://github.com/pydantic/pydantic. MIT License. Used for schedule input models and validation.
