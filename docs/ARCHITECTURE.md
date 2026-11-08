@@ -382,11 +382,15 @@ Changes from the Z4 design:
 
 ### 2.8 api/
 
-- `GET /v1/health` returns version and model names.
-- `POST /v1/plan` takes `{schedule: Schedule, options: {model, language, llm_wording}}` and returns `PlanDocument`.
-- `POST /v1/plan.ics` takes the same body and returns `text/calendar`.
-- Body limit 32 KB, request timeout 25 s, CORS for the web origin only, errors as problem JSON (RFC 9457), access log without bodies or query strings, no cookies, no persistence.
-- Entry point `api/index.py` for the Vercel Python runtime; the same ASGI app runs under Mangum on Lambda if hosting changes (section 3).
+Built in Z11. Reference: docs/API.md.
+
+- `GET /v1/health` returns status, version, model names and the plan schema version.
+- `POST /v1/plan` takes `{schedule: Schedule, options: {seed, cross_check, slow_caffeine, wording}}` and returns `PlanDocument`.
+- `POST /v1/plan.ics?lang=en|tl` takes the same body and returns `text/calendar`.
+- `POST /v1/simulate` takes `{schedule, model}` and returns CBTmin and DLMO per local day (debugging).
+- `api/main.py` builds the app (`create_app(settings)`); `api/models.py` request and response bodies; `api/limits.py` body size limit and rate limiter; `api/config.py` settings from the environment; `api/index.py` the Vercel entry point.
+- Body limit 32 KB (by header and while streaming), 20 requests per minute per client per instance on the compute routes, CORS for the web origins only, errors as problem JSON (RFC 9457), `Cache-Control: no-store`, no cookies, no persistence. Unhandled errors become a plain 500 and are logged by exception type only.
+- Change: the separate Mangum note is dropped; the same ASGI app runs under any ASGI host. Change: no 25 s in-app timeout; the function's 60 s limit applies.
 
 ### 2.9 web/
 
@@ -473,6 +477,17 @@ A plan request runs: Forger99 equilibration (6 loops of 14 days), the search (at
 | total compute | about 2.8 s |
 
 Serverless vCPUs are slower than an M4 Pro core; the Z11 deployment measures the real p95. Levers if it is too slow, in order: halve the restarts, run the Hannay19 cross-check only on request, shorten equilibration by starting from the previous loop's state.
+
+Measured in Z11 (permanent nights worker, seed 0, 320 candidates, same plan everywhere):
+
+| Where | Cross-check on | Cross-check off |
+|---|---|---|
+| development Mac, before Z11 | 12.4 s | about 10 s |
+| development Mac, descents in lockstep (Z11) | 6.3 to 6.5 s | 5.1 to 5.2 s |
+| Vercel `sin1`, warm, measured from Manila | 21.7 to 22.3 s | 17.0 to 17.2 s |
+| Vercel, cold start of `/v1/health` | 8.5 s | |
+
+The estimate above was wrong because it priced the search as one batch. Coordinate descent is sequential: each parameter step needs the result of the one before, so every step is a full 14-day integration (3,360 RK4 steps, 13,440 calls of the package's derivative) whatever the batch width. The cost is set by the number of steps, about 8 to 10 microseconds of Python overhead per derivative call on the Mac and about three times that on the function. Running the restarts in lockstep cut the steps from 87 to 39 integrations. Halving the restarts no longer helps. See D42 for the options.
 
 The 1 min step stays in the test suite, not the request path: golden tests assert that CBTmin at 0.1 h is within 0.1 h of CBTmin at 1 min on every golden schedule (section 5). This changes the earlier plan in SCIENCE 1.7 and section 2.6, which put 1 min verification in the request path; at 13 ms per Hannay19 candidate and about 0.8 s per single 1 min run it would roughly double request time for a difference the tests already bound.
 
