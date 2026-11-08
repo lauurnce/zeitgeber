@@ -12,7 +12,7 @@ from collections.abc import Mapping
 
 from pydantic import BaseModel, ConfigDict, Field
 
-DEFAULT_ORIGINS = ("https://zeitgeber.vercel.app", "http://localhost:3000")
+DEFAULT_ORIGINS = ("https://zeitgeber-five.vercel.app", "http://localhost:3000")
 
 
 class ApiSettings(BaseModel):
