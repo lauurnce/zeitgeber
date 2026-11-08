@@ -210,3 +210,25 @@ Alternatives: gettext catalogs; strings inline in code; a hand-maintained review
 Decision: nudges are written for sleep, rest-day sleep in a planned late window, nap, light blocks, sunglasses and the caffeine window. Shifts, commutes and unchanged rest-day sleep get none. Day sleep uses the "lowest body clock" wording only when the predicted CBTmin falls inside that sleep. Changes that raise the score on their own are explained as trade-offs (the 7 h sleep floor, or the plan as a whole).
 Reason: a nudge for an unchanged 22:00 rest-day sleep would claim a "late night" that is not there; the sleep wording should not state a body-clock fact the model does not show for that day.
 Alternatives: a nudge for every event; one sleep wording for all days.
+
+## API and deployment
+
+### D39. API as built
+Decision: routes live under `/v1` (`/v1/health`, `/v1/plan`, `/v1/plan.ics`, `/v1/simulate`). Request bodies reject unknown fields. Validation errors return `422` problem details with a location, a plain message and a type per problem, without echoing the submitted values. A valid schedule with no feasible plan also returns `422`. Every response carries `Cache-Control: no-store`. Unhandled exceptions are turned into a plain `500` inside the app and logged by exception type and path only, so neither the response nor the log carries schedule details. The rate limit runs as a route dependency, so invalid requests count too.
+Reason: a version prefix lets the plan schema change without breaking clients; the default error path in the framework re-raises to the server log with the exception message, which can contain schedule times.
+Alternatives: unversioned `/plan` as written in the Z11 prompt; FastAPI's default error bodies; logging requests for debugging (rejected: privacy rule).
+
+### D40. Deployment on Vercel from the repository root
+Decision: the API is the Vercel project `zeitgeber` (production `https://zeitgeber-five.vercel.app`), a Python function from `api/index.py` in region `sin1` with a 60 s limit. Dependencies come from `requirements.txt`, exported from `uv.lock` (`make requirements`, checked in CI). `.vercelignore` is an allowlist (`api/`, `zeitgeber/`, the requirements and licence files). The project is connected to the GitHub repository, so pushes to `main` deploy to production. No secrets are needed; a provider key for optional wording would be set with `vercel env add`, never in git. The web app joins the same project in the web phase.
+Reason: Z4 chose a Vercel Python function. Singapore is the closest region to Manila. The allowlist keeps local-only files out of the upload. The bundle is 286 MB, under the 500 MB Python limit.
+Alternatives: AWS Lambda container with SAM (the Z4 fallback); a separate API project; `iad1`.
+
+### D41. Rate limiting per function instance
+Decision: an in-memory sliding window of 20 requests per minute per client on the compute routes, keyed by a salted hash of the first forwarded address. Each instance keeps its own counts.
+Reason: there is no store to share counts in (privacy rule), and a burst spread over instances only costs compute. A platform firewall rule can add a global limit later without code.
+Alternatives: Vercel Firewall rate-limit rule; a Redis counter (rejected: storage).
+
+### D42. The plan route does not meet the 6 s budget yet
+Decision: record the measured latency (about 22 s warm on Vercel with the cross-check, 17 s without; 6.4 s and 5.2 s on the development Mac) and keep the latency test as a strict expected failure until a fix is chosen. Running restart descents in lockstep (same plans, same seeds) is already in; it halved the time.
+Reason: the time is set by the number of sequential coordinate-descent steps, each a full 14-day integration through the package's derivative, and the function's CPU is about three times slower per call than the development Mac. The remaining options change the science path or the search, so they need a decision: (a) search at a 0.2 h step and re-score the chosen plan and ablations at 0.1 h (about half the time, needs a check that rankings hold); (b) a compiled copy of the model derivatives tested against the package (about ten times faster, but a second implementation of the equations, which Z4 avoided); (c) fewer passes or options (changes plans); (d) make the Hannay19 cross-check opt-in (saves about 5 s on the function); (e) accept about 20 s with a progress view in the web app.
+Alternatives: loosen the budget or the test to pass (rejected).
