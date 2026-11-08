@@ -9,6 +9,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
+from functools import lru_cache
 
 import numpy as np
 from astral import Observer
@@ -51,6 +52,7 @@ class SolarTimes:
     dusk: datetime
 
 
+@lru_cache(maxsize=4096)
 def solar_times(location: Location, day: date) -> SolarTimes:
     """Civil dawn, sunrise, solar noon, sunset and civil dusk for a local date."""
     events = sun(Observer(location.latitude, location.longitude), date=day, tzinfo=location.tz)
