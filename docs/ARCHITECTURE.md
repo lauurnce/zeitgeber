@@ -77,59 +77,50 @@ Changes from the starting proposal are marked "change" and explained in place.
 
 ### 2.1 zeitgeber/schedule
 
-```python
-class Location(BaseModel):                      # change: added; light depends on it
-    name: str
-    latitude: float                             # degrees, -72 to 72
-    longitude: float                            # degrees, -180 to 180
-    timezone: str = "Asia/Manila"               # IANA name
+Implemented in Z6; see docs/DECISIONS.md D27 for changes from the first proposal.
 
-class Shift(BaseModel):
-    weekday: int                                # 0 = Monday; the local day the shift starts
-    start: time                                 # local wall clock
-    end: time                                   # local; earlier than start means it crosses midnight
+```python
+class Location(BaseModel):                      # Manila by default; latitude within 72 degrees; IANA timezone checked
+    name: str = "Manila"; latitude: float = 14.5995; longitude: float = 120.9842; timezone: str = "Asia/Manila"
+
+class Shift(BaseModel):                         # 4 to 14 h; an end at or before the start crosses midnight
+    weekday: int; start: time; end: time
 
 class Commute(BaseModel):
     duration_min: int                           # 0 to 300
-    outdoor_min: int                            # 0 to duration_min; counted as daylight only when the sun is up
+    outdoor_share: float                        # 0 to 1; outdoor_min = round(duration_min * outdoor_share)
     mode: Literal["walk", "jeepney_bus", "train", "car_driver", "car_passenger", "motorcycle"]
-    @property
-    def drives(self) -> bool                    # car_driver or motorcycle; gates the dark-lens rule (R2)
+    drives: bool                                # property; gates dark lenses (R7)
 
-class SleepHabits(BaseModel):                   # change: added; current behaviour defines the burn-in
-    workday_sleep_start: time
-    workday_sleep_end: time
-    restday_sleep_start: time
-    restday_sleep_end: time
-    phone_in_bed_min: int = 0                   # light at 30 lux before sleep (SCIENCE 3.5)
+class SleepWindow(BaseModel):                   # 3 to 12 h
+    start: time; end: time
+
+class SleepWindows(BaseModel):
+    after_shift: SleepWindow                    # the sleep that follows each shift
+    after_shift_by_weekday: dict[int, SleepWindow]   # overrides for rotations
+    rest_day: SleepWindow
+    rest_day_second: SleepWindow | None         # required when the rest-day mode is "split"
+    phone_in_bed_min: int                       # dim light before each sleep
 
 class RestDayPolicy(BaseModel):
-    weekdays: list[int]                         # rest days, 0 = Monday
-    keep_night_schedule: bool = False           # True: the worker already sleeps late on rest days
+    mode: Literal["keep_nights", "flip_to_days", "split"] = "flip_to_days"
 
 class Schedule(BaseModel):
-    anchor_date: date                           # local date of the first planned day
-    plan_days: int = 14
-    location: Location
-    shifts: list[Shift]                         # at most one per weekday
-    commute_to_work: Commute                    # change: both commutes modeled
-    commute_home: Commute
-    sleep: SleepHabits
-    rest_days: RestDayPolicy
-
-    def materialize(self) -> list[Interval]:    # absolute UTC intervals for burn-in and plan days
+    anchor_date: date; plan_days: int = 14; location: Location
+    shifts: list[Shift]                         # one per weekday at most; rest days are the others
+    commute_to_work: Commute; commute_home: Commute
+    sleep: SleepWindows; rest_days: RestDayPolicy
+    def window_utc(self, start=None, days=None) -> tuple[datetime, datetime]
+    def materialize(self, start=None, days=None) -> list[Interval]   # UTC, sorted, clipped, never overlapping
 
 @dataclass(frozen=True)
 class Interval:
-    start: datetime                             # UTC, timezone-aware
-    end: datetime
-    kind: Literal["shift", "commute_to_work", "commute_home", "sleep", "rest_sleep", "nap", "light_seek", "light_brake"]
-    day_index: int                              # 0-based plan day the interval belongs to
+    start: datetime; end: datetime              # UTC
+    kind: Literal["shift", "commute_to_work", "commute_home", "sleep", "rest_sleep"]
+    label: str                                  # readable, used in validation errors
 ```
 
-Validation: at most one shift per weekday; shift length 4 to 14 h; rest days are the weekdays without shifts unless listed; `outdoor_min <= duration_min`; sleep windows 3 to 12 h; latitude within 72 degrees (SCIENCE 9.5); timezone resolvable. `materialize` is the only place that turns wall-clock times into UTC, so midnight crossing is handled once.
-
-Change: the rest-day sleep window is a planner parameter (rule R4), so `RestDayPolicy` carries only which days are rest days and whether the worker already keeps a late schedule; the current rest-day sleep times live in `SleepHabits` for the burn-in.
+Placement rules: the after-shift sleep is the first occurrence of its window that starts after the shift ends; it must start after the commute home ends and within 12 h of getting home. Rest-day sleep is added on each rest day for every window of the rest-day mode that overlaps nothing already placed. Validation rejects two shifts on one weekday, any overlap among shifts, commutes and after-shift sleeps, sleep that starts before getting home, and a split mode without a second window. Errors name the weekday and local times, for example "the sleep after the Monday shift starts at Tuesday 08:00, before you get home at Tuesday 08:30".
 
 ### 2.2 zeitgeber/grid (change: added)
 
@@ -174,9 +165,12 @@ class LightProfile:
     lux: np.ndarray                             # (n,) or (n, batch)
     labels: np.ndarray                          # int8 environment codes, (n,) or (n, batch)
 
-def build_light_profile(schedule: Schedule, grid: TimeGrid,
-                        interventions: Interventions | None = None,
-                        constants: LuxConstants = LuxConstants()) -> LightProfile
+class LightInterventions(BaseModel):            # Z6 carries sunglasses only; the planner adds the rest
+    sunglasses: Literal["none", "cat3", "dark"] = "none"
+
+def build_light_profile(schedule: Schedule, start: date | None = None, days: int | None = None,
+                        step_h: float = 0.1, interventions: LightInterventions | None = None,
+                        constants: LuxConstants | None = None) -> LightProfile
 def build_light_batch(schedule: Schedule, grid: TimeGrid,
                       candidates: Sequence[Interventions],
                       constants: LuxConstants = LuxConstants()) -> LightProfile   # lux shape (n, len(candidates))
