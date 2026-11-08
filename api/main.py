@@ -125,7 +125,7 @@ def create_app(settings: ApiSettings | None = None) -> FastAPI:
         found = [
             FieldError(
                 location=[p for p in e["loc"] if p != "body"] or ["body"],
-                message=str(e["msg"]),
+                message=str(e["msg"]).removeprefix("Value error, "),
                 type=str(e["type"]),
             )
             for e in exc.errors()
