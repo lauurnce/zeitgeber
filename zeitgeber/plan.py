@@ -401,22 +401,36 @@ def _better(a: Evaluation, b: Evaluation) -> bool:
 
 
 def _descend(
-    ev: Evaluator, space: InterventionSpace, start: Interventions, passes: int
-) -> tuple[Evaluation, bool]:
-    first = ev.evaluate([start])[0]
-    if first is None:
-        raise InfeasibleError("the starting point breaks a hard constraint")
-    best = first
+    ev: Evaluator, space: InterventionSpace, starts: Sequence[Interventions], passes: int
+) -> list[tuple[Evaluation, bool]]:
+    """Coordinate descent from each start, run in lockstep so that each parameter step of
+    every descent shares one batched simulation. Each descent follows exactly the path it
+    would follow alone: per pass, parameters in :data:`PARAM_ORDER`, keeping the best option.
+    """
+    firsts = ev.evaluate(starts)
+    if any(f is None for f in firsts):
+        raise InfeasibleError("a starting point breaks a hard constraint")
+    best = [f for f in firsts if f is not None]
+    done = [False] * len(best)
     for _ in range(passes):
-        changed = False
+        active = [k for k, d in enumerate(done) if not d]
+        if not active:
+            break
+        changed = dict.fromkeys(active, False)
         for name in PARAM_ORDER:
-            options = [replace(best.interventions, **v) for v in space.values(name)]  # type: ignore[arg-type]
-            for e in ev.evaluate(options):
-                if e is not None and _better(e, best):
-                    best, changed = e, True
-        if not changed:
-            return best, True
-    return best, False
+            options = {
+                k: [replace(best[k].interventions, **v) for v in space.values(name)]  # type: ignore[arg-type]
+                for k in active
+            }
+            results = iter(ev.evaluate([c for k in active for c in options[k]]))
+            for k in active:
+                for _option in options[k]:
+                    e = next(results)
+                    if e is not None and _better(e, best[k]):
+                        best[k], changed[k] = e, True
+        for k in active:
+            done[k] = not changed[k]
+    return list(zip(best, done, strict=True))
 
 
 def _random_start(space: InterventionSpace, rng: np.random.Generator) -> Interventions:
@@ -511,8 +525,7 @@ def search(schedule: Schedule, config: SearchConfig | None = None) -> PlanResult
                 starts.append(c)
                 break
     best, converged = baseline, True
-    for start in starts:
-        found, done = _descend(ev, space, start, config.passes)
+    for found, done in _descend(ev, space, starts, config.passes):
         if _better(found, best):
             best, converged = found, done
     cross: dict[str, ScoreBreakdown] | None = None
