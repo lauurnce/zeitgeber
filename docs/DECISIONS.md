@@ -142,3 +142,10 @@ Alternatives: keep the scaffold in Z4 and push the architecture into Z5.
 Decision: Z5 builds only the empty skeleton (package with docstring modules, API health route, web placeholder, fixtures, tooling, CI). The `schedule` and `grid` implementations move into Z6 alongside the light builder. The API health route is `/v1/health`, as in docs/ARCHITECTURE.md 2.8.
 Reason: the scaffold step was scoped as "no algorithm code"; keeping it free of models lets CI, tooling and fixtures settle before the first real module.
 Alternatives: implement the schedule models in the scaffold step.
+
+## Schedule model and light profile
+
+### D27. Schedule schema as built
+Decision: commutes take an outdoor share (0 to 1) instead of outdoor minutes; `SleepHabits` becomes `SleepWindows` with an after-shift window, per-weekday overrides for rotations, a rest-day window and an optional second rest-day window; `RestDayPolicy` has three modes (`keep_nights`, `flip_to_days`, `split`); `Location` defaults to Manila. The after-shift sleep is placed after each shift and rest-day sleep fills rest days where it overlaps nothing.
+Reason: the phase brief asked for an outdoor share and the three rest-day modes. Rotating schedules need a different sleep after each shift type, which one workday window cannot express. Placing sleep relative to shifts lets night workers and day workers share one rule.
+Alternatives: one workday sleep window keyed to calendar days; free-form lists of sleep intervals.
