@@ -149,3 +149,8 @@ Alternatives: implement the schedule models in the scaffold step.
 Decision: commutes take an outdoor share (0 to 1) instead of outdoor minutes; `SleepHabits` becomes `SleepWindows` with an after-shift window, per-weekday overrides for rotations, a rest-day window and an optional second rest-day window; `RestDayPolicy` has three modes (`keep_nights`, `flip_to_days`, `split`); `Location` defaults to Manila. The after-shift sleep is placed after each shift and rest-day sleep fills rest days where it overlaps nothing.
 Reason: the phase brief asked for an outdoor share and the three rest-day modes. Rotating schedules need a different sleep after each shift type, which one workday window cannot express. Placing sleep relative to shifts lets night workers and day workers share one rule.
 Alternatives: one workday sleep window keyed to calendar days; free-form lists of sleep intervals.
+
+### D28. Light builder placement rules
+Decision: a commute's outdoor minutes sit half at the start and half at the end; daylight lux applies only between sunrise and sunset, so civil twilight counts as dark; transit after dark uses the 10 lux night value; sunglasses scale the whole commute home while the sun is up; phone-in-bed minutes dim home light only. Building many candidate profiles in one batch (`build_light_batch`) moves to the planner step, where it is first needed.
+Reason: walking to and from transport is where outdoor exposure happens on a jeepney or train commute; treating twilight as dark is the conservative choice for the delaying side of the clock; all values stay on the cited constants in docs/SCIENCE.md 3.5.
+Alternatives: outdoor minutes spread across the commute; a twilight lux ramp; sunglasses only on outdoor minutes.
