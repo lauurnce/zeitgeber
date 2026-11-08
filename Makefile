@@ -1,4 +1,4 @@
-.PHONY: setup lint typecheck test api-dev web-dev web-test all
+.PHONY: setup lint typecheck test api-dev web-dev web-test requirements all
 
 setup:
 	uv sync --all-extras
@@ -17,6 +17,9 @@ typecheck:
 
 test:
 	uv run pytest
+
+requirements:
+	uv export --frozen --no-dev --extra api --no-emit-project --no-hashes --format requirements-txt > requirements.txt
 
 api-dev:
 	uv run uvicorn api.main:app --reload --port 8000
