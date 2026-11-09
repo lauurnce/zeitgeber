@@ -130,3 +130,8 @@ Alternatives: the original seven-module proposal without `grid`; planner-side lu
 Decision: coordinate descent over seven discrete intervention parameters in a fixed order, four passes at most, eight seeded restarts, objective score plus soft-constraint penalties plus 0.05 h per active intervention, ties broken by order. Each recommendation's effect is measured by reverting it alone and re-simulating. Hannay19 runs only on the baseline and the chosen plan.
 Reason: deterministic for a given seed, at most 1,260 simulations, fits the request budget, and produces explanations from simulator output only (docs/ARCHITECTURE.md section 4).
 Alternatives: exhaustive grid search (tens of thousands of candidates); gradient-based optimal control as in Serkh and Forger 2014 (continuous light schedules that workers cannot follow); random search.
+
+### D25. Build plan from Z5 to Z13 on Days 2 to 10
+Decision: Z4 is the architecture step on Day 1. The package scaffold and schedule model move to Z5 on Day 2, and Z5 to Z13 map to Days 2 to 10 as in docs/ARCHITECTURE.md section 8, one step per build day.
+Reason: the architecture and benchmark had to come before any package code so that the interfaces and runtime are fixed first.
+Alternatives: keep the scaffold in Z4 and push the architecture into Z5.
