@@ -566,3 +566,31 @@ These values go into `PlanResult.explanations` and into each `PlanEvent.numbers`
 | Performance | evaluation count at most 1,300 and search time within a loose bound on CI; `scripts/bench_sim.py` run by hand when the solver or dependency changes | pytest marker `perf` | the runtime budget holds |
 
 Rules: every commit leaves the suite green; `science` and `perf` run on changes to `zeitgeber/sim`, `zeitgeber/plan` and the lock file and on a weekly schedule; golden files change only with a commit that says why.
+
+## 6. Tooling and CI
+
+Python (`zeitgeber/`, `api/`, `scripts/`):
+
+- uv manages the project and lock file; `pyproject.toml` with distribution name `zeitgeber-core`, import name `zeitgeber`, `requires-python >= 3.12`.
+- ruff for linting and formatting; mypy in strict mode for `zeitgeber/sim` and `zeitgeber/plan`, standard mode elsewhere; pytest with Hypothesis and coverage.
+- pre-commit hooks: ruff, ruff-format, mypy on changed files, end-of-file and trailing-whitespace fixers, prettier for Markdown, JSON and YAML.
+- Third-party notices file carrying the circadian MIT text and the Apache 2.0 metadata note (SCIENCE 2.3).
+
+Web (`web/`):
+
+- pnpm; Next.js App Router with TypeScript and Tailwind; eslint (next core-web-vitals and TypeScript rules); prettier; vitest; Playwright with the axe plugin.
+
+GitHub Actions (`.github/workflows/ci.yml`), on every push to main:
+
+| Job | Steps |
+|---|---|
+| python | matrix 3.12 and 3.13; `uv sync --frozen`; ruff check and format check; mypy; pytest with coverage (unit, parity, golden, property) |
+| science | runs after python on changes to `zeitgeber/sim`, `zeitgeber/plan`, `uv.lock` or weekly: pytest `-m science` and `-m perf`; uploads the F3 to F9 report as an artifact |
+| web | pnpm install frozen; eslint; type check; vitest; next build |
+| e2e | runs after web; starts the API and the web build; Playwright on desktop and phone viewports |
+
+Deployment is by the Vercel Git integration (preview per commit, production from main), not from Actions. CI holds no secrets in v0.1 because language-model wording is off. CI never commits or pushes.
+
+Local-only files (CLAUDE.md, .claude/, prompt files, notes-local/, pilot-data/) stay out through `.git/info/exclude`.
+
+Python versions on the development Mac: uv currently provides 3.13; a 3.12 interpreter is one `uv python install 3.12` away and is listed as an open question until approved.
