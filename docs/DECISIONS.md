@@ -59,3 +59,10 @@ Alternatives: optional saved plans with accounts (out of scope for v0.1).
 Decision: Metro Manila is the default location. The API accepts any latitude and longitude; the web UI lists Philippine cities. Display time zone is Asia/Manila; internal times are UTC and timezone-aware.
 Reason: the primary users are in the Philippines, which has no daylight saving time.
 Alternatives: free-text location with geocoding.
+
+## 2026-11-09, science specification
+
+### D12. Forger99 is the default model; CBTmin and DLMO follow the package conventions
+Decision: Forger99 drives the plan with the package's default parameters. CBTmin is the minimum of x for Forger99, the minimum of x plus 0.8 h for Jewett99, and the phase pi for Hannay19. DLMO is CBTmin minus 7 h in all three. Hannay19 runs alongside; a disagreement above 1 h on CBTmin is shown as a range.
+Reason: fewest parameters, validated on PRC and amplitude experiments in the original paper, and the package's PRC tooling was built around it (docs/SCIENCE.md 1.9). The 7 h interval matches the estimate the Eastman laboratory uses.
+Alternatives: Jewett99 as default; Hannay19 as default; an independent DLMO model.
