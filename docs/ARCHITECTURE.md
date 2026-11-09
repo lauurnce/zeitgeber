@@ -360,3 +360,121 @@ Change: the grounding check is its own class with the banned-term list, and the 
 - Form presets for common BPO shifts and copy-to-all weekdays; English and Taglish toggle.
 - Calls `/api/v1/plan` on the same deployment; keeps the plan in memory only; no analytics on form inputs.
 - Mobile-first; the next 12 h view is the default on phones.
+
+## 3. Runtime decision
+
+### 3.1 Question
+
+Where should the simulator and planner run: (a) a Python API on a serverless host, (b) Python in the browser with Pyodide, or (c) a TypeScript port with parity tests? The answer depends on how long one request takes, how much has to be downloaded or deployed, and how many copies of the science code must be kept correct.
+
+### 3.2 Method
+
+- `scripts/bench_sim.py` simulates 14 days for one schedule (3 burn-in loops, 14 days, CBTmin markers) and for 200 candidate plans, at the planning step of 0.1 h and the verification step of 1 min (SCIENCE 1.7). Candidates vary sleep start and length, sunglasses, a light-seeking hour and rest-day sleep. It times the package's own `integrate` loop and a batched RK4 loop that calls the package's `derv` for all candidates at once, and checks that both give the same states.
+- The same script runs unchanged inside Pyodide 314.0.7 under Node, with numpy, scipy and matplotlib from the Pyodide distribution and fastcore and circadian 1.0.3 from PyPI through micropip.
+- `scripts/bench_sim.mjs` is a 60-line JavaScript port of the Forger99 equations with the same schedule stand-in and RK4 scheme, run in Node.
+- Machine: Apple M4 Pro, 12 cores, 24 GB, macOS 26.5.2, all runs single-threaded. Python 3.13.14 with numpy 2.5.4 and scipy 1.18.1; Pyodide Python 3.14.2 with numpy 2.4.6 and scipy 1.18.0; Node 24.18.0. Measured 2026-11-09.
+
+Commands:
+
+```
+uv run --no-project --with "circadian==1.0.3" python scripts/bench_sim.py
+node scripts/bench_sim.mjs
+```
+
+### 3.3 Results
+
+Native Python, circadian 1.0.3:
+
+| Model | Step | Work | Wall time | Per candidate |
+|---|---|---|---|---|
+| Forger99 | 0.1 h | one schedule: 3 burn-in loops, 14 days, markers | 0.32 s | |
+| Forger99 | 0.1 h | 200 candidates, package `integrate` loop | 15.3 s | 76 ms |
+| Forger99 | 0.1 h | 200 candidates, batched RK4 on package `derv` | 0.17 s | 0.9 ms |
+| Forger99 | 1 min | one schedule | 1.78 s | |
+| Forger99 | 1 min | 200 candidates, package loop (10 measured, extrapolated) | 91 s | 455 ms |
+| Forger99 | 1 min | 200 candidates, batched | 1.02 s | 5.1 ms |
+| Hannay19 | 0.1 h | one schedule | 0.52 s | |
+| Hannay19 | 0.1 h | 200 candidates, package loop | 25.9 s | 130 ms |
+| Hannay19 | 0.1 h | 200 candidates, batched | 0.44 s | 2.2 ms |
+| Hannay19 | 1 min | 200 candidates, batched | 2.61 s | 13.0 ms |
+
+Batched and package loops gave identical states (maximum absolute difference 0.0) for both models at both steps. CBTmin extraction for 200 candidates took 0.02 s or less. The package's `equilibrate` warned "did not equilibrate" after 3 loops, which supports the stricter convergence rule in 2.4.
+
+Python in the browser (Pyodide 314.0.7 under Node, second run with packages cached):
+
+| Work | Time |
+|---|---|
+| start the runtime | 0.86 s |
+| load numpy, scipy, matplotlib, micropip | 1.01 s |
+| install fastcore and circadian with micropip | 0.61 s |
+| `import circadian.models` | 2.64 s |
+| Forger99, 0.1 h, one schedule | 0.63 s |
+| Forger99, 0.1 h, 200 candidates batched | 0.32 s (1.6 ms each) |
+| Hannay19, 0.1 h, 200 candidates batched | 0.80 s (4.0 ms each) |
+| download on first use: runtime 13 MB plus wheels 34 MB (scipy 14, matplotlib 7, pandas 4.2, numpy 3.0, stdlib 2.5) | about 47 MB |
+
+States matched the package loop exactly here too.
+
+JavaScript port of Forger99 (Node 24):
+
+| Step | Work | Time |
+|---|---|---|
+| 0.1 h | one schedule | 3 ms |
+| 0.1 h | 200 candidates | 41 ms (0.21 ms each) |
+| 1 min | 200 candidates | 227 ms (1.14 ms each) |
+
+Deployment footprint of the Python path: installing circadian 1.0.3 pulls numpy (24 MB), scipy (82 MB), pandas (52 MB), matplotlib (28 MB), fontTools (14 MB), Pillow (12 MB) and smaller packages, about 216 MB on macOS. `circadian/lights.py` imports matplotlib at module load, so it cannot be dropped without vendoring. The first import in a fresh environment took 27.9 s because matplotlib built its font cache and Python compiled bytecode; warm imports took 0.5 to 1.3 s.
+
+### 3.4 Request budget
+
+A plan request runs: Forger99 equilibration (6 loops of 14 days), the search (at most 1,260 candidates, section 4.4), ablations (about 6 candidates), and Hannay19 equilibration plus baseline and final plan. All at the 0.1 h step. Estimated from the measurements above on the development Mac:
+
+| Part | Estimate |
+|---|---|
+| Forger99 equilibration, 6 loops | about 0.5 s |
+| search, 1,260 candidates batched | about 1.1 s |
+| ablations, one batch | under 0.05 s |
+| Hannay19 equilibration and two runs | about 1.0 s |
+| light profiles, scoring, rendering | under 0.2 s |
+| total compute | about 2.8 s |
+
+Serverless vCPUs are slower than an M4 Pro core; the Z11 deployment measures the real p95. Levers if it is too slow, in order: halve the restarts, run the Hannay19 cross-check only on request, shorten equilibration by starting from the previous loop's state.
+
+The 1 min step stays in the test suite, not the request path: golden tests assert that CBTmin at 0.1 h is within 0.1 h of CBTmin at 1 min on every golden schedule (section 5). This changes the earlier plan in SCIENCE 1.7 and section 2.6, which put 1 min verification in the request path; at 13 ms per Hannay19 candidate and about 0.8 s per single 1 min run it would roughly double request time for a difference the tests already bound.
+
+### 3.5 Options compared
+
+| | (a) Python API, serverless | (b) Pyodide in the browser | (c) TypeScript port |
+|---|---|---|---|
+| Compute per request | about 2.8 s on the Mac; server estimate 4 to 6 s | about 1.8 times native for batched search; phone speed unmeasured | about 4 times faster than batched numpy for Forger99 |
+| Start-up | cold start plus 0.5 to 1.3 s import; font cache needs a writable directory | about 5.1 s on the Mac before any work, every new page load without cache | none |
+| Download or deploy size | about 216 MB of Python packages on the server | about 47 MB to each user on first use | small bundle |
+| Copies of the science code | one, the published package | one, the published package | two; Forger99, Jewett99, Hannay19, sun times and the planner all ported and kept in parity |
+| Privacy | schedule travels to the server for one request, not stored or logged | schedule never leaves the device | schedule never leaves the device |
+| Fit with the stated stack | matches (Python core, FastAPI) | Python core reused, no FastAPI | replaces the Python core in production |
+
+Serverless hosts for (a):
+
+| | Vercel Python function | AWS Lambda |
+|---|---|---|
+| Package size | up to 5 GB per function on Fluid Compute [3.1] | 250 MB unzipped for zip packages including layers; 10 GB container images [3.2] |
+| Fit with 216 MB of dependencies | fits as is | zip is at or past the limit once Linux BLAS libraries are added; needs a container image |
+| Timeout | 300 s default [3.1] | up to 900 s [3.2] |
+| Extra pieces | none; same project and domain as the web app | ECR image, Function URL or API Gateway, IAM role, CORS, a second deploy pipeline |
+
+### 3.6 Decision
+
+Run the Python core as a Vercel Python function in the same project as the web app (option a, confirming decision D3).
+
+- The measured compute fits a single request once integration is batched, and the batched loop is exactly equal to the package's own loop, so the published code stays the only implementation of the science.
+- Pyodide works and matches exactly, but asks every user to download about 47 MB and wait about 5 s before the first plan on a fast laptop; on a mid-range phone on mobile data that is not acceptable for v0.1.
+- The TypeScript port is the fastest and the most private option, and is worth revisiting for an on-device mode after v0.1. For now it would double the science code that has to be proven correct, which works against the science-first rule.
+- Lambda is not needed for v0.1: the dependencies need a container image there, and it adds an image registry, a URL front end, IAM, CORS and a second pipeline to save nothing that Vercel does not already give. The FastAPI app stays a plain ASGI app so that moving it to a Lambda container image behind a Function URL (arm64, with Mangum) is a one-file change if the Z11 measurements fail the 6 s target.
+
+Settings that follow: `MPLBACKEND=Agg` and `MPLCONFIGDIR=/tmp/matplotlib` in the function environment; import the package lazily inside the adapter; record cold and warm p95 in docs/DECISIONS.md in Z11.
+
+### 3.7 References
+
+- [3.1] Vercel changelog, "Vercel Functions can now be up to 5 GB in package size", and Vercel Functions limits documentation (default timeout 300 s). https://vercel.com/changelog/vercel-functions-can-now-be-up-to-5-gb-in-package-size
+- [3.2] AWS Lambda quotas: deployment package 250 MB unzipped including layers, container image 10 GB, timeout 900 s. https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html (values as documented; check at deployment)
+- [3.3] Pyodide 314.0.7, npm package `pyodide`, released 2026-09-14. https://pyodide.org
