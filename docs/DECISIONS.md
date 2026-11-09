@@ -107,3 +107,8 @@ Alternatives: actigraphy; in-app data collection; a control group.
 Decision: compute sunrise, sunset and civil twilight with the astral package (version 3.2) and verify against the NOAA calculator for Manila within 2 minutes. Default coordinates 14.5995 N, 120.9842 E, Asia/Manila.
 Reason: NOAA states minute-level accuracy within 72 degrees of the equator; astral implements the same Meeus-based method and is small enough to replace with a direct implementation if needed (docs/SCIENCE.md 9).
 Alternatives: implement the NOAA equations directly; use an ephemeris library such as skyfield.
+
+### D21. The science specification precedes the package scaffold
+Decision: Z3 is the science specification (this document set). The package scaffold and schedule data model merge into Z4, and later steps move by one day. The plan keeps 13 steps.
+Reason: every constant and rule now has a source before any code depends on it, which is the project's science-first constraint.
+Alternatives: scaffold first with a skeleton SCIENCE.md, as originally planned.
