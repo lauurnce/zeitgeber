@@ -577,3 +577,46 @@ Lower is better. $S = 0$ means CBTmin sits 2 h before wake on every day and neve
 
 - [7.1] Duffy JF, Dijk DJ, Klerman EB, Czeisler CA (1998). Later endogenous circadian temperature nadir relative to an earlier wake time in older people. American Journal of Physiology 275(5): R1478-R1487. https://doi.org/10.1152/ajpregu.1998.275.5.R1478 (abstract checked)
 - [7.2] Wittmann M, Dinich J, Merrow M, Roenneberg T (2006). Social jetlag: misalignment of biological and social time. Chronobiology International 23(1-2): 497-509. https://doi.org/10.1080/07420520500545979 (abstract checked)
+
+## 8. Pilot measures
+
+### 8.1 Purpose
+
+The pilot with 10 to 15 agents measures sleepiness during shifts and sleep timing, before and during use of a Zeitgeber plan. It does not measure circadian phase (no melatonin or temperature assays), so it tests feasibility and perceived alertness, not the model's phase prediction. The instruments are standard so results can be compared with the literature.
+
+### 8.2 Karolinska Sleepiness Scale (KSS)
+
+- Origin: Akerstedt and Gillberg 1990 [8.1]. Eight subjects kept awake overnight rated sleepiness every two hours while EEG and EOG were recorded; physiological signs of sleepiness appeared reliably only once ratings fell between "sleepy" and "extremely sleepy, fighting sleep" (abstract).
+- Validation: Kaida et al. 2006 [8.2] found KSS closely related to EEG alpha and theta power, alpha attenuation and psychomotor vigilance (mean correlation with lapses r = 0.56) in 16 adults over three days.
+- Scale: nine steps from 1 to 9. The widely used anchors are 1 extremely alert, 3 alert, 5 neither alert nor sleepy, 7 sleepy but no effort to keep awake, 9 very sleepy, great effort to keep awake, fighting sleep. The exact wording in the 1990 paper is UNVERIFIED (paywalled); the pilot form will use the wording from a validated published version and cite it.
+- Cadence in the pilot (design, matching the 2 h cadence of [8.1] and the 2 h test battery of Smith et al. 2009 [5.2]): at the start of the shift and every 2 h until the end, plus once within 30 min of waking from day sleep.
+
+### 8.3 Consensus Sleep Diary
+
+- Origin: Carney et al. 2012 [8.3], an expert consensus diary from the Pittsburgh Assessment Conference, refined through focus groups; the core diary reads at a third-grade level and its instructions at a sixth-grade level (abstract).
+- Core items (as published; exact wording UNVERIFIED against the paper's appendix): time got into bed, time tried to go to sleep, minutes to fall asleep, number of awakenings, total minutes awake during the night, time of final awakening, time out of bed, sleep quality rating, comments.
+- Zeitgeber additions (design): shift worked yes or no and hours; sunglasses worn on the commute yes or no; minutes outdoors in daylight; caffeine times; nap start and end; a lux meter reading at the workstation and on the commute when available; whether the day's plan was followed.
+- Language: English and Taglish versions; the Taglish version is a translation to be reviewed, not a validated instrument (UNVERIFIED).
+
+### 8.4 Protocol outline (design)
+
+| Element | Value |
+|---|---|
+| Participants | 10 to 15 night-shift agents, volunteers, adults, not pregnant, no diagnosed sleep disorder (self-report); others are welcome to use the app but not enrolled |
+| Duration | 2 weeks baseline (diary and KSS only), then 2 weeks following a Zeitgeber plan |
+| Primary outcome | mean KSS in the last 4 h of the shift, baseline versus plan weeks |
+| Secondary | diary total sleep time and sleep quality after shifts; adherence to each rule |
+| Data handling | paper or offline form, held by the participant and Lawrence Panes only; no data enters the web app; consent form states purpose, voluntary participation, withdrawal at any time, and that employers see no individual data (Data Privacy Act of 2012, RA 10173) |
+| Framing | feasibility and acceptability study; no diagnosis, no clinical claims |
+
+### 8.5 Limitations
+
+- Self-report only; no objective sleep or phase measure. Actigraphy or temperature would be needed to validate the model and are out of scope for v0.1.
+- Small sample, no control group, likely expectancy effects.
+- Employer involvement could pressure participation; recruitment must not go through supervisors.
+
+### 8.6 References
+
+- [8.1] Akerstedt T, Gillberg M (1990). Subjective and objective sleepiness in the active individual. International Journal of Neuroscience 52(1-2): 29-37. https://doi.org/10.3109/00207459008994241 (abstract checked)
+- [8.2] Kaida K, Takahashi M, Akerstedt T, et al. (2006). Validation of the Karolinska sleepiness scale against performance and EEG variables. Clinical Neurophysiology 117(7): 1574-1581. https://doi.org/10.1016/j.clinph.2006.03.011 (abstract checked)
+- [8.3] Carney CE, Buysse DJ, Ancoli-Israel S, et al. (2012). The consensus sleep diary: standardizing prospective sleep self-monitoring. Sleep 35(2): 287-302. https://doi.org/10.5665/sleep.1642 (PMC3250369; abstract checked)
