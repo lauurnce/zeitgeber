@@ -253,3 +253,81 @@ Phase response tools (`circadian.prc`): `PhaseResponseCurveLight.light_khalsa(t,
 - [2.1] PyPI project page and JSON API for circadian 1.0.3. https://pypi.org/project/circadian/1.0.3/
 - [2.2] Arcascope/circadian repository, tag v1.0.3. https://github.com/Arcascope/circadian
 - [2.3] circadian-1.0.3.tar.gz: files LICENSE, PKG-INFO, settings.ini, circadian/models.py, circadian/lights.py, circadian/prc.py (read directly from the sdist)
+
+## 3. Light levels
+
+### 3.1 Purpose
+
+The models take lux at the eye over time. Zeitgeber estimates it from the schedule by assigning each block of the day to a light environment with a constant lux value. This section collects measured values for those environments and fixes the v0.1 constants.
+
+### 3.2 Measured and published values
+
+| Environment | Value | Source | Status |
+|---|---|---|---|
+| Direct sunlight, clear sky | about 100,000 lux | general photometric references | UNVERIFIED against a primary measurement; not measured in Manila |
+| Daylight, not in direct sun (open shade) | 10,000 to 25,000 lux | general photometric references | UNVERIFIED |
+| Overcast day | 1,000 to 10,000 lux; sources disagree widely | general photometric references | UNVERIFIED |
+| Natural light, wrist-worn, average over waking hours (summer camping, Colorado) | 4,487 (SD 552) lux; first 2 h after waking 3,074 (SD 1,035) lux | Wright et al. 2013 [3.1] | cited |
+| Electric-lit constructed environment, same subjects, average over waking hours | 979 (SD 352) lux; first 2 h after waking 934 (SD 867) lux | Wright et al. 2013 [3.1] | cited |
+| Call-center floor, 53 spot measurements, horizontal at work surfaces (California, 2012) | mean 50.7 footcandles, about 546 lux (conversion 1 fc = 10.764 lux is ours) | NIOSH 2013 [3.2] | cited |
+| Recommended office task lighting | ANSI/IESNA 2004: 30 to 100 fc (about 320 to 1,080 lux) for visual tasks; OSHA eTool: 20 to 73 fc (about 215 to 785 lux) for computer workstations | as quoted in NIOSH 2013 [3.2] | cited via secondary |
+| "Normal room light" | about 200 to 300 lux | Smith and Eastman 2012 [3.3] | cited |
+| Laboratory "room light" in the hours before bed | under 200 lux at the ceiling setting; typically 60 to 130 lux at the eye | Gooley et al. 2011 [3.4] | cited |
+| Laboratory night-shift control "dim light" | about 150 lux | Crowley et al. 2003 [3.5] | cited |
+| Home lighting in the 4 h before bed | maximized about 65 lux; minimized about 3 lux | Burgess and Molina 2014 [3.6] | cited |
+| Light-emitting eReader at maximum brightness, 38 to 40 cm, measured at the eye | 31.73 lux; printed book in the same dim room 0.91 lux; ambient about 3 lux | Chang et al. 2015 [3.7] | cited |
+| Phone screen at typical distance | not found | | UNVERIFIED; the eReader value is used as a proxy |
+| Bright-light box, 3 h at habitual bedtime | about 3,000 lux (about 7 W/m2) | Burke et al. 2015 [3.8] | cited |
+| Intermittent bright light during simulated night shifts | about 5,000 lux, 20 min on and 40 min off, 4 to 5 pulses per night | Crowley et al. 2003 [3.5] | cited |
+| Constant routine dim light | 2 to 7 lux (Khalsa) ; under 3 lux (St Hilaire) | Khalsa et al. 2003 [4.1]; St Hilaire et al. 2012 [4.2] | cited |
+| Dark bedroom for day sleep | "very dark bedroom"; no lux stated | Smith and Eastman 2012 [3.3] | design value 1 lux |
+| Outdoor street at night, Metro Manila | not found | | UNVERIFIED; design value 10 lux |
+
+### 3.3 Eyewear
+
+| Eyewear | Transmission | Source | Status |
+|---|---|---|---|
+| "Normal" sunglasses used in night-shift trials | 15% visible light transmission | Crowley et al. 2003 [3.5]; Smith and Eastman 2012 [3.3] | cited |
+| "Dark" sunglasses used in night-shift trials | 2% transmission | Crowley et al. 2003 [3.5] | cited |
+| Sunglass filter category 3 (general purpose dark) | 8% to 18% luminous transmittance | ISO 12312-1 as summarized by secondary sources | UNVERIFIED against the standard text |
+| Sunglass filter category 4 (very dark) | 3% to 8%; not suitable for driving | ISO 12312-1 as summarized by secondary sources | UNVERIFIED against the standard text |
+| Blue-blocking (orange) lenses | passed the same 1,300 lux as grey control lenses in the test; grey lenses allowed 46% melatonin suppression, orange lenses 6% (not significant) | Sasseville et al. 2006 [3.9] | cited; photopic transmittance of consumer amber lenses UNVERIFIED |
+
+### 3.4 Photopic lux versus melanopic light
+
+The models in section 1 accept photopic lux. The circadian system is most sensitive near 480 nm [3.10], so two sources with equal lux can have different circadian effect. Orange lenses are the clearest case: they do not change lux much yet block most of the circadian effect [3.9]. Lux-based models therefore cannot represent blue-blocking lenses, and Zeitgeber v0.1 does not model them (design; see docs/DECISIONS.md). Dark sunglasses reduce light across the spectrum and are modeled as a transmission factor on outdoor lux.
+
+### 3.5 Zeitgeber v0.1 constants (design)
+
+| Environment | Constant | Basis |
+|---|---|---|
+| Outdoors, sun up, open | 10,000 lux | model saturation cap (1.7); the Khalsa stimulus level [4.1]; real daylight is higher but adds little drive |
+| Outdoors, sun up, shade or inside a vehicle | 1,000 lux | order of magnitude from the shade range above; UNVERIFIED |
+| Outdoors with dark sunglasses | outdoor value times 0.15 (category 3) or 0.02 (very dark) | Crowley et al. 2003 [3.5] |
+| Call-center floor or office | 500 lux | NIOSH mean 546 lux [3.2]; "normal room light" 200 to 300 lux [3.3] is the lower bound |
+| Home, awake, lights on | 100 lux | between Burgess and Molina's 65 lux maximum [3.6] and Gooley's 60 to 130 lux at the eye [3.4] |
+| Home, awake, lights low, phone in hand | 30 lux | Chang et al. 2015 eReader at the eye [3.7] |
+| Sleep in a dark room | 1 lux | design; Burgess and Molina minimized to about 3 lux [3.6] |
+| Outdoors at night, street | 10 lux | UNVERIFIED |
+
+Every constant is a named parameter. The sensitivity test in Z7 scales each by 0.3 and 3 and reports whether the plan changes.
+
+### 3.6 Limitations
+
+- No value in this section was measured in Metro Manila or in a Philippine call center. The pilot (section 8) includes a lux meter reading at each participant's workstation and on the commute.
+- Photopic lux understates the circadian effect of daylight relative to warm indoor light and overstates it for orange-tinted light.
+- Commute light depends on vehicle, seat, window tint and weather, none of which v0.1 models beyond "outdoor share of the commute".
+
+### 3.7 References
+
+- [3.1] Wright KP, McHill AW, Birks BR, Griffin BR, Rusterholz T, Chinoy ED (2013). Entrainment of the human circadian clock to the natural light-dark cycle. Current Biology 23(16): 1554-1558. https://doi.org/10.1016/j.cub.2013.06.039 (author manuscript PMC4020279)
+- [3.2] NIOSH (2013). Lighting, Indoor Environmental Quality Concerns, and Job Stress at a Call Center, California. Health Hazard Evaluation Report 2012-0081-3169. https://doi.org/10.26616/NIOSHHETA201200813169
+- [3.3] Smith MR, Eastman CI (2012). Shift work: health, performance and safety problems, traditional countermeasures, and innovative management strategies to reduce circadian misalignment. Nature and Science of Sleep 4: 111-132. https://doi.org/10.2147/NSS.S10372 (open access)
+- [3.4] Gooley JJ, Chamberlain K, Smith KA, et al. (2011). Exposure to room light before bedtime suppresses melatonin onset and shortens melatonin duration in humans. Journal of Clinical Endocrinology and Metabolism 96(3): E463-E472. https://doi.org/10.1210/jc.2010-2098 (PMC3047226)
+- [3.5] Crowley SJ, Lee C, Tseng CY, Fogg LF, Eastman CI (2003). Combinations of bright light, scheduled dark, sunglasses, and melatonin to facilitate circadian entrainment to night shift work. Journal of Biological Rhythms 18(6): 513-523. https://doi.org/10.1177/0748730403258422 (abstract checked)
+- [3.6] Burgess HJ, Molina TA (2014). Home lighting before usual bedtime impacts circadian timing: a field study. Photochemistry and Photobiology 90(3): 723-726. https://doi.org/10.1111/php.12241 (PMC4053688)
+- [3.7] Chang AM, Aeschbach D, Duffy JF, Czeisler CA (2015). Evening use of light-emitting eReaders negatively affects sleep, circadian timing, and next-morning alertness. PNAS 112(4): 1232-1237. https://doi.org/10.1073/pnas.1418490112 (PMC4313820)
+- [3.8] Burke TM, Markwald RR, McHill AW, et al. (2015). Effects of caffeine on the human circadian clock in vivo and in vitro. Science Translational Medicine 7(305): 305ra146. https://doi.org/10.1126/scitranslmed.aac5125 (PMC4657156)
+- [3.9] Sasseville A, Paquet N, Sevigny J, Hebert M (2006). Blue blocker glasses impede the capacity of bright light to suppress melatonin production. Journal of Pineal Research 41(1): 73-78. https://doi.org/10.1111/j.1600-079X.2006.00332.x (abstract checked)
+- [3.10] Thorne HC, Jones KH, Peters SP, Archer SN, Dijk DJ (2009). Daily and seasonal variation in the spectral composition of light exposure in humans. Chronobiology International 26(5): 854-866. https://doi.org/10.1080/07420520903044315 (abstract checked)
+- [3.11] ISO 12312-1, Eye and face protection, Sunglasses and related eyewear, Part 1: Sunglasses for general use. Standard text not accessed; category bands taken from secondary summaries. UNVERIFIED
