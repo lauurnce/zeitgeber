@@ -112,3 +112,11 @@ Alternatives: implement the NOAA equations directly; use an ephemeris library su
 Decision: Z3 is the science specification (this document set). The package scaffold and schedule data model merge into Z4, and later steps move by one day. The plan keeps 13 steps.
 Reason: every constant and rule now has a source before any code depends on it, which is the project's science-first constraint.
 Alternatives: scaffold first with a skeleton SCIENCE.md, as originally planned.
+
+## 2026-11-09, architecture
+
+### D22. Runtime: Python core as a Vercel Python function, batched integration, 0.1 h step per request
+Decision: keep decision D3. The planner runs server-side in Python as a Vercel Python function in the same project as the web app. Integration is a batched fixed-step RK4 loop over the package's own `derv`. Every request runs at the 0.1 h step; the 1 min step is used only in tests. `MPLBACKEND=Agg` and `MPLCONFIGDIR=/tmp/matplotlib` are set in the function environment.
+Reason: measured on the development Mac (docs/ARCHITECTURE.md 3.3), batching cut Forger99 from 76 ms to 0.9 ms per 14-day candidate with identical states, which puts a full request at about 2.8 s of compute. Pyodide matched exactly but needs about 47 MB of downloads and about 5 s of start-up per user. A TypeScript port of Forger99 ran 200 candidates in 41 ms but would duplicate all science code. Lambda would need a container image for about 216 MB of dependencies plus a registry, URL front end, IAM and a second pipeline.
+Alternatives: AWS Lambda container image behind a Function URL (kept as the fallback, the ASGI app stays portable); Pyodide in the browser; TypeScript port (revisit for an on-device mode after v0.1).
+Check: p95 latency on the deployed function under 6 s, measured in Z11.
