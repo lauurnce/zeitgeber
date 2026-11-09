@@ -331,3 +331,64 @@ Every constant is a named parameter. The sensitivity test in Z7 scales each by 0
 - [3.9] Sasseville A, Paquet N, Sevigny J, Hebert M (2006). Blue blocker glasses impede the capacity of bright light to suppress melatonin production. Journal of Pineal Research 41(1): 73-78. https://doi.org/10.1111/j.1600-079X.2006.00332.x (abstract checked)
 - [3.10] Thorne HC, Jones KH, Peters SP, Archer SN, Dijk DJ (2009). Daily and seasonal variation in the spectral composition of light exposure in humans. Chronobiology International 26(5): 854-866. https://doi.org/10.1080/07420520903044315 (abstract checked)
 - [3.11] ISO 12312-1, Eye and face protection, Sunglasses and related eyewear, Part 1: Sunglasses for general use. Standard text not accessed; category bands taken from secondary summaries. UNVERIFIED
+
+## 4. Phase response to light
+
+### 4.1 Purpose
+
+The first success criterion is that the simulator reproduces the published shape of the human phase response curve (PRC) to bright light. This section records the published features and the tolerances Zeitgeber will test against.
+
+### 4.2 Published findings
+
+Khalsa et al. 2003 [4.1], read from the abstract (full text paywalled):
+
+- 21 healthy entrained subjects; constant routines in 2 to 7 lux before and after the stimulus.
+- Stimulus: 6.7 h of bright light alternating 6 min of fixed gaze at about 10,000 lux with free gaze at about 5,000 to 9,000 lux, scheduled at different circadian phases across subjects.
+- Phase measured from plasma melatonin (onset, offset, midpoint).
+- Result: a Type 1 PRC with peak-to-trough amplitude of 5.02 h for the melatonin midpoint. Delays when the stimulus was centered before the critical phase at CBTmin, advances when centered after it, no shift at the critical phase. No prolonged dead zone during the subjective day.
+- The maximum delay and maximum advance taken separately are not in the abstract. UNVERIFIED until the full text is read.
+
+St Hilaire et al. 2012 [4.2], abstract:
+
+- 1 h of bright white light (about 8,000 lux), 18 subjects at 18 circadian phases, constant routines in under 3 lux.
+- Result: a Type 1 PRC with fitted peak-to-trough amplitude of 2.20 h, about 40% of the 6.7 h PRC amplitude from 15% of the exposure duration. A dim-light control (under 3 lux) showed no discernible PRC.
+
+Burke et al. 2015 [4.3], full text: 3 h of about 3,000 lux starting at habitual bedtime delayed the melatonin rhythm by about 85 min relative to a dim-light placebo.
+
+Entrainment anchors used as checks:
+
+- Under electric lighting, melatonin onset occurred about 2 h before sleep start; under natural light only, melatonin onset moved to near sunset and offset to before wake time just after sunrise (Wright et al. 2013 [3.1]).
+- CBTmin "is usually a few hours before waking" (Smith and Eastman 2012 [3.3]); the circadian crest of REM sleep sits shortly after CBTmin and the phase relation between sleep and the pacemaker promotes consolidated sleep (Dijk and Czeisler 1995 [4.4]).
+- The intrinsic period of the human pacemaker averages 24.18 h under forced desynchrony (Czeisler et al. 1999 [4.5]).
+
+### 4.3 Features to reproduce and tolerances
+
+Simulated protocol: equilibrate the model on a 16 h light (150 lux) and 8 h dark cycle, then run the Khalsa light profile from the package (`light_khalsa`, 15 lux background, 9,985 lux pulse of 6.7 h) with the pulse centered at each of 24 phases relative to the pre-stimulus CBTmin, and compare CBTmin (or DLMO) before and after. Tolerances are Zeitgeber's design choices unless marked otherwise.
+
+| ID | Feature | Published value | Test tolerance | Status |
+|---|---|---|---|---|
+| F1 | Sign of shift | pulses centered before CBTmin delay, after CBTmin advance [4.1] | pulses centered 2 h or more before CBTmin must delay; 2 h or more after must advance; no tolerance | cited |
+| F2 | Crossover | zero shift at CBTmin [4.1] | fitted zero crossing within 1.5 h of CBTmin | design tolerance |
+| F3 | 6.7 h pulse amplitude | peak-to-trough 5.02 h (melatonin midpoint) [4.1] | 5.0 h, tolerance 1.5 h | design tolerance |
+| F4 | 1 h pulse amplitude | peak-to-trough 2.20 h at about 8,000 lux [4.2] | 2.2 h, tolerance 1.0 h | design tolerance |
+| F5 | Duration non-linearity | F4 is about 40% of F3 [4.2] | ratio between 0.25 and 0.60 | design tolerance |
+| F6 | No dead zone | no prolonged insensitivity in the subjective day [4.1] | no run of 4 consecutive hourly pulse centers with shift smaller than 0.3 h | design |
+| F7 | Evening 3 h at 3,000 lux | about 85 min delay [4.3] | delay between 45 and 125 min | design tolerance |
+| F8 | Free-running period in under 3 lux | 24.18 h [4.5] | Forger99 and Jewett99: 24.2 h, tolerance 0.3 h; Hannay19: report value, tolerance 0.5 h | design tolerance |
+| F9 | Entrained phase angle | CBTmin a few hours before wake [3.3][4.4]; DLMO about 2 h before sleep start [3.1] | on a 16L:8D 150 lux cycle: CBTmin 1 to 4 h before lights-on; DLMO 1 to 3.5 h before lights-off | design tolerance |
+
+Each feature is one pytest case. F1 and F2 are blocking: a model that fails them is not used. F3 to F9 are reported with the measured value so that drift in the dependency is visible.
+
+### 4.4 Limitations
+
+- Khalsa's phase reference is the melatonin midpoint; the models report CBTmin (or DLMO as CBTmin minus 7 h). The test compares shapes and amplitudes, not absolute phases, which is why F2 carries a 1.5 h tolerance.
+- The maxima of delays and advances in Khalsa 2003 are UNVERIFIED pending the full text; F3 uses the peak-to-trough value, which is in the abstract.
+- PRCs were measured in dim-light constant routines. Real workers carry a light history that changes sensitivity; the model handles this only through Process L.
+
+### 4.5 References
+
+- [4.1] Khalsa SBS, Jewett ME, Cajochen C, Czeisler CA (2003). A phase response curve to single bright light pulses in human subjects. Journal of Physiology 549(3): 945-952. https://doi.org/10.1113/jphysiol.2003.040477 (abstract checked; full text not accessible)
+- [4.2] St Hilaire MA, Gooley JJ, Khalsa SBS, Kronauer RE, Czeisler CA, Lockley SW (2012). Human phase response curve to a 1 h pulse of bright white light. Journal of Physiology 590(13): 3035-3045. https://doi.org/10.1113/jphysiol.2012.227892 (abstract checked)
+- [4.3] Burke TM et al. (2015). See [3.8].
+- [4.4] Dijk DJ, Czeisler CA (1995). Contribution of the circadian pacemaker and the sleep homeostat to sleep propensity, sleep structure, electroencephalographic slow waves, and sleep spindle activity in humans. Journal of Neuroscience 15(5): 3526-3538. https://doi.org/10.1523/JNEUROSCI.15-05-03526.1995 (PMC6578184)
+- [4.5] Czeisler CA, Duffy JF, Shanahan TL, et al. (1999). Stability, precision, and near-24-hour period of the human circadian pacemaker. Science 284(5423): 2177-2181. https://doi.org/10.1126/science.284.5423.2177 (abstract checked)
