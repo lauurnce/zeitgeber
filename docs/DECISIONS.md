@@ -72,3 +72,8 @@ Decision: depend on circadian==1.0.3 with a lock hash. Only one adapter module i
 Reason: the release contradicts itself on license (docs/SCIENCE.md 2.3); both options are permissive. The adapter isolates a thinly maintained dependency with no Python 3.11 or later in its classifiers. ShiftWork embeds sleep assumptions that do not fit a weekly schedule with commutes.
 Alternatives: vendor the equations now; implement the models from scratch; use ShiftWork.
 Open question: ask the maintainers to reconcile the license fields.
+
+### D14. Light constants for v0.1 and no modeling of blue-blocking lenses
+Decision: use the constants in docs/SCIENCE.md 3.5 (outdoor 10,000 lux capped at the model saturation level, shade or vehicle 1,000, office 500, home 100, phone in a dark room 30, sleep 1, night street 10), sunglasses as a transmission factor of 0.15 or 0.02, and treat blue-blocking lenses as out of scope for the model.
+Reason: the models take photopic lux and cannot represent spectral filtering; orange lenses pass the same lux while blocking most of the circadian effect. The constants sit on cited measurements where they exist and are marked UNVERIFIED where they do not.
+Alternatives: melanopic conversion factors per source; include blue-blockers as a fixed lux reduction.
