@@ -392,3 +392,51 @@ Each feature is one pytest case. F1 and F2 are blocking: a model that fails them
 - [4.3] Burke TM et al. (2015). See [3.8].
 - [4.4] Dijk DJ, Czeisler CA (1995). Contribution of the circadian pacemaker and the sleep homeostat to sleep propensity, sleep structure, electroencephalographic slow waves, and sleep spindle activity in humans. Journal of Neuroscience 15(5): 3526-3538. https://doi.org/10.1523/JNEUROSCI.15-05-03526.1995 (PMC6578184)
 - [4.5] Czeisler CA, Duffy JF, Shanahan TL, et al. (1999). Stability, precision, and near-24-hour period of the human circadian pacemaker. Science 284(5423): 2177-2181. https://doi.org/10.1126/science.284.5423.2177 (abstract checked)
+
+## 5. Shift-work strategies and planner rules
+
+### 5.1 Purpose
+
+The planner's actions and constraints come from the Eastman laboratory's night-work protocols, which produced a "compromise" circadian phase in the laboratory and in simulated-night-shift field conditions. This section states what those studies did and turns them into explicit rules.
+
+### 5.2 Published findings
+
+Crowley et al. 2003 [3.5] (abstract): 67 young participants, 5 simulated night shifts 23:00 to 07:00, home sleep 08:30 to 15:30 in darkened bedrooms. Sunglasses with 15% or 2% transmission outdoors by day. Intermittent bright light during shifts (about 5,000 lux, 20 min on, 40 min off, 4 to 5 pulses per night, in a moving delaying pattern) versus about 150 lux. Tmin estimated as DLMO + 7 h. Re-entrainment categories: not re-entrained (Tmin before the day sleep period), partially (Tmin in the first half of sleep), completely (Tmin in the second half). With bright light during the shift almost all "earlier" participants reached complete re-entrainment.
+
+Smith and Eastman 2008 [5.1] (abstract): 24 subjects, 3 night shifts, 2 days off, 4 night shifts. Experimental group: five 15-min bright-light pulses per night shift from light boxes, dark sunglasses outdoors, scheduled sleep in dark bedrooms after shifts and on days off, and 15 min of outdoor afternoon light within 2 h of wake (the "light brake"). Final DLMO about 04:30 versus 00:30 in controls; the target was a compromise position with DLMO near 03:00. Experimental subjects performed almost as well at night as at daytime baseline and slept nearly all of the allotted time.
+
+Smith, Fogg and Eastman 2009 [5.2] (abstract): same intervention family. Partially and completely re-entrained subjects had markedly better mood, fatigue and performance than non-re-entrained subjects, and the two re-entrained groups were similar to each other. Partial re-entrainment is enough.
+
+Smith and Eastman 2012 [3.3] (full text): the plan is to shift the clock part way so that Tmin falls within sleep both after night shifts and on days off, using a strong shifted light-dark cycle (sleep in a very dark bedroom), sunglasses of about 15% transmission on the way home, a little bright light during the night shift, and the afternoon light brake to stop the clock from delaying too far. The review notes that the longest, most efficient sleep occurs around Tmin, and that caffeine and naps give symptomatic relief without fixing misalignment.
+
+Sasseville et al. 2006 [3.9]: dark goggles help adjustment to night work but are incompatible with driving. ISO filter category 4 (3% to 8%) is described by secondary sources as unsuitable for driving (UNVERIFIED against the standard).
+
+### 5.3 Planner target
+
+Compromise phase position (decision D1): the predicted Tmin must fall inside the day-sleep window after each night shift and inside the sleep window on rest days. In the Eastman studies this corresponds to a DLMO near 03:00 and Tmin near 10:00 for 23:00 to 07:00 shifts with sleep from about 08:30 [5.1][3.3]. Zeitgeber computes the target from the worker's own windows rather than fixing clock times (design).
+
+### 5.4 Rules
+
+| ID | Rule | Basis | Status |
+|---|---|---|---|
+| R1 | Bright light early in the shift: the planner may place a light-seeking window (target 1,000 lux or more, for example a light box or a brightly lit break area) in the part of the shift that precedes predicted CBTmin, ending at least 2 h before CBTmin. Intermittent exposure of 15 to 20 min blocks counts; 500 lux floor lighting alone does not. | Crowley 2003 [3.5]; Smith 2008 [5.1]; Process L time constants [1.4] | cited; the 2 h margin and 1,000 lux threshold are design |
+| R2 | Dark sunglasses on the commute home whenever the sun is above the horizon, from leaving the building until indoors. Default transmission 15%. Recommend 2% lenses only when the worker is not driving or riding a motorcycle. | Crowley 2003 [3.5]; Smith 2008 [5.1]; Smith and Eastman 2012 [3.3]; driving caveat from Sasseville 2006 [3.9] | cited; driving rule is design |
+| R3 | Sleep in a very dark room starting within 1.5 h of arriving home, at a fixed time on every workday, with a window of at least 7 h. | Crowley 2003 sleep 08:30 to 15:30 [3.5]; Smith and Eastman 2012 [3.3] | cited; 1.5 h and 7 h are design |
+| R4 | Rest-day sleep is a late window, not a flip to a normal night: default 03:00 to 11:00, adjusted so that predicted Tmin stays inside it. | Smith 2008 "adequate late night sleep on days off" [5.1]; Smith and Eastman 2012 [3.3] | cited; default hours are design |
+| R5 | Light brake: 15 min outdoors within 2 h of waking from day sleep, to stop the clock delaying past the target. | Smith 2008 [5.1]; Smith and Eastman 2012 [3.3] | cited |
+| R6 | No bright light in the 2 h before the planned sleep window other than what R2 already limits; phone use in a dark room counts as 30 lux (3.5). | Gooley 2011 [3.4]; Burgess and Molina 2014 [3.6]; Chang 2015 [3.7] | cited for effect; 2 h is design |
+| R7 | Never recommend looking at the sun, light above 10,000 lux, or eyewear darker than category 3 for anyone who drives. | safety; ISO category guidance (UNVERIFIED) | design |
+
+### 5.5 Limitations
+
+- The protocols were run on young healthy volunteers with simulated night shifts and controlled home sleep; the field conditions of Metro Manila commutes are different.
+- The studies tested fixed 23:00 to 07:00 shifts and 2-day weekends. Rotations and split rest days are untested.
+- Light boxes were used for R1; most call centers do not have them. The planner should mark R1 as "if available".
+- Partial re-entrainment reduced impairment in the laboratory; the size of the benefit in real workplaces is not established.
+
+### 5.6 References
+
+- [5.1] Smith MR, Eastman CI (2008). Night shift performance is improved by a compromise circadian phase position: study 3. Circadian phase after 7 night shifts with an intervening weekend off. Sleep 31(12): 1639-1645. https://doi.org/10.1093/sleep/31.12.1639 (PMC2603486; abstract checked)
+- [5.2] Smith MR, Fogg LF, Eastman CI (2009). A compromise circadian phase position for permanent night work improves mood, fatigue, and performance. Sleep 32(11): 1481-1489. https://doi.org/10.1093/sleep/32.11.1481 (PMC2768954; abstract checked)
+- [5.3] Crowley SJ et al. (2003). See [3.5].
+- [5.4] Smith MR, Eastman CI (2012). See [3.3].
