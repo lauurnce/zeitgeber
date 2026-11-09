@@ -440,3 +440,59 @@ Compromise phase position (decision D1): the predicted Tmin must fall inside the
 - [5.2] Smith MR, Fogg LF, Eastman CI (2009). A compromise circadian phase position for permanent night work improves mood, fatigue, and performance. Sleep 32(11): 1481-1489. https://doi.org/10.1093/sleep/32.11.1481 (PMC2768954; abstract checked)
 - [5.3] Crowley SJ et al. (2003). See [3.5].
 - [5.4] Smith MR, Eastman CI (2012). See [3.3].
+
+## 6. Caffeine and naps
+
+### 6.1 Purpose
+
+Caffeine and naps are alertness countermeasures, not clock shifters. Zeitgeber includes a caffeine cutoff and a pre-shift nap because both protect the day-sleep window and night-shift alertness, and because workers already use them. This section fixes the numbers behind those rules.
+
+### 6.2 Published findings
+
+Caffeine pharmacokinetics:
+
+- Half-life in healthy adults is commonly summarized as about 5 h with a wide range, roughly 1.5 to 9.5 h. This summary comes from secondary coverage of the Institute of Medicine 2001 report [6.1]; the primary text could not be accessed. UNVERIFIED.
+- Smoking increases caffeine clearance and shortens its half-life; oral contraceptive use has the opposite effect over a wide dose range (Grzegorzewski et al. 2021, systematic analysis of 141 publications [6.2]).
+- Pharmacokinetics are also affected by age, sex and hormones, liver disease, obesity and diet, with CYP1A2 metabolizing about 95% of ingested caffeine (Nehlig 2018 [6.3], abstract). Pregnancy prolongs half-life (commonly stated; UNVERIFIED here).
+
+Caffeine and sleep (Drake et al. 2013 [6.4], abstract): 400 mg taken at bedtime, 3 h before bedtime or 6 h before bedtime each significantly disturbed sleep relative to placebo, measured by diary and a portable monitor at home. The authors conclude that caffeine should be avoided for a minimum of 6 h before bedtime. The size of the total sleep time reduction at 6 h is not in the abstract (UNVERIFIED).
+
+Caffeine and the clock (Burke et al. 2015 [3.8], full text): 2.9 mg/kg, equivalent to 200 mg in a 69 kg person, taken 3 h before habitual bedtime in dim light delayed the melatonin rhythm by about 40 min compared with placebo; 3 h of about 3,000 lux at bedtime delayed it by about 85 min; both together by about 105 min.
+
+Naps:
+
+- Ruggiero and Redeker 2014 [6.5] (systematic review of 13 studies, full text): naps of 20 to 40 min between 02:00 and 03:00 during night shifts improved sleepiness, reaction time and lapses through the end of the shift; naps as short as 20 min helped; 60 and 120 min naps at 00:00 did not improve reaction time in one study; sleep inertia of about 20 to 30 min followed naps.
+- Sallinen et al. 1998 [6.6] (abstract): 30 or 50 min naps at 01:00 or 04:00 improved responses in the second half of the shift; inertia lasted about 10 to 15 min; 50 min naps slightly impaired the following day sleep.
+- Schweitzer et al. 2006 [6.7] (abstract): an evening nap before the first two of four night shifts plus caffeine improved alertness and performance in the laboratory and in 53 real shift workers; the combination beat either alone.
+- Garbarino et al. 2004 [6.8] (abstract): in Italian shift-working police drivers, a model of accident risk versus sleep pressure estimated about 38% more accidents if prophylactic naps were omitted.
+- Smith and Eastman 2012 [3.3]: naps improve alertness but do not remove the decrement at the circadian nadir.
+
+### 6.3 Rules
+
+| ID | Rule | Basis | Status |
+|---|---|---|---|
+| C1 | Caffeine cutoff: no caffeine in the 6 h before the planned sleep window. The plan prints the clock time. | Drake 2013 [6.4] | cited |
+| C2 | If the worker reports oral contraceptive use or another reason to expect slow clearance, the cutoff extends to 8 h. | direction from Grzegorzewski 2021 [6.2]; the 8 h figure is design | design |
+| C3 | Caffeine is allowed in the first half of the shift; pairing it with a pre-shift nap is suggested. | Schweitzer 2006 [6.7] | cited |
+| C4 | Zeitgeber v0.1 does not model caffeine's effect on circadian phase. | Burke 2015 shows a 40 min delay from one evening dose [3.8]; too small and too variable to plan on | design |
+| N1 | Pre-shift nap: an opportunity of 30 to 90 min, placed 2 to 4 h before the shift start and ending at least 30 min before leaving home, so that sleep inertia clears. | Schweitzer 2006 [6.7]; Garbarino 2004 [6.8]; inertia 10 to 30 min [6.5][6.6] | cited; the window and 30 min margin are design |
+| N2 | In-shift nap: if the employer allows, 20 to 30 min between about 02:00 and 03:00 shift time. Shown as a note, not planned. | Ruggiero and Redeker 2014 [6.5] | cited |
+| N3 | Nap blocks count as dark (1 lux) in the light profile. | eyes closed in a dark room | design |
+
+### 6.4 Limitations
+
+- Half-life numbers are UNVERIFIED pending the primary text; the rules rest on Drake 2013's direct 6 h finding, not on half-life arithmetic.
+- Dose matters and v0.1 does not ask for it. Drake used 400 mg; a typical cup contains far less (amount UNVERIFIED here).
+- Nap evidence is from small, mixed-design studies and none measured workplace safety outcomes [6.5].
+- Caffeine advice must stay generic. Pregnancy and health conditions are referred to a doctor, per the wellness framing.
+
+### 6.5 References
+
+- [6.1] Institute of Medicine (2001). Caffeine for the Sustainment of Mental Task Performance: Formulations for Military Operations. National Academies Press. Chapter 2, Pharmacology of Caffeine. https://www.ncbi.nlm.nih.gov/books/NBK223808/ (text not accessible at the time of writing; UNVERIFIED)
+- [6.2] Grzegorzewski J, Bartsch F, Koller A, Konig M (2021). Pharmacokinetics of caffeine: a systematic analysis of reported data for application in metabolic phenotyping and liver function testing. Frontiers in Pharmacology 12: 752826. https://doi.org/10.3389/fphar.2021.752826 (open access, PMC8914174)
+- [6.3] Nehlig A (2018). Interindividual differences in caffeine metabolism and factors driving caffeine consumption. Pharmacological Reviews 70(2): 384-411. https://doi.org/10.1124/pr.117.014407 (abstract checked)
+- [6.4] Drake C, Roehrs T, Shambroom J, Roth T (2013). Caffeine effects on sleep taken 0, 3, or 6 hours before going to bed. Journal of Clinical Sleep Medicine 9(11): 1195-1200. https://doi.org/10.5664/jcsm.3170 (PMC3805807; abstract checked)
+- [6.5] Ruggiero JS, Redeker NS (2014). Effects of napping on sleepiness and sleep-related performance deficits in night-shift workers: a systematic review. Biological Research for Nursing 16(2): 134-142. https://doi.org/10.1177/1099800413476571 (PMC4079545; full text read)
+- [6.6] Sallinen M, Harma M, Akerstedt T, Rosa R, Lillqvist O (1998). Promoting alertness with a short nap during a night shift. Journal of Sleep Research 7(4): 240-247. https://doi.org/10.1046/j.1365-2869.1998.00121.x (abstract checked)
+- [6.7] Schweitzer PK, Randazzo AC, Stone K, Erman M, Walsh JK (2006). Laboratory and field studies of naps and caffeine as practical countermeasures for sleep-wake problems associated with night work. Sleep 29(1): 39-50. https://doi.org/10.1093/sleep/29.1.39 (abstract checked)
+- [6.8] Garbarino S, Mascialino B, Penco MA, et al. (2004). Professional shift-work drivers who adopt prophylactic naps can reduce the risk of car accidents during night work. Sleep 27(7): 1295-1302. https://doi.org/10.1093/sleep/27.7.1295 (abstract checked)
