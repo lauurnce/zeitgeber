@@ -607,3 +607,21 @@ Python versions on the development Mac: uv currently provides 3.13; a 3.12 inter
 | 6 | Wording drifts into medical advice through templates or language-model rewrites | low | high | templates by default; grounding check with banned terms; rewriter off unless enabled; Lawrence reviews every template | grounding check rejection rate rises |
 | 7 | Privacy leak through logs, analytics, error tracking or the language-model provider | low | high | no body logging, no analytics on inputs, templates only to the rewriter, log-capture test, stateless API | any schedule field found in logs |
 | 8 | Workers cannot or will not follow the plan: late weekend sleep, sunglasses, input burden, Taglish tone | high | medium | presets and copy-to-all, next 12 h view, one-line reasons, Taglish review, adherence items in the pilot diary | pilot adherence below half on R2 or R4 |
+
+## 8. Build plan
+
+Z1 to Z4 are done on Day 1 (2026-11-09). One step per build day from here. Commit ranges are the expected count for a full day of atomic commits; the hard cap is 100 per calendar day, Asia/Manila.
+
+| Step | Day | Deliverables | Tests that prove it | Commits |
+|---|---|---|---|---|
+| Z5 | 2 | uv project and lock; pyproject (zeitgeber-core); ruff, mypy, pytest, Hypothesis, pre-commit; CI python job; third-party notices; circadian 1.0.3 install and smoke test; `zeitgeber/schedule` and `zeitgeber/grid` | smoke test imports the package and integrates 1 day; schedule validation unit tests; `materialize` property tests; grid index round trip | 55 to 75 |
+| Z6 | 3 | `zeitgeber/light`: solar times, `LuxConstants`, `build_light_profile`, `build_light_batch`, labels, interventions applied | sun times versus NOAA within 2 min on 4 dates; lux property tests; label coverage; the Z3 worker profile matches a hand-computed day | 55 to 75 |
+| Z7 | 4 | `zeitgeber/sim`: `ClockModel`, three adapters, batched `integrate`, `equilibrate`, `markers` | parity with the package `integrate` (exact); golden traces; 0.1 h versus 1 min CBTmin within 0.1 h; equilibration converges on the worker schedule | 50 to 70 |
+| Z8 | 5 | science validation: F1 to F9, sensitivity harness, reports; SCIENCE.md updates from findings | `science` suite green on F1 and F2; F3 to F9 values recorded; sensitivity table committed | 50 to 70 |
+| Z9 | 6 | `zeitgeber/score` and `zeitgeber/plan`: score, intervention space, constraints, seeded search, explanations | score property tests; determinism test (same seed, same plan); three golden plans; explanation ablation sums sanity-checked | 60 to 85 |
+| Z10 | 7 | `zeitgeber/output`: `PlanDocument`, timeline, .ics with alarms, English and Taglish templates, grounding check, `Rewriter` protocol with the provider adapter off by default | .ics round trip; grounding check property tests; template snapshot tests; every number in every nudge traced to the plan | 55 to 80 |
+| Z11 | 8 | `api/`: FastAPI app, problem JSON, limits, Vercel function entry, preview deployment; CI api job; serverless latency measured | OpenAPI snapshot; schemathesis; no-logging test; p95 latency recorded in docs/DECISIONS.md | 50 to 70 |
+| Z12 | 9 | `web/`: Next.js scaffold, form with presets, next 12 h view, timeline, nudges, .ics download, language toggle; vitest; Playwright | vitest suite; Playwright flows on desktop and phone; axe scan clean | 60 to 90 |
+| Z13 | 10 | landing page with the name story; pilot protocol document from SCIENCE 8; README; SCIENCE.md review; v0.1 tag | all suites green; manual review of landing and README; tag pushed | 50 to 70 |
+
+If a day runs long, the step carries over and the next day's number moves; the decision log records the change.
