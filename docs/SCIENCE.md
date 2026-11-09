@@ -160,7 +160,7 @@ The 7 h DLMO-to-CBTmin interval is the estimate the Eastman laboratory uses to d
 ### 1.7 Valid ranges
 
 - Illuminance: 0 to about 10,000 lux. The models were fit to the photopic range [1.4]; above $I_0$ the drive saturates, so values beyond 10,000 lux add little. Zeitgeber caps model input at 10,000 lux (design).
-- Time step: the package integrates with fixed-step fourth-order Runge-Kutta and assumes constant light within a step. Zeitgeber uses 0.1 h (6 min) for planning and 1/60 h for verification (design; the package's own PRC code uses 0.10 h).
+- Time step: the package integrates with fixed-step fourth-order Runge-Kutta and assumes constant light within a step. Zeitgeber uses 0.1 h (6 min) for every request and 1/60 h only in tests, which assert that CBTmin at the two steps differs by less than 0.1 h on the golden schedules (design; the package's own PRC code uses 0.10 h; timing in docs/ARCHITECTURE.md 3.4).
 - $n \in [0, 1]$; $R \in (0, 1]$. The Hannay19 phase equation contains $1/R$ and is undefined at $R = 0$; Zeitgeber guards against $R$ below 0.05 (design).
 - Burn-in: the package's `equilibrate` loops the schedule until the last DLMO moves by less than 0.001 h between loops, with a default of 10 loops. Zeitgeber uses at least 14 days of the current schedule as burn-in (design).
 
