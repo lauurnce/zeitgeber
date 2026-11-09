@@ -97,3 +97,8 @@ Alternatives: half-life based cutoff; no nap recommendation; planned in-shift na
 Decision: score S is the mean over planned days of the absolute difference between the predicted CBTmin offset from mid-sleep and a target of 2 h before wake, plus 0.5 times the overlap in hours between the shift and a 4 h window centered on CBTmin. The Crowley re-entrainment category and a social-jetlag analogue are reported alongside. Recommendations explain themselves by ablation on S.
 Reason: it follows how the literature places CBTmin inside sleep and how the Eastman studies categorize re-entrainment, while giving the planner a continuous objective. Design parts are labeled in docs/SCIENCE.md 7.3.
 Alternatives: categorical score only; fraction of sleep inside biological night; a sleep-homeostat model.
+
+### D19. Pilot instruments
+Decision: Karolinska Sleepiness Scale at shift start and every 2 h, plus once after waking; Consensus Sleep Diary core items with Zeitgeber additions (shift, sunglasses, outdoor minutes, caffeine, naps, lux readings, adherence); 2 weeks baseline then 2 weeks on plan; data on paper or offline forms, never in the app.
+Reason: standard, validated, low-burden instruments that match the 2 h cadence of the source studies; the design keeps the pilot a feasibility study and keeps personal data out of the product (docs/SCIENCE.md 8).
+Alternatives: actigraphy; in-app data collection; a control group.
