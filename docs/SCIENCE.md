@@ -185,3 +185,71 @@ Default model: Forger99. Reasons: it has the fewest parameters, the original pap
 - [1.5] Hannay KM, Forger DB, Booth V (2020). Seasonality and light phase-resetting in the mammalian circadian rhythm. Scientific Reports 10: 19506. https://doi.org/10.1038/s41598-020-74002-2 (open access)
 - [1.6] St Hilaire MA, Klerman EB, Khalsa SBS, Wright KP, Czeisler CA, Kronauer RE (2007). Addition of a non-photic component to a light-based mathematical model of the human circadian pacemaker. Journal of Theoretical Biology 247(4): 583-599. https://doi.org/10.1016/j.jtbi.2007.04.001 (author manuscript PMC3123888)
 - [1.7] Arcascope (2025). circadian, version 1.0.3, file circadian/models.py. https://github.com/Arcascope/circadian (open source; see section 2)
+
+## 2. The circadian package
+
+### 2.1 Purpose
+
+Zeitgeber does not re-implement the models. It uses the open-source `circadian` package by Arcascope behind an adapter, so that the equations in section 1 run as published code and can be swapped or vendored later.
+
+### 2.2 Identity and pin
+
+| Item | Value | Source |
+|---|---|---|
+| Distribution name | `circadian` | PyPI JSON for 1.0.3 |
+| Version pinned | 1.0.3 | released 2025-08-18 (sdist and wheel upload times on PyPI) |
+| Requires Python | >= 3.7; classifiers list 3.7 to 3.10 only | PyPI metadata. Python 3.12 is untested by the authors; Zeitgeber runs an install and smoke test in Z4 |
+| Dependencies | fastcore, pandas, numpy, scipy, matplotlib | PyPI `requires_dist` and `settings.ini` in the sdist |
+| Repository | https://github.com/Arcascope/circadian, tag v1.0.3 | GitHub tags API |
+| Software citation | Tavella F, Hannay K, Walch O (2023). Arcascope/circadian: Refactoring of readers and metrics modules. Zenodo, v1.0.2. https://doi.org/10.5281/zenodo.8206871 | package README |
+
+Pin form: `circadian==1.0.3` with the lock file's hash. The adapter is the only module allowed to import it.
+
+### 2.3 License
+
+The release contradicts itself. The LICENSE file shipped inside the 1.0.3 sdist is the MIT License with the line "Copyright (c) [2023] [Kevin Hannay]" (brackets as in the file). The package metadata in the same sdist (PKG-INFO and settings.ini) declares "Apache Software License 2.0", and PyPI shows the Apache classifier. The GitHub repository sidebar reads MIT. Both licenses are permissive and compatible with Zeitgeber's MIT license. Zeitgeber's third-party notices will reproduce the MIT text from the LICENSE file and state that the metadata declares Apache 2.0. If the package is ever vendored, the same notice travels with the copied code. Resolving the contradiction with the maintainers is recorded as an open question in docs/DECISIONS.md.
+
+### 2.4 Units and time step
+
+- Time: hours, as a one-dimensional numpy array. The difference between consecutive entries is the integration step. `cbt()` reads the step from the first difference only, so the time grid must be uniform.
+- Light: photopic lux, one value per time point, passed as the `input` array aligned to the time array. The integrator holds light constant within a step.
+- Solver: fixed-step fourth-order Runge-Kutta (`step_rk4`). No adaptive stepping, no error control.
+- Phase: radians from `np.angle`; amplitude dimensionless.
+- Markers: times in the same hour units as the input time array. CBTmin candidates must be at least 13 h apart (`_min_marker_distance_in_hours`), and a warning is raised if two markers fall within 6 h.
+
+### 2.5 API that Zeitgeber uses
+
+Light schedules (`circadian.lights`):
+
+- `LightSchedule(light, period=None)`: wraps a function from time in hours to lux, or a constant. `schedule(time_array)` returns a lux array.
+- `LightSchedule.from_pulse(lux, start, duration, period=None, baseline=0.0)`: one pulse, optionally repeated.
+- `LightSchedule.Regular(lux, lights_on, lights_off)`: a 24 h light-dark cycle.
+- `LightSchedule.ShiftWork(lux, days_on, days_off, lights_on_workday, lights_off_workday, lights_on_day_off, lights_off_day_off)`: a built-in shift pattern with its own sleep assumptions. Zeitgeber does not use it; the light profile of section 3 is built as a function of time and wrapped in `LightSchedule`.
+- Schedules support `+`, `-` and `concatenate_at(other, timepoint)`.
+
+Models (`circadian.models`): `Forger99()`, `Jewett99()`, `Hannay19()`, `Hannay19TP()`, `Hilaire07()`, `Breslow13()`. Each accepts a `params` dict to override defaults. Methods:
+
+- `model.integrate(time, initial_condition=None, input=light_array)` returns a `DynamicalTrajectory` with `.time` and `.states`; `model(time, ic, light)` is the same call.
+- `model.equilibrate(time, input, num_loops=10)` integrates the schedule repeatedly, carrying the final state forward, and returns the final state. It warns if the last DLMO moved by more than 0.001 h between the last two loops.
+- `model.cbt(trajectory=None)` returns CBTmin times; `model.dlmos(trajectory=None)` returns CBTmin minus `cbt_to_dlmo`.
+- `model.phase(trajectory, time)` and `model.amplitude(trajectory, time)`.
+
+Phase response tools (`circadian.prc`): `PhaseResponseCurveLight.light_khalsa(t, CR)` builds the light profile of the Khalsa et al. 2003 protocol as the package authors encoded it: 15 lux background and a 9985 lux pulse from CR + 12.65 h to CR + 19.35 h, that is 6.7 h long. `PRCFinder` contains the Type 0 protocol used for model fitting. Zeitgeber reuses `light_khalsa` for the tests in section 4.
+
+### 2.6 Behavior to note
+
+- `equilibrate` judges convergence by the last DLMO only. Zeitgeber additionally checks that the full set of daily CBTmin times changed by less than 0.05 h between the last two loops (design).
+- Default initial conditions correspond to midnight on a 16 h light, 8 h dark schedule. Zeitgeber always equilibrates on the worker's current schedule before planning.
+- Negative lux values produce a warning rather than an error; Zeitgeber validates inputs before calling the package.
+
+### 2.7 Limitations
+
+- Maintenance is thin: three releases in 2023, one in 2025, open issues and pull requests at the time of writing, and no Python 3.11 or later in the classifiers.
+- No adaptive solver, so step size must be chosen by testing (section 1.7).
+- Documentation and code disagree in places (the README refers to a `Light` class; the code has `LightSchedule`).
+
+### 2.8 References
+
+- [2.1] PyPI project page and JSON API for circadian 1.0.3. https://pypi.org/project/circadian/1.0.3/
+- [2.2] Arcascope/circadian repository, tag v1.0.3. https://github.com/Arcascope/circadian
+- [2.3] circadian-1.0.3.tar.gz: files LICENSE, PKG-INFO, settings.ini, circadian/models.py, circadian/lights.py, circadian/prc.py (read directly from the sdist)
