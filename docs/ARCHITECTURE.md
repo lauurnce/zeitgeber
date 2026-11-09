@@ -479,3 +479,73 @@ Settings that follow: `MPLBACKEND=Agg` and `MPLCONFIGDIR=/tmp/matplotlib` in the
 - [3.1] Vercel changelog, "Vercel Functions can now be up to 5 GB in package size", and Vercel Functions limits documentation (default timeout 300 s). https://vercel.com/changelog/vercel-functions-can-now-be-up-to-5-gb-in-package-size
 - [3.2] AWS Lambda quotas: deployment package 250 MB unzipped including layers, container image 10 GB, timeout 900 s. https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html (values as documented; check at deployment)
 - [3.3] Pyodide 314.0.7, npm package `pyodide`, released 2026-09-14. https://pyodide.org
+
+## 4. Planner design
+
+### 4.1 Intervention parameters
+
+| Parameter | Values in v0.1 | Rule (SCIENCE) |
+|---|---|---|
+| `sleep_start_offset_h` | 0, 0.5, 1.0, 1.5 h after arriving home | R3 |
+| `sleep_len_h` | 7, 8, 9 h | R3 |
+| `sunglasses` | none; cat3 (transmission 0.15); dark (0.02), offered only when the worker does not drive or ride a motorcycle | R2, R7 |
+| `light_seek_start_h`, `light_seek_len_h` | none; or start at 0 to shift length minus 2 h in 1 h steps, length 0.5 or 1.0 h, target 1,000 lux | R1 |
+| `light_brake` | off; on (15 min outdoors within 2 h of waking from day sleep) | R5 |
+| `rest_sleep_start` | 01:00, 02:00, 03:00, 04:00 local, 8 h long | R4 |
+| `nap_len_min` | 0, 30, 60, 90 min, placed about 3 h before the shift and ending 30 min before leaving home | N1 |
+| caffeine cutoff | derived, not searched: sleep start minus 6 h, or minus 8 h when slow clearance is reported | C1, C2 |
+
+One coordinate pass evaluates every alternative value of every parameter with the others fixed: about 35 candidates for a 9 h shift, simulated as one batch.
+
+### 4.2 Constraints
+
+Hard constraints make a candidate infeasible before simulation:
+
+- dark lenses for a worker who drives (R7);
+- a nap that does not fit between the end of day sleep and departure for work;
+- a sleep window that overlaps a shift or a commute;
+- a light-seeking window outside the shift.
+
+Soft constraints add hours to the objective after simulation (values are design):
+
+- a light-seeking window that ends less than 2 h before that night's predicted CBTmin: 0.5 h (R1);
+- outdoor light, including the light brake, inside the 2 h before the planned sleep window: 0.5 h (R6);
+- a plan with fewer than 7 h of sleep opportunity on any workday: 1.0 h (R3).
+
+### 4.3 Objective
+
+For candidate $c$ with score $S(c)$ from SCIENCE 7.3, soft-constraint penalties $V(c)$ and $a(c)$ active interventions (sunglasses counts 1 for cat3 and 2 for dark; each other non-default parameter counts 1):
+
+$$
+J(c) = S(c) + V(c) + \varepsilon\, a(c), \qquad \varepsilon = 0.05\ \text{h}
+$$
+
+The burden term prefers the simpler plan when two plans score alike. It never outweighs a real improvement: one extra intervention costs 3 minutes of score.
+
+### 4.4 Search
+
+Deterministic given the schedule and `SearchConfig.seed`:
+
+1. Build the burn-in profile from `SleepHabits` and equilibrate Forger99 (6 loops of 14 days, tolerance 0.05 h). Simulate and score the do-nothing baseline.
+2. Coordinate descent in a fixed parameter order: sunglasses, sleep start offset, sleep length, rest-day sleep start, light brake, light seeking, nap. For each parameter, build all alternatives as one light batch, simulate at 0.1 h, score, and keep the value with the lowest $J$. Ties go to the earlier value in the list. A pass ends after the last parameter; stop when a pass changes nothing or after `passes` (4).
+3. Restarts: draw `restarts` (8) feasible starting points with `numpy.random.default_rng(seed)` and run the same descent from each. Keep the lowest $J$ overall; ties go to lower burden, then to the earlier restart.
+4. Cross-check: equilibrate Hannay19 on the same burn-in, run it on the baseline and the chosen plan at 0.1 h, and record the CBTmin difference per day. The 1 min step is not used per request; tests bound the 0.1 h error (sections 3.4 and 5).
+5. Explanations (4.5).
+
+Budget: at most $(1 + 8) \times 4 \times 35 = 1{,}260$ simulations at the 0.1 h step. On the development Mac that is about 1.1 s of batched Forger99 integration within a total of about 2.8 s per request (section 3.4). Target on the serverless host: p95 under 6 s, measured in Z11. `PlanResult.evaluations` records the actual count.
+
+### 4.5 How a recommendation records its effect
+
+For each active intervention in the chosen plan, revert that one parameter to its default, re-simulate (all ablations in one batch at 0.1 h), and record:
+
+- `delta_score_h`: score without the intervention minus score with it (positive means it helped);
+- `delta_cbt_day7_h` and `delta_cbt_day14_h`: how much later or earlier CBTmin would be on those days without it;
+- the rule identifiers it rests on.
+
+These values go into `PlanResult.explanations` and into each `PlanEvent.numbers`, so a nudge such as "sunglasses on the ride home keep your low point from moving about 1.2 h earlier by day 7" is built only from numbers the simulator produced. The grounding check (2.7) treats that set as the only allowed numbers for the event's text.
+
+### 4.6 Limitations
+
+- Coordinate descent with restarts finds good plans, not provably optimal ones; the golden plans in section 5 pin the behavior.
+- Soft penalties and $\varepsilon$ are design values and will be tuned against the golden schedules in Z9.
+- The planner optimizes the 14 planned days only; longer-term drift is not modeled.
