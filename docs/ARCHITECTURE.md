@@ -594,3 +594,16 @@ Deployment is by the Vercel Git integration (preview per commit, production from
 Local-only files (CLAUDE.md, .claude/, prompt files, notes-local/, pilot-data/) stay out through `.git/info/exclude`.
 
 Python versions on the development Mac: uv currently provides 3.13; a 3.12 interpreter is one `uv python install 3.12` away and is listed as an open question until approved.
+
+## 7. Risk register
+
+| # | Risk | Likelihood | Impact | Mitigation | Signal |
+|---|---|---|---|---|---|
+| 1 | Lux constants are off by a factor of 10 for Manila commutes and floors, moving predictions by hours | high | high | every constant named and scaled in the sensitivity test; plan shows windows, not minutes; pilot collects lux readings (SCIENCE 3.6, 8.3) | sensitivity test flips a recommendation |
+| 2 | Model does not transfer: lab-fit parameters, CBTmin convention differences, fixed 7 h DLMO offset | medium | high | F1 to F9 tests; Forger99 with Hannay19 cross-check shown as a range; UNVERIFIED tags kept visible | cross-check disagreement above 1 h |
+| 3 | Dependency fragility: license contradiction, Python 3.12 untested, thin maintenance, matplotlib import | medium | medium | pin 1.0.3, adapter is the only importer, parity tests, vendoring fallback under MIT, both license notices | smoke test fails on 3.12; import time grows |
+| 4 | Serverless latency and bundle: dependencies total hundreds of MB, cold start adds import time, search adds seconds | medium | medium | batched integration (0.9 ms per candidate), budget of 1,300 simulations, lazy import, Hannay19 on final plan only; Lambda container image as fallback | p95 request above 6 s |
+| 5 | Planner returns a poor or unstable plan: local optima, constraint interplay, floating-point ties | medium | medium | fixed parameter order, seeded restarts, burden term, golden plans with tolerances, determinism test | golden plan diff without a code reason |
+| 6 | Wording drifts into medical advice through templates or language-model rewrites | low | high | templates by default; grounding check with banned terms; rewriter off unless enabled; Lawrence reviews every template | grounding check rejection rate rises |
+| 7 | Privacy leak through logs, analytics, error tracking or the language-model provider | low | high | no body logging, no analytics on inputs, templates only to the rewriter, log-capture test, stateless API | any schedule field found in logs |
+| 8 | Workers cannot or will not follow the plan: late weekend sleep, sunglasses, input burden, Taglish tone | high | medium | presets and copy-to-all, next 12 h view, one-line reasons, Taglish review, adherence items in the pilot diary | pilot adherence below half on R2 or R4 |
