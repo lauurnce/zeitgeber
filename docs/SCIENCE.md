@@ -496,3 +496,84 @@ Naps:
 - [6.6] Sallinen M, Harma M, Akerstedt T, Rosa R, Lillqvist O (1998). Promoting alertness with a short nap during a night shift. Journal of Sleep Research 7(4): 240-247. https://doi.org/10.1046/j.1365-2869.1998.00121.x (abstract checked)
 - [6.7] Schweitzer PK, Randazzo AC, Stone K, Erman M, Walsh JK (2006). Laboratory and field studies of naps and caffeine as practical countermeasures for sleep-wake problems associated with night work. Sleep 29(1): 39-50. https://doi.org/10.1093/sleep/29.1.39 (abstract checked)
 - [6.8] Garbarino S, Mascialino B, Penco MA, et al. (2004). Professional shift-work drivers who adopt prophylactic naps can reduce the risk of car accidents during night work. Sleep 27(7): 1295-1302. https://doi.org/10.1093/sleep/27.7.1295 (abstract checked)
+
+## 7. Misalignment score
+
+### 7.1 Purpose
+
+The planner needs one number that says how far the predicted clock sits from the work and sleep schedule, so that candidate plans can be compared and each recommendation can report how much it moved that number.
+
+### 7.2 How the literature quantifies misalignment
+
+| Measure | Definition | Source |
+|---|---|---|
+| Re-entrainment category | Tmin before the day-sleep period: not re-entrained; in the first half of sleep: partially; in the second half: completely | Crowley et al. 2003 [3.5]; Smith et al. 2009 [5.2] |
+| Phase angle of entrainment | time from DLMO to sleep onset (about 2 h under electric lighting), or from CBTmin to wake | Wright et al. 2013 [3.1]; Gooley et al. 2011 [3.4]; Duffy et al. 1998 [7.1] |
+| Sleep timing relative to CBTmin | longest and most efficient sleep when it occurs around Tmin, which normally falls a few hours before waking | Smith and Eastman 2012 [3.3]; Dijk and Czeisler 1995 [4.4] |
+| Social jetlag | difference between mid-sleep on work days and on free days | Wittmann et al. 2006 [7.2] |
+
+### 7.3 Zeitgeber score
+
+For each planned day $d$ with sleep window start $s_d$, wake $w_d$, duration $L_d = w_d - s_d$ and mid-sleep $m_d = (s_d + w_d)/2$, take the predicted CBTmin $c_d$ nearest to $m_d$ and the circular difference
+
+$$
+\Delta_d = \operatorname{wrap}_{24}(c_d - m_d) \in (-12, 12]
+$$
+
+The target position of CBTmin inside sleep is 2 h before wake, so the target offset from mid-sleep is
+
+$$
+t_d = \frac{L_d}{2} - 2
+$$
+
+Daily misalignment in hours:
+
+$$
+M_d = \left| \Delta_d - t_d \right|
+$$
+
+Shift penalty, the overlap in hours between the shift interval $W_d$ of that night and the sleepiest window around CBTmin:
+
+$$
+P_d = \left| W_d \cap [c_d - 2,\; c_d + 2] \right|
+$$
+
+Score over the $D$ planned days:
+
+$$
+S = \frac{1}{D} \sum_{d=1}^{D} \left( M_d + \lambda P_d \right), \qquad \lambda = 0.5
+$$
+
+Lower is better. $S = 0$ means CBTmin sits 2 h before wake on every day and never overlaps the shift. Alongside $S$, the plan reports:
+
+- the Crowley category per day (not, partial, complete) and the modal category over the week;
+- the social-jetlag analogue $SJ = \left| \overline{m}_{work} - \overline{m}_{rest} \right|$ in hours;
+- for each recommendation, the change in $S$ when that recommendation is removed and the plan re-simulated (ablation).
+
+| Element | Status |
+|---|---|
+| CBTmin belongs inside sleep, a few hours before wake | cited [3.3][4.4][7.1] |
+| 2 h before wake as the exact target | design; "a few hours" in the sources |
+| Circular difference and daily averaging | design |
+| 2 h half-width of the sleepiest window | design; the performance trough around Tmin is described qualitatively in [3.3] |
+| $\lambda = 0.5$ (4 h of overlap costs as much as 2 h of misalignment) | design |
+| Crowley categories | cited [3.5] |
+| Social-jetlag analogue | adapted from [7.2]; mid-sleep definition theirs, application to shift days ours |
+
+### 7.4 Valid ranges and edge cases
+
+- $M_d \in [0, 12]$ h; $P_d \in [0, 4]$ h; $S \in [0, 14]$ h.
+- If no CBTmin is predicted within 12 h of $m_d$ (model desynchrony), the day scores 12 h and the plan flags it.
+- Naps are not sleep windows for this score.
+- Split sleep (two episodes) uses the longer episode (design).
+
+### 7.5 Limitations
+
+- The score treats CBTmin as the only marker. Alertness also depends on time awake (sleep homeostasis), which v0.1 does not model.
+- The 2 h target is a design choice inside a range the literature gives as "a few hours". A worker whose habitual phase angle differs will be scored as misaligned when they are not.
+- Averaging over days hides a single bad night; the daily values are shown as well.
+
+### 7.6 References
+
+- [7.1] Duffy JF, Dijk DJ, Klerman EB, Czeisler CA (1998). Later endogenous circadian temperature nadir relative to an earlier wake time in older people. American Journal of Physiology 275(5): R1478-R1487. https://doi.org/10.1152/ajpregu.1998.275.5.R1478 (abstract checked)
+- [7.2] Wittmann M, Dinich J, Merrow M, Roenneberg T (2006). Social jetlag: misalignment of biological and social time. Chronobiology International 23(1-2): 497-509. https://doi.org/10.1080/07420520500545979 (abstract checked)
