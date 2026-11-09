@@ -549,3 +549,20 @@ These values go into `PlanResult.explanations` and into each `PlanEvent.numbers`
 - Coordinate descent with restarts finds good plans, not provably optimal ones; the golden plans in section 5 pin the behavior.
 - Soft penalties and $\varepsilon$ are design values and will be tuned against the golden schedules in Z9.
 - The planner optimizes the 14 planned days only; longer-term drift is not modeled.
+
+## 5. Testing strategy
+
+| Layer | What is tested | Tool | Proves |
+|---|---|---|---|
+| Unit | each module's functions on fixed inputs: schedule validation and materialization, solar times, lux assignment, integrate, markers, wrap, score, interventions, renderers, grounding check | pytest | the pieces behave as specified |
+| Parity | batched `integrate` against the package's own `integrate` on the same light array | pytest | the batching changes no result (bit-identical in the benchmark) |
+| Golden traces | model states at day 14 for fixed light arrays; CBTmin at 0.1 h versus 1 min steps within 0.1 h | pytest, stored arrays | numerical stability, dependency drift |
+| Golden plans | three fixed schedules (the night-shift worker from Z3, a 20:00 to 05:00 five-on two-off schedule, a rest-day flip) to stored `PlanDocument` JSON; times within 6 min, scores within 0.05 h, categories exact; regenerated only by an explicit script with a reviewed diff | pytest | the planner's behavior is pinned |
+| Property-based | `materialize`: no overlapping intervals, at most 24 h per day, round trip through local time; light: nonnegative, capped, sunglasses never raise lux, sleep windows are exactly the sleep constant; score: within bounds, invariant under a 24 h shift of all inputs; grounding check: rejects any injected digit string or banned term; .ics: render then parse with `icalendar` gives the same events and alarms | Hypothesis | invariants hold for inputs nobody wrote by hand |
+| Science | F1 to F9 from SCIENCE 4.3 (F1 and F2 blocking, the rest reported); sun times against NOAA within 2 min; sensitivity of CBTmin to each lux constant scaled by 0.3 and 3 | pytest marker `science` | the first success criterion |
+| API contract | OpenAPI snapshot; property-based requests with schemathesis expecting only 200, 413 or 422; responses validate against the `PlanDocument` schema; a log-capture test asserts no request body or schedule field appears in logs | pytest, httpx, schemathesis | the API matches its contract and keeps the privacy promise |
+| Web unit | form validation, presets, time formatting, English and Taglish strings | vitest | UI logic |
+| End to end | preset, plan, next 12 h view, timeline, .ics download parsed, both languages, phone viewport, accessibility scan | Playwright, axe | the product works for a user |
+| Performance | evaluation count at most 1,300 and search time within a loose bound on CI; `scripts/bench_sim.py` run by hand when the solver or dependency changes | pytest marker `perf` | the runtime budget holds |
+
+Rules: every commit leaves the suite green; `science` and `perf` run on changes to `zeitgeber/sim`, `zeitgeber/plan` and the lock file and on a weekly schedule; golden files change only with a commit that says why.
