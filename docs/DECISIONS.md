@@ -92,3 +92,8 @@ Alternatives: full re-entrainment protocols; light boxes only; no eyewear rule.
 Decision: caffeine cutoff 6 h before the planned sleep window (8 h when slow clearance is reported), caffeine allowed in the first half of the shift, no modeling of caffeine's phase effect, a pre-shift nap opportunity of 30 to 90 min placed 2 to 4 h before the shift and ending 30 min before leaving home, in-shift naps shown only as a note, nap blocks counted as dark in the light profile.
 Reason: Drake 2013 supports the 6 h cutoff directly; Burke 2015's 40 min phase effect is too small and variable to plan on; Schweitzer 2006 and Garbarino 2004 support pre-shift naps; sleep inertia of 10 to 30 min motivates the margin (docs/SCIENCE.md 6.3).
 Alternatives: half-life based cutoff; no nap recommendation; planned in-shift naps.
+
+### D18. Misalignment score
+Decision: score S is the mean over planned days of the absolute difference between the predicted CBTmin offset from mid-sleep and a target of 2 h before wake, plus 0.5 times the overlap in hours between the shift and a 4 h window centered on CBTmin. The Crowley re-entrainment category and a social-jetlag analogue are reported alongside. Recommendations explain themselves by ablation on S.
+Reason: it follows how the literature places CBTmin inside sleep and how the Eastman studies categorize re-entrainment, while giving the planner a continuous objective. Design parts are labeled in docs/SCIENCE.md 7.3.
+Alternatives: categorical score only; fraction of sleep inside biological night; a sleep-homeostat model.
