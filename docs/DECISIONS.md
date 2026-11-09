@@ -102,3 +102,8 @@ Alternatives: categorical score only; fraction of sleep inside biological night;
 Decision: Karolinska Sleepiness Scale at shift start and every 2 h, plus once after waking; Consensus Sleep Diary core items with Zeitgeber additions (shift, sunglasses, outdoor minutes, caffeine, naps, lux readings, adherence); 2 weeks baseline then 2 weeks on plan; data on paper or offline forms, never in the app.
 Reason: standard, validated, low-burden instruments that match the 2 h cadence of the source studies; the design keeps the pilot a feasibility study and keeps personal data out of the product (docs/SCIENCE.md 8).
 Alternatives: actigraphy; in-app data collection; a control group.
+
+### D20. Sun times from astral using the NOAA equations
+Decision: compute sunrise, sunset and civil twilight with the astral package (version 3.2) and verify against the NOAA calculator for Manila within 2 minutes. Default coordinates 14.5995 N, 120.9842 E, Asia/Manila.
+Reason: NOAA states minute-level accuracy within 72 degrees of the equator; astral implements the same Meeus-based method and is small enough to replace with a direct implementation if needed (docs/SCIENCE.md 9).
+Alternatives: implement the NOAA equations directly; use an ephemeris library such as skyfield.
