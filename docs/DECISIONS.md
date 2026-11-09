@@ -87,3 +87,8 @@ Alternatives: compare only the sign of shifts; fit the model to the PRC points.
 Decision: the planner optimizes for the compromise phase position computed from the worker's own windows, and uses rules R1 (bright light before predicted CBTmin, ending 2 h before it), R2 (15% sunglasses on a daylight commute; 2% only for non-drivers), R3 (dark-room sleep within 1.5 h of arriving home, at least 7 h, fixed time), R4 (late rest-day sleep, default 03:00 to 11:00), R5 (15 min outdoor light brake within 2 h of waking), R6 (no bright light in the 2 h before sleep), R7 (safety limits).
 Reason: these are the Eastman laboratory interventions that produced partial re-entrainment and better mood, fatigue and performance; margins and defaults are marked as design in docs/SCIENCE.md 5.4.
 Alternatives: full re-entrainment protocols; light boxes only; no eyewear rule.
+
+### D17. Caffeine and nap rules
+Decision: caffeine cutoff 6 h before the planned sleep window (8 h when slow clearance is reported), caffeine allowed in the first half of the shift, no modeling of caffeine's phase effect, a pre-shift nap opportunity of 30 to 90 min placed 2 to 4 h before the shift and ending 30 min before leaving home, in-shift naps shown only as a note, nap blocks counted as dark in the light profile.
+Reason: Drake 2013 supports the 6 h cutoff directly; Burke 2015's 40 min phase effect is too small and variable to plan on; Schweitzer 2006 and Garbarino 2004 support pre-shift naps; sleep inertia of 10 to 30 min motivates the margin (docs/SCIENCE.md 6.3).
+Alternatives: half-life based cutoff; no nap recommendation; planned in-shift naps.
