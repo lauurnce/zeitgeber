@@ -77,3 +77,8 @@ Open question: ask the maintainers to reconcile the license fields.
 Decision: use the constants in docs/SCIENCE.md 3.5 (outdoor 10,000 lux capped at the model saturation level, shade or vehicle 1,000, office 500, home 100, phone in a dark room 30, sleep 1, night street 10), sunglasses as a transmission factor of 0.15 or 0.02, and treat blue-blocking lenses as out of scope for the model.
 Reason: the models take photopic lux and cannot represent spectral filtering; orange lenses pass the same lux while blocking most of the circadian effect. The constants sit on cited measurements where they exist and are marked UNVERIFIED where they do not.
 Alternatives: melanopic conversion factors per source; include blue-blockers as a fixed lux reduction.
+
+### D15. Phase response test features and tolerances
+Decision: adopt the nine features F1 to F9 in docs/SCIENCE.md 4.3 as pytest cases. F1 (sign of shift) and F2 (crossover within 1.5 h of CBTmin) block the use of a model; the rest report measured values.
+Reason: they encode the published PRC shape and amplitude from Khalsa 2003 and St Hilaire 2012, the evening-light delay from Burke 2015, the intrinsic period from Czeisler 1999 and the entrained phase angle, which together cover the first success criterion.
+Alternatives: compare only the sign of shifts; fit the model to the PRC points.
