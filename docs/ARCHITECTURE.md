@@ -275,8 +275,7 @@ class SearchConfig:
     seed: int = 0
     passes: int = 4
     restarts: int = 8
-    step_h: float = 0.1
-    verify_step_h: float = 1 / 60
+    step_h: float = 0.1                         # request path; 1/60 only in tests (section 3.4)
     lam: float = 0.5
     burden_h: float = 0.05
     model: str = "forger99"
@@ -299,6 +298,8 @@ class PlanResult:
 def search(schedule: Schedule, config: SearchConfig = SearchConfig()) -> PlanResult
 def explain(schedule: Schedule, chosen: Interventions, config: SearchConfig) -> list[Explanation]
 ```
+
+Change: the request path runs at the 0.1 h step throughout; the 1 min step is used only in tests that bound the difference (section 3.4).
 
 Change: the cross-check model runs on the baseline and the final plan only, not on every candidate. Hannay19 costs about 2.5 times Forger99 per step (section 3) and its job is a second opinion, not a search objective.
 
