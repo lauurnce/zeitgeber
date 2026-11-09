@@ -620,3 +620,46 @@ The pilot with 10 to 15 agents measures sleepiness during shifts and sleep timin
 - [8.1] Akerstedt T, Gillberg M (1990). Subjective and objective sleepiness in the active individual. International Journal of Neuroscience 52(1-2): 29-37. https://doi.org/10.3109/00207459008994241 (abstract checked)
 - [8.2] Kaida K, Takahashi M, Akerstedt T, et al. (2006). Validation of the Karolinska sleepiness scale against performance and EEG variables. Clinical Neurophysiology 117(7): 1574-1581. https://doi.org/10.1016/j.clinph.2006.03.011 (abstract checked)
 - [8.3] Carney CE, Buysse DJ, Ancoli-Israel S, et al. (2012). The consensus sleep diary: standardizing prospective sleep self-monitoring. Sleep 35(2): 287-302. https://doi.org/10.5665/sleep.1642 (PMC3250369; abstract checked)
+
+## 9. Sun times
+
+### 9.1 Purpose
+
+The light profile needs sunrise, sunset and civil twilight for the worker's location and each date, so that the commute and any outdoor block get daylight lux only when the sun is up.
+
+### 9.2 Algorithm
+
+The NOAA Solar Calculator equations, based on Jean Meeus, Astronomical Algorithms [9.1][9.2]. NOAA states that sunrise and sunset are theoretically accurate to within a minute for latitudes between +72 and -72 degrees, assumes 0.833 degrees of atmospheric refraction at the horizon, and notes that observed times vary with atmospheric conditions. The NOAA page also states that the calculator is no longer maintained; the equations themselves are unchanged.
+
+Civil twilight (dawn and dusk) is the time when the sun's center is 6 degrees below the horizon (standard definition; the value is the default depression in the library below).
+
+### 9.3 Library
+
+Zeitgeber v0.1 uses the `astral` Python package, version 3.2 (design). It implements the same Meeus-based approach and exposes `sun(observer, date, tzinfo)` returning dawn, sunrise, noon, sunset and dusk. Its license is reported as Apache License 2.0 on PyPI (UNVERIFIED here). The Z7 tests compare its output for Manila against the NOAA calculator on four dates within 2 minutes (design tolerance). If the dependency becomes a problem, the NOAA equations are small enough to implement directly.
+
+### 9.4 Manila reference values
+
+Location used: Manila, 14.5995 N, 120.9842 E (GeoNames; UNVERIFIED against an official gazetteer), time zone Asia/Manila, UTC+8, no daylight saving time. Computed with astral 3.2 on 2026-11-09:
+
+| Date | Civil dawn | Sunrise | Solar noon | Sunset | Civil dusk |
+|---|---|---|---|---|---|
+| 2026-01-01 | 05:57 | 06:21 | 11:59 | 17:37 | 18:01 |
+| 2026-03-21 | 05:38 | 05:59 | 12:03 | 18:06 | 18:28 |
+| 2026-06-21 | 05:04 | 05:28 | 11:57 | 18:27 | 18:51 |
+| 2026-09-23 | 05:23 | 05:45 | 11:48 | 17:51 | 18:13 |
+| 2026-11-09 | 05:31 | 05:54 | 11:39 | 17:25 | 17:47 |
+| 2026-12-21 | 05:52 | 06:16 | 11:53 | 17:31 | 17:55 |
+
+Sunrise moves between about 05:28 and 06:21 and sunset between about 17:25 and 18:27 over the year, so a 07:00 commute home is in full daylight on every date, and a 06:00 commute is in daylight or civil twilight.
+
+### 9.5 Valid ranges and limitations
+
+- Valid for latitudes within 72 degrees of the equator; all of the Philippines qualifies.
+- Geometry only. Cloud cover, haze, buildings and vehicle windows are handled by the lux classes in section 3, not here.
+- Dates far from the present carry no extra error at this accuracy level.
+
+### 9.6 References
+
+- [9.1] NOAA Global Monitoring Laboratory. Solar Calculator: Calculation Details. https://gml.noaa.gov/grad/solcalc/calcdetails.html (read 2026-11-09)
+- [9.2] Meeus J (1998). Astronomical Algorithms, 2nd edition. Willmann-Bell. (book; not accessed, cited as NOAA's stated source)
+- [9.3] astral, Python package, version 3.2. https://pypi.org/project/astral/
